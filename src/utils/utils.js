@@ -5,6 +5,7 @@ export * from './console';
 let _uuid = 0;
 
 export const
+    noop = () => undefined,
     uuid = (prefix = 'component-') => prefix + _uuid++,
     objsToListsOnKey = (key, obj) => {
         if (!obj[key]) { return {...obj}; }

@@ -26,13 +26,13 @@ export const
         let vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
         let fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
         if (!vertexShader || !fragmentShader) {
-            return null;
+            return undefined;
         }
 
         // Create a program object
         let program = gl.createProgram();
         if (!program) {
-            return null;
+            return undefined;
         }
 
         // Attach the shader objects
@@ -50,7 +50,7 @@ export const
             gl.deleteProgram(program);
             gl.deleteShader(fragmentShader);
             gl.deleteShader(vertexShader);
-            return null;
+            return undefined;
         }
         return program;
     },
@@ -60,7 +60,7 @@ export const
         let shader = gl.createShader(type);
         if (!shader) {
             error('unable to create shader');
-            return null;
+            return undefined;
         }
 
         // Set the shader program
@@ -75,7 +75,7 @@ export const
             let error = gl.getShaderInfoLog(shader);
             error('Failed to compile shader: ' + error);
             gl.deleteShader(shader);
-            return null;
+            return undefined;
         }
 
         return shader;
@@ -83,7 +83,7 @@ export const
 
     getWebGlContext = (canvas, options, onError) => {
         _addCreationListener(canvas, onError);
-        let context = null,
+        let context = undefined,
             namesLen = WEBGL_NAMES.length,
             i;
         for (i = 0; i < namesLen; i += 1) {

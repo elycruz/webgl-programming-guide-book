@@ -20,9 +20,10 @@ export default class DrawRectangle extends Component {
     render () {
         const {props} = this;
         return ([
-            <div key={uuid('draw-a-point-element-')}>
+            <header key={uuid('draw-a-point-element-')}>
+                <h3>DrawRectangle.jsx</h3>
                 <p>Basic example of drawing into '2d' context.</p>
-            </div>,
+            </header>,
             <canvas key={uuid('draw-a-point-element-')} width="377" height="377"
                     id={props.canvasId} ref={this.canvas}>
                 <p>Html canvas element not supported</p>

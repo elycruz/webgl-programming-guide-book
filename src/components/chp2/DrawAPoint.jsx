@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {uuid} from '../../utils/utils';
+import {uuid, error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
 
 export default class DrawAPoint extends Component {
@@ -22,7 +22,7 @@ export default class DrawAPoint extends Component {
         // gl.fillRect(120, 10, 150, 150);
 
         if (!WebGlUtils.initShaders (gl, basicVertexShader, basicFragmentShader)) {
-            console.error('error');
+            error('Unable to initialize shaders');
         }
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -37,9 +37,10 @@ export default class DrawAPoint extends Component {
         const {props} = this;
 
         return ([
-                <div key={uuid('draw-a-point-element-')}>
-                    <p>In this exercise in chapter 2 of weblg-prog-guide, the author shows the user how draw in a '2d' canvas.</p>
-                </div>,
+                <header key={uuid('draw-a-point-element-')}>
+                    <h3>DrawAPoint.jsx</h3>
+                    <p>Painting a red square in the view with a `gl` context.</p>
+                </header>,
                 <canvas key={uuid('draw-a-point-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>

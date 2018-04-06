@@ -3,15 +3,19 @@ import {BrowserRouter, Route, Link} from 'react-router-dom'
 import {uuid} from "./utils/utils";
 import * as navContainer from './app.nav';
 import AppNav from "./AppNav";
-import DrawRectangle from "./components/chp1/DrawRectangle";
-import DrawAPoint from "./components/chp1/DrawAPoint";
+import DrawRectangle from "./components/chp2/DrawRectangle";
+import DrawAPoint from "./components/chp2/DrawAPoint";
+import DrawAPoint2 from "./components/chp2/DrawAPoint2";
+import DrawAPoint3 from "./components/chp2/DrawAPoint3";
 
 class App extends Component {
-    renderRoutes (navContainer) {
+    static renderRoutes () {
         return ([
-            <Route key={uuid('route-')} path={"/"} render={() => (<p>Hello</p>)} exact={true}/>,
+            <Route key={uuid('route-')} path={"/"} render={() => (<p>Examples from the book "Webgl Programming Guide - ..."</p>)} exact={true}/>,
+            <Route key={uuid('route-')} path={"/chp2/draw-rectangle"} component={DrawRectangle} />,
             <Route key={uuid('route-')} path={"/chp2/draw-a-point"} component={DrawAPoint} />,
-            <Route key={uuid('route-')} path={"/chp2/draw-rectangle"} component={DrawRectangle} />
+            <Route key={uuid('route-')} path={"/chp2/draw-a-point-2"} component={DrawAPoint2} />,
+            <Route key={uuid('route-')} path={"/chp2/draw-a-point-3"} component={DrawAPoint3} />,
         ]);
     }
 
@@ -37,7 +41,7 @@ class App extends Component {
                         <div>
                             <AppNav navContainer={navContainer} />
                             <section>
-                            {this.renderRoutes(navContainer)}
+                            {App.renderRoutes()}
                             </section>
                         </div>
                     </main>
