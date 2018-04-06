@@ -1,6 +1,31 @@
 # webgl-programming-guide-book
 WebGl Programming Guide book exercises and code refactor.
 
+**Note:**
+- This book uses Webgl 1.0 so all examples will/are in webgl 1.0 (maybe at another time
+we can port the examples to use Webgl 2 (OpenGl Es 3.0).
+- Only chp2 has been converted into the app so far.  All other chapters are from several years ago
+and don't use the newly set up app.
+
+## Dirs
+- ./src/components - All chapter examples are here.
+- Other dis are self explanetory (./src/utils for utils, ./src/css for sass/css etc.).
+
+## Development
+Dev scripts etc.
+
+### Main dev commands
+1.  `yarn install`
+2.  `yarn start` (for react-app) and
+3.  `yarn watch-css` for watching sass files.
+
+### Dev scripts
+#### On Windows
+If `yarn` is installed run 'start.bat'
+
+#### On Ubuntu/gnome-terminal
+If `yarn` is installed `sh start.sh`
+
 ## Create-React-App Pre-amble
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
