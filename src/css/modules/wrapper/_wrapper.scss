@@ -1,0 +1,34 @@
+@import "key-frames";
+
+#wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  &,
+  * {
+    @extend %border-box;
+  }
+  > * {
+    width: 100%;
+  }
+  > * > * {
+    max-width: $container-max-width;
+    margin: auto;
+  }
+
+  > header,
+  > footer {
+    position: relative;
+    height: auto;
+  }
+
+  @import "header";
+  @import "main";
+}
+
+/** Import: Header, Nav, and Footer **/
+@import "hamburger-btn";
+@import "nav";
+@import "mobile-nav";
+@import "overlay-bg";

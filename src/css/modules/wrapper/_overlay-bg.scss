@@ -1,0 +1,15 @@
+.overlay-bg {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  @include opacity(0);
+  background-color: rgba(0,0,0,0.55);
+  @include transform(translateX(-100%));
+  @include transition(fit-with-browser-prefixes((opacity 0.34s,), opacity));
+  z-index: 89;
+}
+
+.overlay-bg.active {
+  @include transform(translateX(0));
+  @include opacity(1);
+}

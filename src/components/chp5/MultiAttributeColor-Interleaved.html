@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi Attribute Size</title>
+</head>
+<body>
+<canvas width="320px" height="240px" id="canvas1"></canvas>
+<script type="text/shader" id="basic-vertex-shader">
+precision highp float;
+attribute vec4 a_Position;
+attribute vec4 a_Color;
+varying vec4 v_Color;
+void main () {
+    gl_Position = a_Position;
+    gl_PointSize = 10.0;
+    v_Color = a_Color;
+}
+</script>
+<script type="text/shader" id="basic-fragment-shader">
+precision highp float;
+varying vec4 v_Color;
+void main () {
+    gl_FragColor = v_Color;
+}
+</script>
+<!--<script src="webgl-programming-guide/lib/webgl-utils.js"></script>-->
+<!--<script src="webgl-programming-guide/lib/webgl-debug.js"></script>-->
+<script src="../../webgl-programming-guide/lib/cuon-utils.js"></script>
+<script src="../../webgl-programming-guide/lib/cuon-matrix.js"></script>
+<script src="../node_modules/sjljs/sjl.min.js"></script>
+<script src="../../lib/WebGlUtils-2.js"></script>
+<script src="MultiAttributeColor-Interleaved.js"></script>
+</body>
+</html>

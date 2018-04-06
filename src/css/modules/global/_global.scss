@@ -1,0 +1,23 @@
+@import "common-classes";
+@import "controls";
+@import "image-with-preloader";
+@import "vignette";
+
+.figure-image {
+  &,
+  .image-with-preloader {
+    margin-bottom: 21px;
+  }
+}
+
+.med-link {
+  color: $color-3-1;
+  font-size: 1.3rem;
+  line-height: 2.1rem;
+  border-bottom: 1px solid transparent;
+}
+
+.med-link:hover {
+  //border-color: $color-3-1;
+  text-decoration: underline;
+}

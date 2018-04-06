@@ -1,0 +1,85 @@
+@import "reset";
+@import "variables";
+@import "color-theme";
+@import "placeholders";
+@import "fonts";
+@import "../mixins/mixins";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font: normal 1.13rem $global-fonts;
+  width: 100%;
+  height: 100%;
+  color: $highlight-gray;
+  //overflow-x: hidden;
+}
+
+ul li,
+h3, h4, h5, h6,
+blockquote,
+p {
+  margin-bottom: 13px;
+}
+
+blockquote,
+p {
+  text-indent: 1rem;
+}
+
+a,
+button,
+input[type="submit"],
+input[type="reset"] {
+  @include with-browser-prefixes(transition, (
+    (background $ani-speed-1),
+    (color $ani-speed-1),
+    (border $ani-speed-3)
+  ));
+}
+
+a {
+  display: inline-block;
+  color: $color-3-1;
+  text-decoration: none;
+  box-sizing: border-box;
+  line-height: 100%;
+}
+
+i {
+  font-style: italic;
+}
+
+ul {
+  list-style: disc;
+  padding-left: 13px;
+  margin-left: 8px;
+}
+ul li {
+  line-height: 21px;
+  margin-bottom: 13px;
+}
+
+h3, h4, h5, h6 {
+  font-weight: bold;
+}
+
+h4 {
+  font-size: 21px;
+}
+
+blockquote,
+blockquote + figcaption,
+p {
+  font-size: 13px;
+  font-size: 1rem; /** Incase it's supported **/
+  line-height: 1.4rem; /** If supported **/
+}
+
+.svg-defines {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 0;
+  height: 0;
+}

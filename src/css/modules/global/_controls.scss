@@ -1,0 +1,42 @@
+.controls a,
+.controls .btn,
+.controls button,
+.controls input[type="submit"],
+.controls input[type="reset"] {
+  display: inline-block;
+  text-decoration: none;
+  color: #FFF;
+  box-shadow: 1px 1px 5px 0 transparentize(#555555, 0.72);
+  margin: 3px;
+  border-radius: 5px;
+  background: $color-3-1;
+  //@include with-browser-prefixes(transform-origin, center center);
+  @include transition (
+    fit-with-browser-prefixes((
+      transform $ani-speed-1 ease-in-out,
+      opacity $ani-speed-1 ease-in-out, color $ani-speed-1 ease-in-out,
+      background $ani-speed-1 ease-in-out,
+      background-color $ani-speed-1 ease-in-out,
+    ), (opacity, transform))
+  );
+  padding: 13px;
+
+  &:hover {
+    background: $color-4-1;
+    cursor: pointer;
+    @include transform(scale(1.1));
+    color: #FFF;
+  }
+  &:active,
+  &.active {
+    @include transform(scale(1.05));
+    background: $color-4-2;
+    box-shadow: 1px 1px 5px 0 transparentize(#EEEEEE, 0.72);
+  }
+}
+
+.controls .big-btn {
+  font-size: 1.6rem;
+  padding: 10px;
+  margin: 5px;
+}

@@ -1,29 +1,27 @@
 /**
  * Created by edlc on 11/27/16.
  */
-(function() {
 
-    'use strict';
+import {log, error} from './console';
 
-    const
-        __ = fjl._,
-        curry = fjl.curry,
-        WEBGL_NAMES = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"],
-        webGlCreationErrorEventName = 'webglcontextcreationerror',
-        log = console.log.bind(console);
+export const
 
-    function initShaders (gl, vshader, fshader) {
+    WEBGL_NAMES = Object.freeze(["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"]),
+
+    webGlCreationErrorEventName = 'webglcontextcreationerror',
+
+    initShaders = (gl, vshader, fshader) => {
         const program = createProgram(gl, vshader, fshader);
         if (!program) {
-            console.error('Failed to create program');
+            error('Failed to create program');
             return false;
         }
         gl.useProgram(program);
         gl.program = program;
         return true;
-    }
+    },
 
-    function createProgram (gl, vshader, fshader) {
+    createProgram = (gl, vshader, fshader) => {
         // Create shader object
         let vertexShader = loadShader(gl, gl.VERTEX_SHADER, vshader);
         let fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fshader);
@@ -47,21 +45,21 @@
         // Check the result of linking
         let linked = gl.getProgramParameter(program, gl.LINK_STATUS);
         if (!linked) {
-            let error = gl.getProgramInfoLog(program);
-            log('Failed to link program: ' + error);
+            let err = gl.getProgramInfoLog(program);
+            log('Failed to link program: ' + err);
             gl.deleteProgram(program);
             gl.deleteShader(fragmentShader);
             gl.deleteShader(vertexShader);
             return null;
         }
         return program;
-    }
+    },
 
-    function loadShader(gl, type, source) {
+    loadShader = (gl, type, source) => {
         // Create shader object
         let shader = gl.createShader(type);
         if (!shader) {
-            log('unable to create shader');
+            error('unable to create shader');
             return null;
         }
 
@@ -75,15 +73,15 @@
         let compiled = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
         if (!compiled) {
             let error = gl.getShaderInfoLog(shader);
-            log('Failed to compile shader: ' + error);
+            error('Failed to compile shader: ' + error);
             gl.deleteShader(shader);
             return null;
         }
 
         return shader;
-    }
+    },
 
-    function getWebGlContext (canvas, options, onError) {
+    getWebGlContext = (canvas, options, onError) => {
         _addCreationListener(canvas, onError);
         let context = null,
             namesLen = WEBGL_NAMES.length,
@@ -92,31 +90,24 @@
             try {
                 context = canvas.getContext(WEBGL_NAMES[i], options);
             }
-            catch(e) {}
+            catch (e) {
+            }
             if (context) {
                 break;
             }
         }
         return context;
-    }
+    },
 
-    function _addCreationListener (canvas, onError) {
-        onError = onError || function () {alert('WebGl unsupported.');};
-        if (canvas.addEventListener) {
-            canvas.addEventListener(webGlCreationErrorEventName, function(event) {
+    _addCreationListener = (canvas, onError) => {
+        onError = onError || function () {
+            error('WebGl unsupported.');
+            alert('WebGl unsupported.');
+        };
+        if (!canvas.addEventListener) {
+            canvas.addEventListener(webGlCreationErrorEventName, function (event) {
                 onError(event.statusMessage);
             }, false);
         }
     }
-
-    Object.defineProperty(window, 'WebGlUtils', {
-        value: Object.defineProperties({}, {
-            getWebGlContext: {value: getWebGlContext, enumerable: true},
-            createProgram: {value: createProgram, enumerable: true},
-            initShaders: {value: initShaders, enumerable: true},
-            loadShader: {value: loadShader, enumerable: true}
-        }),
-        enumerable: true
-    });
-
-}());
+;

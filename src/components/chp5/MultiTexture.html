@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multi Attribute Size</title>
+</head>
+<body>
+<canvas width="320px" height="240px" id="canvas1"></canvas>
+<script type="text/shader" id="basic-vertex-shader">
+precision mediump float;
+attribute vec4 a_Position;
+attribute vec2 a_TexCoord;
+varying vec2 v_TexCoord;
+void main () {
+    gl_Position = a_Position;
+    v_TexCoord = a_TexCoord;
+}
+</script>
+<script type="text/shader" id="basic-fragment-shader">
+precision mediump float;
+uniform sampler2D u_Sampler0;
+uniform sampler2D u_Sampler1;
+varying vec2 v_TexCoord;
+void main () {
+    vec4 color0 = texture2D(u_Sampler0, v_TexCoord);
+    vec4 color1 = texture2D(u_Sampler1, v_TexCoord);
+    gl_FragColor = color0 * color1;
+}
+</script>
+<!--<script src="webgl-programming-guide/lib/webgl-utils.js"></script>-->
+<!--<script src="webgl-programming-guide/lib/webgl-debug.js"></script>-->
+<script src="../../webgl-programming-guide/lib/cuon-utils.js"></script>
+<script src="../../webgl-programming-guide/lib/cuon-matrix.js"></script>
+<script src="../node_modules/sjljs/sjl.min.js"></script>
+<script src="../../lib/WebGlUtils-2.js"></script>
+<script src="TextureQuad.js"></script>
+</body>
+</html>

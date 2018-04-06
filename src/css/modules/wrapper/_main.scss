@@ -1,0 +1,57 @@
+main {
+  > div {
+    display: flex;
+    flex-direction: row;
+    > nav {
+      flex-basis: 21%;
+    }
+    > section {
+      flex-basis: 89%;
+    }
+  }
+
+  .h2 {
+    color: $color-3-1;
+    font: normal 21px $global-fonts;
+    line-height: 21px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .h3 {
+    color: $color-3-1;
+    font: normal 1rem $global-fonts;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  section {
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    p a {
+      @include with-browser-prefixes(transition,
+              fit-with-browser-prefixes((
+                      opacity $ani-speed-1,
+                      color $ani-speed-1
+              ), (opacity)
+              )
+      );
+      color: $color-3-1;
+      &:hover {
+        color: $color-4-1;
+      }
+      &.active,
+      &:active {
+        color: $color-4-2;
+      }
+    }
+
+    header:first-child {
+      padding: 34px 13px 21px;
+    }
+  }
+
+}

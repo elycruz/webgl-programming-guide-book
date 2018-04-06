@@ -1,0 +1,19 @@
+/** Hamburger Nav Setup **/
+.hamburger-btn {
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  background: rgba(0, 0, 0, 0);
+  @include opacity(1);
+  margin: 0 21px 0 0;
+  cursor: pointer;
+}
+
+.hamburger-btn .slice {
+  height: 5px;
+  border-radius: 21px;
+  margin-bottom: 5.5px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}

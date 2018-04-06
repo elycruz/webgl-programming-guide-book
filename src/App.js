@@ -1,21 +1,50 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
+import {BrowserRouter, Route, Link} from 'react-router-dom'
+import {uuid} from "./utils/utils";
+import * as navContainer from './app.nav';
+import AppNav from "./AppNav";
+import DrawRectangle from "./components/chp1/DrawRectangle";
+import DrawAPoint from "./components/chp1/DrawAPoint";
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
-    );
-  }
+    renderRoutes (navContainer) {
+        return ([
+            <Route key={uuid('route-')} path={"/"} render={() => (<p>Hello</p>)} exact={true}/>,
+            <Route key={uuid('route-')} path={"/chp2/draw-a-point"} component={DrawAPoint} />,
+            <Route key={uuid('route-')} path={"/chp2/draw-rectangle"} component={DrawRectangle} />
+        ]);
+    }
+
+    render() {
+        return (
+            <BrowserRouter>
+                <div id="wrapper" className="clearfix">
+                    <header>
+                        <div>
+                            <div className="logo">
+                                <div>
+                                    <a className="hamburger-btn">
+                                        <div className="slice">&nbsp;</div>
+                                        <div className="slice">&nbsp;</div>
+                                        <div className="slice">&nbsp;</div>
+                                    </a>
+                                    <h1><a href="#">WebGl Programming Guide Book Examples</a></h1>
+                                </div>
+                            </div>
+                        </div>
+                    </header>
+                    <main>
+                        <div>
+                            <AppNav navContainer={navContainer} />
+                            <section>
+                            {this.renderRoutes(navContainer)}
+                            </section>
+                        </div>
+                    </main>
+                </div>
+            </BrowserRouter>
+        );
+    }
 }
 
 export default App;

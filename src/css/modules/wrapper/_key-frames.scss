@@ -1,0 +1,74 @@
+@keyframes shrink-away {
+  0% {
+    @include transform(scale(1, 1));
+    @include opacity(1);
+  }
+  100% {
+    @include transform(scale(0.55, 0.55));
+    @include opacity(0);
+  }
+}
+
+@keyframes fall-in {
+  0% {
+    @include transform(scale(2, 2));
+    @include opacity(0);
+  }
+  100% {
+    @include transform(scale(1, 1));
+    @include opacity(1);
+  }
+}
+
+@keyframes slide-away-left {
+  0% {
+    @include opacity(1);
+    @include transform(translateX(0));
+  }
+  100% {
+    @include opacity(0);
+    @include transform(translateX(100%));
+  }
+}
+
+@keyframes slide-in-right {
+  0% {
+    @include opacity(0);
+    @include transform(translateX(100%));
+  }
+  100% {
+    @include opacity(1);
+    @include transform(translateX(0));
+  }
+}
+
+@keyframes slide-in-bottom {
+  0% {
+    @include opacity(0);
+    @include transform(translateY(100%));
+  }
+  100% {
+    @include opacity(1);
+    @include transform(translateY(0));
+  }
+}
+
+@keyframes slide-in-from-top {
+  from {
+    @include opacity(0);
+    @include transform(translateY(-100%));
+  }
+  to {
+    @include opacity(1);
+    @include transform(translateY(0));
+  }
+}
+
+@keyframes fade-away {
+  from {@include opacity(1);}
+  99% {@include opacity(0);}
+  100% {
+    @include opacity(0);
+    z-index: -100;
+  }
+}

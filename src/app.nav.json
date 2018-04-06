@@ -1,0 +1,38 @@
+{
+    "items": {
+        "home": {
+            "label": "Home",
+            "uri": "/"
+        },
+        "chp1": {
+            "label": "Chapter 1",
+            "uri": "/chp1"
+        },
+        "chp2": {
+            "label": "Chapter 2",
+            "uri": "/chp2",
+            "items": {
+                "drawRectangle": {
+                    "label": "Draw Rectangle",
+                    "uri": "/chp2/draw-rectangle"
+                },
+                "drawPoint": {
+                    "label": "Draw a Point",
+                    "uri": "/chp2/draw-a-point"
+                }
+            }
+        },
+        "chp3": {
+            "label": "Chapter 3",
+            "uri": "/chp2"
+        },
+        "chp4": {
+            "label": "Chapter 4",
+            "uri": "/chp2"
+        },
+        "chp5": {
+            "label": "Chapter 5",
+            "uri": "/chp5"
+        }
+    }
+}

@@ -1,0 +1,33 @@
+/**
+ * @note Font paths are relative paths from public root.
+ * @note Google fonts are included also (Lato, Oswald, Roboto):
+ * https://fonts.googleapis.com/css?family=Lato|Oswald|Roboto
+ */
+@font-face {
+  font-family: "Lights of Stardust";
+  src: url("/fonts/lights_of_the_stardust/lights-of-stardust.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Reckless";
+  src: url("/fonts/reckless/reckless_sample.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Lobster 1.4";
+  src: url("/fonts/lobster/lobster.otf");
+  font-weight: normal;
+}
+@font-face {
+  font-family: "Geo Sans Light";
+  src: url("/fonts/geo_sans_light/GeosansLight.ttf");
+  font-weight: normal;
+}
+
+@font-face {
+  font-family: "Geo Sans Light Oblique";
+  src: url("/fonts/geo_sans_light/GeosansLight-Oblique.ttf");
+  font-weight: normal;
+}
