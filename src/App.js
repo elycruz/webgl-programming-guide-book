@@ -8,6 +8,7 @@ import DrawAPoint from "./components/chp2/DrawAPoint";
 import DrawAPoint2 from "./components/chp2/DrawAPoint2";
 import DrawAPoint3 from "./components/chp2/DrawAPoint3";
 import MultiPoint from "./components/chp3/MultiPoint";
+import HelloTriangle from "./components/chp3/HelloTriangle";
 
 class App extends Component {
     static renderRoutes () {
@@ -18,6 +19,7 @@ class App extends Component {
             <Route key={uuid('route-')} path={"/chp2/draw-a-point-2"} component={DrawAPoint2} />,
             <Route key={uuid('route-')} path={"/chp2/draw-a-point-3"} component={DrawAPoint3} />,
             <Route key={uuid('route-')} path={"/chp3/multi-point"} component={MultiPoint} />,
+            <Route key={uuid('route-')} path={"/chp3/hello-triangle"} component={HelloTriangle} />,
         ]);
     }
 

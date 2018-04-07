@@ -23,6 +23,10 @@
         "multiPoint": {
             "label": "Multi Point",
             "uri": "/chp3/multi-point"
+        },
+        "helloTriangle": {
+            "label": "Hello Triangle",
+            "uri": "/chp3/hello-triangle"
         }
     }
 }
