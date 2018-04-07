@@ -9,14 +9,15 @@ const
         }`,
     vertShader = `
         attribute vec4 a_Position;
+        uniform vec4 u_Translation;
         void main () {
-            gl_Position = a_Position;
+            gl_Position = a_Position + u_Translation;
         }`
 ;
 
-export default class HelloTriangle extends Component {
+export default class TranslatedTriangle extends Component {
     static defaultProps = {
-        canvasId: 'hello-triangle-canvas'
+        canvasId: 'translated-triangle-canvas'
     };
 
     constructor (props) {
@@ -35,11 +36,16 @@ export default class HelloTriangle extends Component {
             ],
             program = WebGlUtils.initProgram(gl, shadersAssocList);
 
-        let numCreatedVertices;
+        let numCreatedVertices,
+            u_Translation,
+            // Translation vars
+            tx = 0.5, ty = 0.5, tz = 0.0;
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
-                    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+                    0.0,  0.5,
+                    -0.5, -0.5,
+                    0.5,  -0.5
                 ]),
                 vertexBuffer = glContext.createBuffer(),
                 _a_Position_ = gl.getAttribLocation(gl.program, 'a_Position');
@@ -50,17 +56,24 @@ export default class HelloTriangle extends Component {
             return !vertexBuffer ? -1 : 3; // num sides in shape
         }
 
+        // If no program bail
         if (!program) {
-            error('Error while creating and linking program.');
+            error ('Error while creating and linking program.');
             return;
         }
 
+        // Create vertices for shape
         numCreatedVertices = initVertexBuffers(gl);
 
+        // Pass translation values
+        u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
+        gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
+
         if (numCreatedVertices === -1) {
-            error('Error while creating vertice buffer.');
+            error ('Error while creating vertice buffer.');
         }
 
+        // Clear then draw
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, numCreatedVertices);
@@ -70,17 +83,16 @@ export default class HelloTriangle extends Component {
         const {props} = this;
 
         return ([
-                <header key={uuid('hello-triangle-element-')}>
-                    <h3>MultiPoint.jsx</h3>
-                    <p>Multi points example.</p>
+                <header key={uuid('translated-triangle-element-')}>
+                    <h3>TranslatedTriangle.jsx</h3>
                 </header>,
-                <canvas key={uuid('hello-triangle-element-')} width="377" height="377"
+                <canvas key={uuid('translated-triangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>,
-                <script key={uuid('hello-triangle-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
+                <script key={uuid('translated-triangle-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
                         dangerouslySetInnerHTML={{__html: vertShader}}></script>,
-                <script key={uuid('hello-triangle-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
+                <script key={uuid('translated-triangle-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
                         dangerouslySetInnerHTML={{__html: fragShader}}></script>
             ]
         );

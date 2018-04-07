@@ -2,31 +2,48 @@
     "items": {
         "home": {
             "label": "Home",
-            "uri": "/"
+            "uri": "/",
+            "componentName": "DrawRectangle"
         },
         "drawRectangle": {
             "label": "Draw Rectangle",
-            "uri": "/chp2/draw-rectangle"
+            "uri": "/chp2/draw-rectangle",
+            "componentName": "DrawRectangle"
         },
         "drawPoint": {
             "label": "Draw a Point",
-            "uri": "/chp2/draw-a-point"
+            "uri": "/chp2/draw-a-point",
+            "componentName": "DrawAPoint"
         },
         "drawPoint2": {
             "label": "Draw a Point 2",
-            "uri": "/chp2/draw-a-point-2"
+            "uri": "/chp2/draw-a-point-2",
+            "componentName": "DrawAPoint2"
         },
         "drawPoint3": {
             "label": "Draw a Point 3",
-            "uri": "/chp2/draw-a-point-3"
+            "uri": "/chp2/draw-a-point-3",
+            "componentName": "DrawAPoint3"
         },
         "multiPoint": {
             "label": "Multi Point",
-            "uri": "/chp3/multi-point"
+            "uri": "/chp3/multi-point",
+            "componentName": "MultiPoint"
         },
         "helloTriangle": {
             "label": "Hello Triangle",
-            "uri": "/chp3/hello-triangle"
+            "uri": "/chp3/hello-triangle",
+            "componentName": "HelloTriangle"
+        },
+        "helloQuad": {
+            "label": "Hello Quad",
+            "uri": "/chp3/hello-quad",
+            "componentName": "HelloQuad"
+        },
+        "translatedTriangle": {
+            "label": "Translated Triangle",
+            "uri": "/chp3/translated-triangle",
+            "componentName": "TranslatedTriangle"
         }
     }
 }

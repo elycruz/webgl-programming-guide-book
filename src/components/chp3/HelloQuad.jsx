@@ -14,9 +14,9 @@ const
         }`
 ;
 
-export default class HelloTriangle extends Component {
+export default class HelloQuad extends Component {
     static defaultProps = {
-        canvasId: 'hello-triangle-canvas'
+        canvasId: 'hello-rectangle-canvas'
     };
 
     constructor (props) {
@@ -39,7 +39,10 @@ export default class HelloTriangle extends Component {
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
-                    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+                    -0.5,  0.5,
+                    -0.5, -0.5,
+                    0.5,  0.5,
+                    0.5, -0.5
                 ]),
                 vertexBuffer = glContext.createBuffer(),
                 _a_Position_ = gl.getAttribLocation(gl.program, 'a_Position');
@@ -47,40 +50,40 @@ export default class HelloTriangle extends Component {
             gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
             gl.vertexAttribPointer(_a_Position_, 2, gl.FLOAT,  false, 0, 0);
             gl.enableVertexAttribArray(_a_Position_);
-            return !vertexBuffer ? -1 : 3; // num sides in shape
+            return !vertexBuffer ? -1 : 4; // num sides in shape
         }
 
         if (!program) {
-            error('Error while creating and linking program.');
+            error ('Error while creating and linking program.');
             return;
         }
 
         numCreatedVertices = initVertexBuffers(gl);
 
         if (numCreatedVertices === -1) {
-            error('Error while creating vertice buffer.');
+            error ('Error while creating vertice buffer.');
         }
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
-        gl.drawArrays(gl.TRIANGLES, 0, numCreatedVertices);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, numCreatedVertices);
     }
 
     render () {
         const {props} = this;
 
         return ([
-                <header key={uuid('hello-triangle-element-')}>
-                    <h3>MultiPoint.jsx</h3>
-                    <p>Multi points example.</p>
+                <header key={uuid('hello-rectangle-element-')}>
+                    <h3>HelloQuad.jsx</h3>
+                    <p>Hello Rectangle.</p>
                 </header>,
-                <canvas key={uuid('hello-triangle-element-')} width="377" height="377"
+                <canvas key={uuid('hello-rectangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>,
-                <script key={uuid('hello-triangle-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
+                <script key={uuid('hello-rectangle-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
                         dangerouslySetInnerHTML={{__html: vertShader}}></script>,
-                <script key={uuid('hello-triangle-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
+                <script key={uuid('hello-rectangle-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
                         dangerouslySetInnerHTML={{__html: fragShader}}></script>
             ]
         );
