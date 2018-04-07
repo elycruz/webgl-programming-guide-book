@@ -21,7 +21,7 @@ export default class AppNav extends Component {
         }
         return (<ul key={uuid('ul-')}>
             {items.map(item => (<li key={uuid('ul-li-')}>
-                    <Link to={item.uri}>
+                    <Link to={item.uri} className={item.uri === window.location.pathname ? 'active' : ''}>
                         {item.label}
                     </Link>
                     {item.items ? AppNav.renderUnorderedList(item.items) : null}

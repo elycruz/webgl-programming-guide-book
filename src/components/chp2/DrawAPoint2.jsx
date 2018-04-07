@@ -62,7 +62,7 @@ export default class DrawAPoint2 extends Component {
         canvasElm.addEventListener(this.props.mouseClickName, this.onCanvasClick);
 
         gl.vertexAttrib3f(a_Position, 0.0, 0.0, 0.0);
-        // gl.uniform4f(u_FragColor, 0.0, 0.0, 0.0, 0.0);
+        gl.uniform4f(u_FragColor, 1.0, 0.0, 0.0, 0.0);
 
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
@@ -70,7 +70,8 @@ export default class DrawAPoint2 extends Component {
     }
 
     componentWillUnmount () {
-        this.canvas.current.removeEventListener(this.props.mouseClickName, this.onCanvasClick);
+        this.canvas.current.removeEventListener(
+            this.props.mouseClickName, this.onCanvasClick);
     }
 
     render () {

@@ -19,6 +19,10 @@
         "drawPoint3": {
             "label": "Draw a Point 3",
             "uri": "/chp2/draw-a-point-3"
+        },
+        "multiPoint": {
+            "label": "Multi Point",
+            "uri": "/chp3/multi-point"
         }
     }
 }

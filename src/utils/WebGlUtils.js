@@ -104,7 +104,7 @@ export const
             error('WebGl unsupported.');
             alert('WebGl unsupported.');
         };
-        if (!canvas.addEventListener) {
+        if (canvas.addEventListener) {
             canvas.addEventListener(webGlCreationErrorEventName, function (event) {
                 onError(event.statusMessage);
             }, false);

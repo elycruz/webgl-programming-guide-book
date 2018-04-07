@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Link} from 'react-router-dom'
+import {BrowserRouter, Route} from 'react-router-dom'
 import {uuid} from "./utils/utils";
 import * as navContainer from './app.nav';
 import AppNav from "./AppNav";
@@ -7,6 +7,7 @@ import DrawRectangle from "./components/chp2/DrawRectangle";
 import DrawAPoint from "./components/chp2/DrawAPoint";
 import DrawAPoint2 from "./components/chp2/DrawAPoint2";
 import DrawAPoint3 from "./components/chp2/DrawAPoint3";
+import MultiPoint from "./components/chp3/MultiPoint";
 
 class App extends Component {
     static renderRoutes () {
@@ -16,6 +17,7 @@ class App extends Component {
             <Route key={uuid('route-')} path={"/chp2/draw-a-point"} component={DrawAPoint} />,
             <Route key={uuid('route-')} path={"/chp2/draw-a-point-2"} component={DrawAPoint2} />,
             <Route key={uuid('route-')} path={"/chp2/draw-a-point-3"} component={DrawAPoint3} />,
+            <Route key={uuid('route-')} path={"/chp3/multi-point"} component={MultiPoint} />,
         ]);
     }
 
