@@ -44,9 +44,7 @@ class App extends Component {
                     <main>
                         <div>
                             <AppNav navContainer={navContainer} />
-                            <section>
-                            {App.renderRoutes()}
-                            </section>
+                            <section>{App.renderRoutes()}</section>
                         </div>
                     </main>
                 </div>

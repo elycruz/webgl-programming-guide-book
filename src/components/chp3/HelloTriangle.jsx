@@ -39,7 +39,7 @@ export default class HelloTriangle extends Component {
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
-                    0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+                    0.0, 0.3, -0.3, -0.3, 0.3, -0.3
                 ]),
                 vertexBuffer = glContext.createBuffer(),
                 _a_Position_ = gl.getAttribLocation(gl.program, 'a_Position');
