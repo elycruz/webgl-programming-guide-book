@@ -27,11 +27,9 @@ export default class MultiPoint extends Component {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = WebGlUtils.getWebGlContext(canvasElm),
-            basicVertexShader = document.querySelector('#basic-vertex-shader').innerText,
-            basicFragmentShader = document.querySelector('#basic-fragment-shader').innerText,
             shadersAssocList = [
-                [gl.VERTEX_SHADER, basicVertexShader],
-                [gl.FRAGMENT_SHADER, basicFragmentShader]
+                [gl.VERTEX_SHADER, vertShader],
+                [gl.FRAGMENT_SHADER, fragShader]
             ],
             program = WebGlUtils.initProgram(gl, shadersAssocList);
 
@@ -77,11 +75,7 @@ export default class MultiPoint extends Component {
                 <canvas key={uuid('multi-point-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
-                </canvas>,
-                <script key={uuid('multi-point-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
-                    dangerouslySetInnerHTML={{__html: vertShader}}></script>,
-                <script key={uuid('multi-point-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
-                    dangerouslySetInnerHTML={{__html: fragShader}}></script>
+                </canvas>
             ]
         );
     }

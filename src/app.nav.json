@@ -44,6 +44,11 @@
             "label": "Translated Triangle",
             "uri": "/chp3/translated-triangle",
             "componentName": "TranslatedTriangle"
+        },
+        "rotatedTriangle": {
+            "label": "Rotated Triangle",
+            "uri": "/chp3/rotated-triangle",
+            "componentName": "RotatedTriangle"
         }
     }
 }

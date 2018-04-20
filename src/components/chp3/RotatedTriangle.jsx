@@ -10,9 +10,16 @@ const
         }`,
 
     vertShader = `
+        // x' = x cos b - y sin b
+        // y' = x sin b + y cos
+        // z' = z
         attribute vec4 a_Position;
+        uniform float u_CosB, u_SinB;
         void main () {
-            gl_Position = a_Position;
+            gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;
+            gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;
+            gl_Position.z = a_Position.z;
+            gl_Position.w = 1.0;
         }`
 
 ;
@@ -36,7 +43,12 @@ export default class HelloTriangle extends Component {
             ],
             program = WebGlUtils.initProgram(gl, shadersAssocList);
 
-        let numCreatedVertices;
+        let numCreatedVertices,
+            u_CosB, u_SinB,
+            angle = 90,
+            radians = WebGlUtils.toRadians(angle),
+            cosB,
+            sinB;
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
@@ -62,6 +74,15 @@ export default class HelloTriangle extends Component {
             error('Error while creating vertice buffer.');
         }
 
+        cosB = Math.cos(radians);
+        sinB = Math.sin(radians);
+
+        // Pass rotation values
+        u_CosB = gl.getUniformLocation(program, 'u_CosB');
+        u_SinB = gl.getUniformLocation(program, 'u_SinB');
+        gl.uniform1f(u_CosB, cosB);
+        gl.uniform1f(u_SinB, sinB);
+
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLES, 0, numCreatedVertices);
@@ -72,8 +93,7 @@ export default class HelloTriangle extends Component {
 
         return ([
                 <header key={uuid('hello-triangle-element-')}>
-                    <h3>MultiPoint.jsx</h3>
-                    <p>Multi points example.</p>
+                    <h3>RotatedTriangle.jsx</h3>
                 </header>,
                 <canvas key={uuid('hello-triangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>

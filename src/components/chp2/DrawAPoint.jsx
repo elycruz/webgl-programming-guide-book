@@ -2,6 +2,21 @@ import React, {Component} from 'react';
 import {uuid, error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
 
+const
+
+    vertextShader = `
+        void main () {
+            gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
+            gl_PointSize = 10.0;
+        }`,
+
+    fragmentShader = `
+        void main () {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+        }`
+
+;
+
 export default class DrawAPoint extends Component {
     static defaultProps = {
         canvasId: 'draw-a-point-canvas'
@@ -14,14 +29,12 @@ export default class DrawAPoint extends Component {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,
-            gl = WebGlUtils.getWebGlContext(canvasElm),
-            basicVertexShader = document.querySelector('#basic-vertex-shader').innerText,
-            basicFragmentShader = document.querySelector('#basic-fragment-shader').innerText;
+            gl = WebGlUtils.getWebGlContext(canvasElm);
 
         // gl.fillStyle = 'rgba(0,0,255,1.0)';
         // gl.fillRect(120, 10, 150, 150);
 
-        if (!WebGlUtils.initShaders (gl, basicVertexShader, basicFragmentShader)) {
+        if (!WebGlUtils.initShaders (gl, vertextShader, fragmentShader)) {
             error('Unable to initialize shaders');
         }
 
@@ -44,18 +57,7 @@ export default class DrawAPoint extends Component {
                 <canvas key={uuid('draw-a-point-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
-                </canvas>,
-                <script key={uuid('draw-a-point-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
-                    dangerouslySetInnerHTML={{__html: `void main () {
-                        gl_Position = vec4(0.0, 0.0, 0.0, 1.0);
-                        gl_PointSize = 10.0;
-                    }`}}></script>,
-                <script key={uuid('draw-a-point-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
-                    dangerouslySetInnerHTML={{__html: `
-                    void main () {
-                        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-                    }
-                    `}}></script>
+                </canvas>
             ]
         );
     }

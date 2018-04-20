@@ -2,6 +2,24 @@ import React, {Component} from 'react';
 import {uuid, error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
 
+const
+
+    vertextShader = `
+        attribute vec4 a_Position;
+        void main () {
+            gl_Position = a_Position;
+            gl_PointSize = 20.0;
+        }`,
+
+    fragmentShader = `
+        precision mediump float;
+        uniform vec4 u_FragColor;
+        void main () {
+            gl_FragColor = u_FragColor;
+        }
+        `
+;
+
 export default class DrawAPoint2 extends Component {
     static defaultProps = {
         canvasId: 'draw-a-point-2-canvas',
@@ -16,11 +34,9 @@ export default class DrawAPoint2 extends Component {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,
-            gl = WebGlUtils.getWebGlContext(canvasElm),
-            basicVertexShader = document.querySelector('#basic-vertex-shader').innerText,
-            basicFragmentShader = document.querySelector('#basic-fragment-shader').innerText;
+            gl = WebGlUtils.getWebGlContext(canvasElm);
 
-        if (!WebGlUtils.initShaders (gl, basicVertexShader, basicFragmentShader)) {
+        if (!WebGlUtils.initShaders (gl, vertextShader, fragmentShader)) {
             error('Unable to initialize shaders.');
         }
 
@@ -76,7 +92,6 @@ export default class DrawAPoint2 extends Component {
 
     render () {
         const {props} = this;
-
         return ([
                 <header key={uuid('draw-a-point-2-element-')}>
                     <h3>DrawPoint2.jsx</h3>
@@ -85,23 +100,8 @@ export default class DrawAPoint2 extends Component {
                 <canvas key={uuid('draw-a-point-2-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
-                </canvas>,
-                <script key={uuid('draw-a-point-2-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
-                    dangerouslySetInnerHTML={{__html: `attribute vec4 a_Position;
-                    void main () {
-                        gl_Position = a_Position;
-                        gl_PointSize = 20.0;
-                    }`}}></script>,
-                <script key={uuid('draw-a-point-2-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
-                    dangerouslySetInnerHTML={{__html: `
-                    precision mediump float;
-                    uniform vec4 u_FragColor;
-                    void main () {
-                        gl_FragColor = u_FragColor;
-                    }
-                    `}}></script>
-            ]
-        );
+                </canvas>
+        ]);
     }
 
 }

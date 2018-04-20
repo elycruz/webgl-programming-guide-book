@@ -3,15 +3,18 @@ import {uuid, error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils-2';
 
 const
-    fragShader = `
+
+    fragmentShader = `
         void main () {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }`,
-    vertShader = `
+
+    vertextShader = `
         attribute vec4 a_Position;
         void main () {
             gl_Position = a_Position;
         }`
+
 ;
 
 export default class HelloQuad extends Component {
@@ -27,11 +30,9 @@ export default class HelloQuad extends Component {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = WebGlUtils.getWebGlContext(canvasElm),
-            basicVertexShader = document.querySelector('#basic-vertex-shader').innerText,
-            basicFragmentShader = document.querySelector('#basic-fragment-shader').innerText,
             shadersAssocList = [
-                [gl.VERTEX_SHADER, basicVertexShader],
-                [gl.FRAGMENT_SHADER, basicFragmentShader]
+                [gl.VERTEX_SHADER, vertextShader],
+                [gl.FRAGMENT_SHADER, fragmentShader]
             ],
             program = WebGlUtils.initProgram(gl, shadersAssocList);
 
@@ -80,11 +81,7 @@ export default class HelloQuad extends Component {
                 <canvas key={uuid('hello-rectangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
-                </canvas>,
-                <script key={uuid('hello-rectangle-element-')} type="x-shader/x-vertex" id="basic-vertex-shader"
-                        dangerouslySetInnerHTML={{__html: vertShader}}></script>,
-                <script key={uuid('hello-rectangle-element-')} type="x-shader/x-fragment" id="basic-fragment-shader"
-                        dangerouslySetInnerHTML={{__html: fragShader}}></script>
+                </canvas>
             ]
         );
     }
