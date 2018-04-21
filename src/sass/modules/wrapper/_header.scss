@@ -10,9 +10,10 @@
 
     h1 {
       line-height: 0;
+      border-bottom: 1px solid #CCC;
     }
     h1 a {
-      font: normal 34px "Lato", $global-fonts;
+      font: normal 18px "Lato", $global-fonts;
       color: $color-3-1;
       text-decoration: none;
       text-transform: uppercase;
@@ -134,11 +135,6 @@
 
 @media (min-device-width: 768px) and (max-device-width: 3840px) {
   > header .logo {
-    margin-bottom: 13px;
-
-    h1 {
-      margin-bottom: 8px;
-    }
     h1 a {
       line-height: 34px;
     }

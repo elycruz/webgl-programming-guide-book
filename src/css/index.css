@@ -1200,9 +1200,10 @@ p {
     #wrapper > header .logo {
       cursor: pointer; }
       #wrapper > header .logo h1 {
-        line-height: 0; }
+        line-height: 0;
+        border-bottom: 1px solid #CCC; }
       #wrapper > header .logo h1 a {
-        font: normal 34px "Lato", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
+        font: normal 18px "Lato", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
         color: #1240AB;
         text-decoration: none;
         text-transform: uppercase; }
@@ -1294,12 +1295,8 @@ p {
     #wrapper > main > section > header:first-child {
       padding: 21px 13px !important; } }
   @media (min-device-width: 768px) and (max-device-width: 3840px) {
-    #wrapper > header .logo {
-      margin-bottom: 13px; }
-      #wrapper > header .logo h1 {
-        margin-bottom: 8px; }
-      #wrapper > header .logo h1 a {
-        line-height: 34px; }
+    #wrapper > header .logo h1 a {
+      line-height: 34px; }
     #wrapper > header .hamburger-btn {
       display: none; }
     #wrapper > header nav {
@@ -1310,7 +1307,11 @@ p {
       display: none; } }
   #wrapper main > div {
     display: flex;
-    flex-direction: row; }
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0 13px; }
+    #wrapper main > div > * {
+      margin-right: 13px; }
     #wrapper main > div > nav {
       flex-basis: 21%; }
     #wrapper main > div > section {
@@ -1384,16 +1385,15 @@ p {
     display: block; }
   #wrapper > main > div > nav ul li,
   #wrapper > header + .mobile-nav ul li {
-    margin-bottom: 0; }
+    margin-bottom: 8px; }
     #wrapper > main > div > nav ul li:last-child,
     #wrapper > header + .mobile-nav ul li:last-child {
       margin-right: 0; }
   #wrapper > main > div > nav ul li a,
   #wrapper > header + .mobile-nav ul li a {
     color: #1240AB;
-    font: normal 0.89rem "Roboto", "Lobster 1.4", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
+    font: normal 0.89rem "Roboto", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
     border-radius: 3px;
-    padding: 0 8px 3px;
     text-decoration: none;
     letter-spacing: 1px;
     text-transform: lowercase;

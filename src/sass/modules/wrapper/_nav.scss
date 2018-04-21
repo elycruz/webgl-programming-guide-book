@@ -15,7 +15,7 @@
     }
 
     ul li {
-      margin-bottom: 0;
+      margin-bottom: 8px;
       &:last-child {
         margin-right: 0;
       }
@@ -24,9 +24,8 @@
     ul li a {
       @extend %border-box;
       color: $color-3-1;
-      font: normal 0.89rem "Roboto", "Lobster 1.4", $global-fonts;
+      font: normal 0.89rem "Roboto", $global-fonts;
       border-radius: 3px;
-      padding: 0 8px 3px;
       text-decoration: none;
       letter-spacing: 1px;
       text-transform: lowercase;
