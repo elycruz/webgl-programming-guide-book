@@ -24,7 +24,7 @@ const
 
 ;
 
-export default class HelloTriangle extends Component {
+export default class RotatedTriangle extends Component {
     static defaultProps = {
         canvasId: 'hello-triangle-canvas'
     };

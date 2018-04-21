@@ -49,6 +49,11 @@
             "label": "Rotated Triangle",
             "uri": "/chp3/rotated-triangle",
             "componentName": "RotatedTriangle"
+        },
+        "rotatedTriangleMatrix": {
+            "label": "Rotated Triangle Matrix",
+            "uri": "/chp3/rotated-triangle-matrix",
+            "componentName": "RotatedTriangle_Matrix"
         }
     }
 }

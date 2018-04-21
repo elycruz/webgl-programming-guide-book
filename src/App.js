@@ -13,6 +13,7 @@ import HelloTriangle from "./components/chp3/HelloTriangle";
 import HelloQuad from "./components/chp3/HelloQuad";
 import TranslatedTriangle from "./components/chp3/TranslatedTriangle";
 import RotatedTriangle from "./components/chp3/RotatedTriangle";
+import RotatedTriangle_Matrix from "./components/chp3/RotatedTriangle_Matrix";
 
 class App extends Component {
     static renderRoutes () {
@@ -27,6 +28,7 @@ class App extends Component {
             <Route key={uuid('route-')} path={"/chp3/hello-quad"} component={HelloQuad} />,
             <Route key={uuid('route-')} path={"/chp3/translated-triangle"} component={TranslatedTriangle} />,
             <Route key={uuid('route-')} path={"/chp3/rotated-triangle"} component={RotatedTriangle} />,
+            <Route key={uuid('route-')} path={"/chp3/rotated-triangle-matrix"} component={RotatedTriangle_Matrix} />,
         ]);
     }
 

@@ -12,9 +12,9 @@ export const
 
     toRadians = deg => Math.PI * deg / 180.0,
 
-    uniformLoc = (gl, locName) => gl.getUniformLocation(gl.program, locName),
+    getUniformLoc = (gl, locName) => gl.getUniformLocation(gl.program, locName),
 
-    attribLoc = (gl, locName) => gl.getAttribLocation(gl.program, locName),
+    getAttribLoc = (gl, locName) => gl.getAttribLocation(gl.program, locName),
 
     initProgram = (gl, shadersAssocList) => {
         let program = compileProgram(gl, shadersAssocList);

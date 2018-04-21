@@ -76,7 +76,6 @@ export default class HelloQuad extends Component {
         return ([
                 <header key={uuid('hello-rectangle-element-')}>
                     <h3>HelloQuad.jsx</h3>
-                    <p>Hello Rectangle.</p>
                 </header>,
                 <canvas key={uuid('hello-rectangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
