@@ -51,9 +51,19 @@
             "componentName": "RotatedTriangle"
         },
         "rotatedTriangleMatrix": {
-            "label": "Rotated Triangle Matrix",
+            "label": "Rotated Triangle by Matrix",
             "uri": "/chp3/rotated-triangle-matrix",
             "componentName": "RotatedTriangle_Matrix"
+        },
+        "translatedTriangleMatrix": {
+            "label": "Translate Triangle by Matrix",
+            "uri": "/chp3/translated-triangle-matrix",
+            "componentName": "TranslatedTriangle_Matrix"
+        },
+        "scaledTriangleMatrix": {
+            "label": "Scaled Triangle by Matrix",
+            "uri": "/chp3/scaled-triangle-matrix",
+            "componentName": "ScaledTriangle_Matrix"
         }
     }
 }

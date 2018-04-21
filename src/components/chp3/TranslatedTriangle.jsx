@@ -7,6 +7,7 @@ const
         void main () {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }`,
+
     vertShader = `
         attribute vec4 a_Position;
         uniform vec4 u_Translation;
@@ -17,7 +18,7 @@ const
 
 export default class TranslatedTriangle extends Component {
     static defaultProps = {
-        canvasId: 'translated-triangle-canvas'
+        canvasId: 'translated-triangle-matrix-canvas'
     };
 
     constructor (props) {
@@ -81,10 +82,10 @@ export default class TranslatedTriangle extends Component {
         const {props} = this;
 
         return ([
-                <header key={uuid('translated-triangle-element-')}>
+                <header key={uuid('translated-triangle-matrix-element-')}>
                     <h3>TranslatedTriangle.jsx</h3>
                 </header>,
-                <canvas key={uuid('translated-triangle-element-')} width="377" height="377"
+                <canvas key={uuid('translated-triangle-matrix-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>

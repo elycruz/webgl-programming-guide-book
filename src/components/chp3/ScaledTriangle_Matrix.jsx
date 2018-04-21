@@ -16,9 +16,9 @@ const
         }`
 ;
 
-export default class TranslatedTriangle extends Component {
+export default class ScaledTriangle_Matrix extends Component {
     static defaultProps = {
-        canvasId: 'translated-triangle-canvas'
+        canvasId: 'scaled-triangle-canvas'
     };
 
     constructor (props) {
@@ -64,12 +64,12 @@ export default class TranslatedTriangle extends Component {
         }
 
         const
-            Tx = 0.5, Ty = 0.5, Tz = 0.5,
+            Sx = 0.5, Sy = 0.5, Sz = 0.5,
             transformMatrix = new Float32Array([
-                1.0, 0.0, 0.0, 0.0,
-                0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0,
-                Tx, Ty, Tz, 1.0,
+                Sx, 0.0, 0.0, 0.0,
+                0.0, Sy, 0.0, 0.0,
+                0.0, 0.0, Sz, 0.0,
+                0.0, 0.0, 0.0, 1.0,
             ]),
 
             // Get shader variable pointer
@@ -87,10 +87,10 @@ export default class TranslatedTriangle extends Component {
         const {props} = this;
 
         return ([
-                <header key={uuid('translated-triangle-element-')}>
-                    <h3>TranslatedTriangle_Matrix.jsx</h3>
+                <header key={uuid('scaled-triangle-element-')}>
+                    <h3>ScaledTriangle_Matrix.jsx</h3>
                 </header>,
-                <canvas key={uuid('translated-triangle-element-')} width="377" height="377"
+                <canvas key={uuid('scaled-triangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>

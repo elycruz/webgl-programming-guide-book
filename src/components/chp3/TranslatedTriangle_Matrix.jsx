@@ -7,11 +7,12 @@ const
         void main () {
             gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }`,
+
     vertShader = `
         attribute vec4 a_Position;
-        uniform vec4 u_Translation;
+        uniform mat4 u_TransformMatrix;
         void main () {
-            gl_Position = a_Position + u_Translation;
+            gl_Position = u_TransformMatrix * a_Position;
         }`
 ;
 
@@ -33,11 +34,6 @@ export default class TranslatedTriangle extends Component {
                 [gl.FRAGMENT_SHADER, fragShader]
             ],
             program = WebGlUtils.initProgram(gl, shadersAssocList);
-
-        let numCreatedVertices,
-            u_Translation,
-            // Translation vars
-            tx = 0.5, ty = 0.5, tz = 0.0;
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
@@ -61,15 +57,25 @@ export default class TranslatedTriangle extends Component {
         }
 
         // Create vertices for shape
-        numCreatedVertices = initVertexBuffers(gl);
-
-        // Pass translation values
-        u_Translation = gl.getUniformLocation(gl.program, 'u_Translation');
-        gl.uniform4f(u_Translation, tx, ty, tz, 0.0);
+        const numCreatedVertices = initVertexBuffers(gl);
 
         if (numCreatedVertices === -1) {
             error ('Error while creating vertice buffer.');
         }
+
+        const
+            Tx = 0.5, Ty = 0.5, Tz = 0.5,
+            transformMatrix = new Float32Array([
+                1.0, 0.0, 0.0, 0.0,
+                0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0,
+                Tx, Ty, Tz, 1.0,
+            ]),
+
+            // Get shader variable pointer
+            u_TransformMatrix = gl.getUniformLocation(gl.program, 'u_TransformMatrix');
+
+        gl.uniformMatrix4fv(u_TransformMatrix, false, transformMatrix);
 
         // Clear then draw
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -82,7 +88,7 @@ export default class TranslatedTriangle extends Component {
 
         return ([
                 <header key={uuid('translated-triangle-element-')}>
-                    <h3>TranslatedTriangle.jsx</h3>
+                    <h3>TranslatedTriangle_Matrix.jsx</h3>
                 </header>,
                 <canvas key={uuid('translated-triangle-element-')} width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
