@@ -72,6 +72,11 @@
             "label": "Rotated and Translated Triangle",
             "uri": "/chp4/rotated-translated-triangle",
             "componentFilePath": "./components/chp4/RotatedTranslatedTriangle"
+        },
+        "rotatingTriangleMatrix": {
+            "label": "Rotating Triangle",
+            "uri": "/chp4/rotating-triangle",
+            "componentFilePath": "./components/chp4/RotatingTriangle"
         }
     }
 }

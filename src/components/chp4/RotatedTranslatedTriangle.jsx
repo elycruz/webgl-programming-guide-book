@@ -76,8 +76,8 @@ export default class RotatedTranslatedTriangle extends Component {
         modelMatrix = mat4.create(); // transformMatrix
 
         mat4.scale(modelMatrix, modelMatrix, ListF32([0.5, 0.5, 1]));
-        mat4.translate(modelMatrix, modelMatrix, ListF32([sinB, cosB, 1]));
         mat4.rotateZ(modelMatrix, modelMatrix, radians);
+        mat4.translate(modelMatrix, modelMatrix, ListF32([sinB, cosB, 1]));
 
         const u_TransformMatrix = gl.getUniformLocation(program, 'u_TransformMatrix');
 
