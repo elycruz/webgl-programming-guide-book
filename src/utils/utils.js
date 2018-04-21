@@ -1,6 +1,7 @@
 import {keys} from 'fjl';
 
 export * from './console';
+export * from './raqLimiter';
 
 let _uuid = 0;
 

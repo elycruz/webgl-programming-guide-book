@@ -1,5 +1,6 @@
-import React, {Component} from 'react';
-import {uuid, error, log} from '../../utils/utils';
+import React from 'react';
+import GenericCanvasExperimentView from '../app/GenericCanvasExperimentView';
+import {error} from '../../utils/utils';
 import {getWebGlContext, initProgram, toRadians} from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
 
@@ -21,15 +22,7 @@ const
 
 ;
 
-export default class RotatingTriangle extends Component {
-    static defaultProps = {
-        canvasId: 'rotating-triangle-canvas'
-    };
-
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
+export default class RotatingTriangle extends GenericCanvasExperimentView {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,
@@ -83,8 +76,12 @@ export default class RotatingTriangle extends Component {
             }
 
             const radians = toRadians(currentAngle),
-                out = mat4.create();
+                out = mat4.create(),
+                cosB = Math.cos(radians),
+                sinB = Math.sin(radians)
+            ;
 
+            mat4.translate(out, modelMatrix, ListF32([cosB, sinB, 1]));
             mat4.rotateZ(out, out, radians);
 
             // Pass rotation values
@@ -107,21 +104,6 @@ export default class RotatingTriangle extends Component {
 
         g_last = Date.now();
         getTick(mat4.create())();
-    }
-
-    render () {
-        const {props} = this;
-
-        return ([
-                <header key={uuid('rotating-triangle-element-')}>
-                    <h3>AnimatedTriangle.jsx</h3>
-                </header>,
-                <canvas key={uuid('rotating-triangle-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            ]
-        );
     }
 
 }

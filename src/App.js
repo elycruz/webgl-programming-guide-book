@@ -29,13 +29,21 @@ class App extends Component {
     static renderRoutes(navContainer) {
         return isEmpty(navContainer.items) ?
             null : objsToListsOnKey('items', navContainer).items.map(item => {
+                const uriParts = item.uri.split('/'),
+                    filePathParts = item.componentFilePath.split('/'),
+                    aliasName = uriParts.length ? uriParts[uriParts.length - 1] : null;
                 return (
                     <Route
                         key={uuid('route-')}
                         path={item.uri}
                         component={
                             lazyAsyncComponent(
-                                () => import(item.componentFilePath + '.jsx').catch(error)
+                                () => import(item.componentFilePath + '.jsx').catch(error),
+                                {
+                                    fileName: filePathParts[filePathParts.length - 1] + '.jsx',
+                                    aliasName,
+                                    canvasId: aliasName
+                                }
                             )
                         }
                         {...item.reactRouterRouteParams}
