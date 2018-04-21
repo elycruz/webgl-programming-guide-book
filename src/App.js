@@ -1,39 +1,47 @@
 import React, {Component} from 'react';
 import {BrowserRouter, Route} from 'react-router-dom'
-import {uuid} from "./utils/utils";
-import * as navContainer from './app.nav';
+import {uuid, objsToListsOnKey} from "./utils/utils";
+import * as navContainer from './components/app/app.nav.json';
+import {isEmpty, error} from 'fjl';
 
-import AppNav from "./AppNav";
-import DrawRectangle from "./components/chp2/DrawRectangle";
-import DrawAPoint from "./components/chp2/DrawAPoint";
-import DrawAPoint2 from "./components/chp2/DrawAPoint2";
-import DrawAPoint3 from "./components/chp2/DrawAPoint3";
-import MultiPoint from "./components/chp3/MultiPoint";
-import HelloTriangle from "./components/chp3/HelloTriangle";
-import HelloQuad from "./components/chp3/HelloQuad";
-import TranslatedTriangle from "./components/chp3/TranslatedTriangle";
-import RotatedTriangle from "./components/chp3/RotatedTriangle";
-import RotatedTriangle_Matrix from "./components/chp3/RotatedTriangle_Matrix";
-import TranslatedTriangle_Matrix from "./components/chp3/TranslatedTriangle_Matrix";
-import ScaledTriangle_Matrix from "./components/chp3/ScaledTriangle_Matrix";
+import AppNav from "./components/app/AppNav";
+
+const
+
+    lazyAsyncComponent = (fetchComponent = () => (Promise.resolve({})), props = {}) => {
+        return class LazyAsyncComponent extends Component {
+            state = {FetchedComponent: null};
+            componentWillMount() {
+                fetchComponent().then(({ default: component }) => {
+                    this.setState({ FetchedComponent: component });
+                });
+            }
+            render() {
+                const { FetchedComponent } = this.state;
+                return FetchedComponent ? <FetchedComponent {...props} /> : null;
+            }
+        };
+    }
+
+;
 
 class App extends Component {
-    static renderRoutes () {
-        return ([
-            <Route key={uuid('route-')} path={"/"} render={() => (<p>Examples from the book "Webgl Programming Guide - ..."</p>)} exact={true} />,
-            <Route key={uuid('route-')} path={"/chp2/draw-rectangle"} component={DrawRectangle} />,
-            <Route key={uuid('route-')} path={"/chp2/draw-a-point"} component={DrawAPoint} />,
-            <Route key={uuid('route-')} path={"/chp2/draw-a-point-2"} component={DrawAPoint2} />,
-            <Route key={uuid('route-')} path={"/chp2/draw-a-point-3"} component={DrawAPoint3} />,
-            <Route key={uuid('route-')} path={"/chp3/multi-point"} component={MultiPoint} />,
-            <Route key={uuid('route-')} path={"/chp3/hello-triangle"} component={HelloTriangle} />,
-            <Route key={uuid('route-')} path={"/chp3/hello-quad"} component={HelloQuad} />,
-            <Route key={uuid('route-')} path={"/chp3/translated-triangle"} component={TranslatedTriangle} />,
-            <Route key={uuid('route-')} path={"/chp3/rotated-triangle"} component={RotatedTriangle} />,
-            <Route key={uuid('route-')} path={"/chp3/rotated-triangle-matrix"} component={RotatedTriangle_Matrix} />,
-            <Route key={uuid('route-')} path={"/chp3/translated-triangle-matrix"} component={TranslatedTriangle_Matrix} />,
-            <Route key={uuid('route-')} path={"/chp3/scaled-triangle-matrix"} component={ScaledTriangle_Matrix} />,
-        ]);
+    static renderRoutes(navContainer) {
+        return isEmpty(navContainer.items) ?
+            null : objsToListsOnKey('items', navContainer).items.map(item => {
+                return (
+                    <Route
+                        key={uuid('route-')}
+                        path={item.uri}
+                        component={
+                            lazyAsyncComponent(
+                                () => import(item.componentFilePath + '.jsx').catch(error)
+                            )
+                        }
+                        {...item.reactRouterRouteParams}
+                    />
+                );
+            });
     }
 
     render() {

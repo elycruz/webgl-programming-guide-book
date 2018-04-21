@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {BrowserRouter, Route, Link} from 'react-router-dom'
 import {isEmpty, keys} from 'fjl';
-import {objsToListsOnKey, uuid} from './utils/utils';
+import {objsToListsOnKey, uuid} from '../../utils/utils';
 
 export default class AppNav extends Component {
     static defaultProps = {
@@ -31,7 +31,7 @@ export default class AppNav extends Component {
     }
 
     render () {
-        const {props, state} = this;
+        const {props} = this;
         return (<nav>
             {AppNav.renderUnorderedList(objsToListsOnKey('items', props.navContainer).items)}
         </nav>)
