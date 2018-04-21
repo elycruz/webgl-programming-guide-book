@@ -73,7 +73,7 @@ class App extends Component {
                     <main>
                         <div>
                             <AppNav navContainer={navContainer} />
-                            <section>{App.renderRoutes(navContainer)}</section>
+                            <section className="canvas-experiment-view">{App.renderRoutes(navContainer)}</section>
                         </div>
                     </main>
                 </div>

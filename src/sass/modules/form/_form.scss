@@ -1,0 +1,73 @@
+form {
+  legend {
+    margin-bottom: 34px;
+  }
+
+  .block-form-fields {
+    > .form-field {
+      display: block;
+    }
+  }
+
+}
+
+form fieldset + fieldset {
+  margin-top: 13px;
+}
+
+.form-field {
+  display: inline-block;
+  margin: 0 0 34px;
+
+  label {
+    padding: 8px;
+    cursor: pointer;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 10.5px;
+  }
+}
+
+.form-field.select-field {
+  label + select {
+    display: block;
+    margin-top: 8px;
+  }
+}
+
+.form-field.radio-inputs {
+  label,
+  label + input[type="radio"] {
+    display: inline-block;
+  }
+  label:first-child {
+    margin-right: 8px;
+  }
+  input + label {
+    padding-left: 0;
+    margin-right: 8px;
+  }
+}
+
+.form-field.inline-inputs {
+  label + input,
+  input {
+    display: inline-block;
+    margin-right: 13px;
+  }
+}
+
+.form-field.visual-slider {
+  .slider {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    span {
+      display: inline-block;
+      padding: 8px;
+    }
+  }
+}

@@ -82,6 +82,11 @@
             "label": "Orbiting Triangle",
             "uri": "/chp4/orbiting-triangle",
             "componentFilePath": "./components/chp4/OrbitingTriangle"
+        },
+        "rotatingTriangleWithButtons": {
+            "label": "Rotating Triangle with Buttons",
+            "uri": "/chp4/rotating-triangle-with-buttons",
+            "componentFilePath": "./components/chp4/RotatingTriangleWithButtons"
         }
     }
 }

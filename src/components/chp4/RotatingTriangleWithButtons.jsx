@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {Component} from 'react';
 import GenericCanvasExperimentView from '../app/GenericCanvasExperimentView';
-import {error} from '../../utils/utils';
+import {uuid, error} from '../../utils/utils';
 import {getWebGlContext, initProgram, toRadians} from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
 
@@ -22,17 +22,39 @@ const
 
 ;
 
-export default class RotatingTriangle extends GenericCanvasExperimentView {
+export default class RotatingTriangleWithButtons extends Component {
+    static defaultProps = {
+        aliasName: 'experiment-alias-name',
+        canvasId: 'experiment-canvas',
+        fileName: 'FileNameGoesHere.jsx',
+        angleStep: 45.0
+    };
+
+    static onAngleStepChange (e) {
+        this.angleStep = parseFloat(e.currentTarget.value);
+        this.angleStepVisualRef.current.innerHTML = this.angleStep;
+    }
+
+    constructor (props) {
+        super(props);
+        this.canvas = React.createRef();
+        this.angleStepVisualRef = React.createRef();
+        this.angleStep = this.props.angleStep;
+    }
+
+    componentWillMount () {
+        this.boundAngleStepChange = RotatingTriangleWithButtons.onAngleStepChange.bind(this);
+    }
 
     componentDidMount () {
-        const canvasElm = this.canvas.current,
+        const self = this,
+            canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),
             shadersAssocList = [
                 [gl.VERTEX_SHADER, vertShader],
                 [gl.FRAGMENT_SHADER, fragShader]
             ],
             program = initProgram(gl, shadersAssocList),
-            angleStep = 45.0,
             triangleModelMatrix = mat4.create();
 
         let g_last,
@@ -100,7 +122,7 @@ export default class RotatingTriangle extends GenericCanvasExperimentView {
                 elapsed = now - g_last,
                 newAngle;
             g_last = now;
-            newAngle = (angle + (angleStep * elapsed) / 1000.0);
+            newAngle = (angle + (self.angleStep * elapsed) / 1000.0);
             return newAngle % 360;
         }
 
@@ -113,5 +135,35 @@ export default class RotatingTriangle extends GenericCanvasExperimentView {
         // Start animation
         getTick(triangleModelMatrix)();
     }
+
+    render () {
+        const {props} = this;
+
+        return ([
+                <header key={uuid(props.aliasName + '-element-')}>
+                    <h3>{props.fileName}</h3>
+                </header>,
+                <section key={uuid(props.aliasName + '-element-')}>
+                    <canvas width="377" height="377"
+                            id={props.canvasId} ref={this.canvas}>
+                        <p>Html canvas element not supported</p>
+                    </canvas>
+                </section>,
+                <section key={uuid(props.aliasName + '-element-')}>
+                    <div className="form-field block visual-slider">
+                        <label>Angle step (speed):</label>
+                        <div className="slider">
+                            <span>-</span>
+                            <input onChange={this.boundAngleStepChange} type="range" step="5" min="5" max="360" defaultValue="5" />
+                            <span>+</span>
+                            <span>=</span>
+                            <span ref={this.angleStepVisualRef}>{this.angleStep}</span>
+                        </div>
+                    </div>
+                </section>
+            ]
+        );
+    }
+
 
 }

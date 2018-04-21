@@ -1015,15 +1015,6 @@ p {
 .figure-image .image-with-preloader {
   margin-bottom: 21px; }
 
-.med-link {
-  color: #1240AB;
-  font-size: 1.3rem;
-  line-height: 2.1rem;
-  border-bottom: 1px solid transparent; }
-
-.med-link:hover {
-  text-decoration: underline; }
-
 @keyframes shrink-away {
   0% {
     -o-transform: scale(1, 1);
@@ -1335,8 +1326,10 @@ p {
     font: normal 1rem "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
     letter-spacing: 0;
     text-transform: uppercase; }
-  #wrapper main section:last-child {
-    margin-bottom: 0; }
+  #wrapper main section, #wrapper main header {
+    margin-bottom: 13px; }
+    #wrapper main section:last-child, #wrapper main header:last-child {
+      margin-bottom: 0; }
   #wrapper main section p a {
     -o-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     -ms-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
@@ -1348,8 +1341,6 @@ p {
       color: #00CC00; }
     #wrapper main section p a.active, #wrapper main section p a:active {
       color: #269926; }
-  #wrapper main section header:first-child {
-    padding: 34px 13px 21px; }
 
 /** Import: Header, Nav, and Footer **/
 /** Hamburger Nav Setup **/
@@ -1508,6 +1499,54 @@ p {
   -moz-opacity: 1;
   -webkit-opacity: 1;
   opacity: 1; }
+
+form legend {
+  margin-bottom: 34px; }
+
+form .block-form-fields > .form-field {
+  display: block; }
+
+form fieldset + fieldset {
+  margin-top: 13px; }
+
+.form-field {
+  display: inline-block;
+  margin: 0 0 34px; }
+  .form-field label {
+    padding: 8px;
+    cursor: pointer; }
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    padding: 10.5px; }
+
+.form-field.select-field label + select {
+  display: block;
+  margin-top: 8px; }
+
+.form-field.radio-inputs label,
+.form-field.radio-inputs label + input[type="radio"] {
+  display: inline-block; }
+
+.form-field.radio-inputs label:first-child {
+  margin-right: 8px; }
+
+.form-field.radio-inputs input + label {
+  padding-left: 0;
+  margin-right: 8px; }
+
+.form-field.inline-inputs label + input,
+.form-field.inline-inputs input {
+  display: inline-block;
+  margin-right: 13px; }
+
+.form-field.visual-slider .slider {
+  display: flex;
+  flex-direction: row;
+  align-items: center; }
+  .form-field.visual-slider .slider span {
+    display: inline-block;
+    padding: 8px; }
 
 .svg-defines {
   width: 0;

@@ -25,11 +25,16 @@ main {
     text-transform: uppercase;
   }
 
-  section {
+  section, header {
+    margin-bottom: 13px;
 
     &:last-child {
       margin-bottom: 0;
     }
+  }
+
+  section {
+
 
     p a {
       @include with-browser-prefixes(transition,
@@ -49,9 +54,6 @@ main {
       }
     }
 
-    header:first-child {
-      padding: 34px 13px 21px;
-    }
   }
 
 }
