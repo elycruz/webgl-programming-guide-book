@@ -87,6 +87,11 @@
             "label": "Rotating Triangle with Buttons",
             "uri": "/chp4/rotating-triangle-with-buttons",
             "componentFilePath": "./components/chp4/RotatingTriangleWithButtons"
+        },
+        "multiAttributeSize": {
+            "label": "Multi Attribute Size",
+            "uri": "/chp5/multi-attribute-size",
+            "componentFilePath": "./components/chp5/MultiAttributeSize"
         }
     }
 }
