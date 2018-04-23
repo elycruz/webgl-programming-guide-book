@@ -5,26 +5,20 @@ import {objsToListsOnKey, uuid} from '../../utils/utils';
 
 export default class AppNav extends Component {
     static defaultProps = {
-        navContainer: {}
+        navContainer: {},
+        onLinkClick: () => (undefined)
     };
 
-    static initialState = () => ({});
-
-    constructor (props) {
-        super(props);
-        this.state = AppNav.initialState();
-    }
-
-    static renderUnorderedList (items) {
+    renderUnorderedList (items) {
         if (isEmpty(items)) {
             return null;
         }
         return (<ul key={uuid('ul-')}>
             {items.map(item => (<li key={uuid('ul-li-')}>
-                    <Link to={item.uri} className={item.uri === window.location.pathname ? 'active' : ''}>
+                    <Link to={item.uri} className={item.uri === window.location.pathname ? 'active' : ''} onClick={this.props.onLinkClick}>
                         {item.label}
                     </Link>
-                    {item.items ? AppNav.renderUnorderedList(item.items) : null}
+                    {item.items ? this.renderUnorderedList(item.items) : null}
                 </li>)
             )}
         </ul>);
@@ -33,7 +27,7 @@ export default class AppNav extends Component {
     render () {
         const {props} = this;
         return (<nav>
-            {AppNav.renderUnorderedList(objsToListsOnKey('items', props.navContainer).items)}
+            {this.renderUnorderedList(objsToListsOnKey('items', props.navContainer).items)}
         </nav>)
     }
 }
