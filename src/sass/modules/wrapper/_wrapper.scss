@@ -13,7 +13,6 @@
     width: 100%;
   }
   > * > * {
-    max-width: $container-max-width;
     margin: auto;
   }
 
@@ -29,7 +28,6 @@
   @import "hamburger-btn";
   @import "nav";
   @import "overlay-bg";
-
 }
 
 @media (min-width: 320px) and (max-width: 767px) {
@@ -43,5 +41,17 @@
       @include transform(translateX(0));
       @include opacity(1);
     }
+  }
+}
+
+@media (min-width: 320px) and (max-width: 1439px) {
+  #wrapper > * > * {
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 1440px) and (max-width: 3840px) {
+  #wrapper > * > * {
+    max-width: $container-max-width;
   }
 }

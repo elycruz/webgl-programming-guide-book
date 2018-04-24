@@ -124,7 +124,7 @@
 .grid-container {
   margin-left: auto;
   margin-right: auto;
-  max-width: 1200px;
+  max-width: 1440px;
   padding-left: 10.5px;
   padding-right: 10.5px; }
 
@@ -1191,7 +1191,6 @@ p {
   #wrapper > * {
     width: 100%; }
   #wrapper > * > * {
-    max-width: 1200px;
     margin: auto; }
   #wrapper > header,
   #wrapper > footer {
@@ -1438,6 +1437,14 @@ p {
     -moz-opacity: 1;
     -webkit-opacity: 1;
     opacity: 1; } }
+
+@media (min-width: 320px) and (max-width: 1439px) {
+  #wrapper > * > * {
+    max-width: 100%; } }
+
+@media (min-width: 1440px) and (max-width: 3840px) {
+  #wrapper > * > * {
+    max-width: 1440px; } }
 
 form legend {
   margin-bottom: 34px; }
