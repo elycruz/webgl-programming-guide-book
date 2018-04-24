@@ -62,4 +62,13 @@ main {
 
   }
 
+  > div > section.view-area {
+    opacity: 0;
+    transition: opacity 0.13s linear;
+  }
+
+  > div > section.view-area.visible {
+    opacity: 1;
+  }
+
 }

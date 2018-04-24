@@ -896,6 +896,9 @@ p {
 .clear-both {
   clear: both; }
 
+.none {
+  display: none; }
+
 .controls a,
 .controls .btn,
 .controls button,
@@ -1342,6 +1345,11 @@ p {
       color: #00CC00; }
     #wrapper main section p a.active, #wrapper main section p a:active {
       color: #269926; }
+  #wrapper main > div > section.view-area {
+    opacity: 0;
+    transition: opacity 0.13s linear; }
+  #wrapper main > div > section.view-area.visible {
+    opacity: 1; }
 
 /** Import: Header, Nav, and Footer **/
 /** Hamburger Nav Setup **/

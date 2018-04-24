@@ -8,13 +8,25 @@ import AppNav from "./components/app/AppNav";
 
 const
 
-    lazyAsyncComponent = (fetchComponent = () => (Promise.resolve({})), props = {}) => {
+    lazyAsyncComponent = (fetchComponent = () => (Promise.resolve({})), props = {}, metaProps = {}) => {
         return class LazyAsyncComponent extends Component {
             state = {FetchedComponent: null};
             componentWillMount() {
-                fetchComponent().then(({ default: component }) => {
-                    this.setState({ FetchedComponent: component });
-                });
+                // const {viewsElmRef, viewsElmVisibleClassName} = metaProps,
+                //     viewsElm = viewsElmRef.current,
+                //     handler = e => {
+                //         log('fade-out transition completed');
+                //         e.currentTarget.removeEventListener('transitionend', handler);
+                //         log('awaiting component load...');
+                        fetchComponent().then(({ default: component }) => {
+                            log('Component fetched.  Setting component to state...');
+                            this.setState({ FetchedComponent: component });
+                            // metaProps.viewElmRef.current.classList.add(metaProps.viewsElmVisibleClassName);
+                        });
+                //     };
+                // log('awaiting fade-out transition');
+                // viewsElm.addEventListener('transitionend', handler);
+                // viewsElm.classList.remove(viewsElmVisibleClassName);
             }
             render() {
                 const { FetchedComponent } = this.state;
@@ -30,26 +42,7 @@ class App extends Component {
         viewsElmVisbleClassName: 'visible'
     };
 
-    static onLinkClick (e, altDetail) {
-        if (!altDetail) {
-            e.preventDefault();
-        }
-        else if (altDetail.awaitingTransition === false) {
-            return;
-        }
-        const viewsElm = this.viewsElmRef.current,
-            handler = e => {
-                log('transition completed');
-                this.boundOnLinkClick(e, {awaitingTransition: false});
-                viewsElm.classList.remove(this.props.viewsElmVisbleClassName);
-                viewsElm.removeEventListener('transitionend', handler);
-            };
-        log('awaiting transition');
-        viewsElm.addEventListener('transitionend', handler);
-        viewsElm.classList.remove(this.props.viewsElmVisbleClassName);
-    }
-
-    static renderRoutes(navContainer) {
+    static renderRoutes(navContainer, metaProps) {
         return isEmpty(navContainer.items) ?
             null : objsToListsOnKey('items', navContainer).items.map(item => {
                 const uriParts = item.uri.split('/'),
@@ -66,7 +59,8 @@ class App extends Component {
                                     fileName: filePathParts[filePathParts.length - 1] + '.jsx',
                                     aliasName,
                                     canvasId: aliasName
-                                }
+                                },
+                                metaProps
                             )
                         }
                         {...item.reactRouterRouteParams}
@@ -77,7 +71,6 @@ class App extends Component {
 
     constructor (props) {
         super(props);
-        this.boundOnLinkClick = App.onLinkClick.bind(this);
         this.viewsElmRef = React.createRef();
     }
 
@@ -101,10 +94,15 @@ class App extends Component {
                     </header>
                     <main>
                         <div>
-                            <AppNav navContainer={navContainer} {/*onLinkClick={this.boundOnLinkClick}*/} />
+                            <AppNav navContainer={navContainer} />
                             <section ref={this.viewsElmRef}
-                                     className="canvas-experiment-view">
-                                {App.renderRoutes(navContainer)}
+                                     className="canvas-experiment-view view-area visible">
+                                {
+                                    App.renderRoutes(navContainer, {
+                                        viewsElmRef: this.viewsElmRef,
+                                        viewsElmVisibleClassName: this.props.viewsElmVisbleClassName
+                                    })
+                                }
                             </section>
                         </div>
                     </main>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {BrowserRouter, Route, Link} from 'react-router-dom'
-import {isEmpty, keys} from 'fjl';
+import {isEmpty, keys, log} from 'fjl';
 import {objsToListsOnKey, uuid} from '../../utils/utils';
 
 export default class AppNav extends Component {
