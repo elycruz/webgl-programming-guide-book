@@ -28,7 +28,20 @@
   @import "main";
   @import "hamburger-btn";
   @import "nav";
-  @import "mobile-nav";
   @import "overlay-bg";
+
 }
 
+@media (min-width: 320px) and (max-width: 767px) {
+  html.mobile-nav-active {
+    .overlay-bg {
+      top: 0;
+      left: 0;
+    }
+    #wrapper main > div > nav,
+    #wrapper > .overlay-bg {
+      @include transform(translateX(0));
+      @include opacity(1);
+    }
+  }
+}

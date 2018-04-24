@@ -5,7 +5,7 @@
   @include opacity(0);
   background-color: rgba(0,0,0,0.55);
   @include transform(translateX(-100%));
-  @include transition(fit-with-browser-prefixes((opacity 0.34s,), opacity));
+  @include transition(fit-with-browser-prefixes((opacity 0.55s,), opacity));
   z-index: 89;
 }
 

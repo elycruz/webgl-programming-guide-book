@@ -2,6 +2,7 @@ import {keys} from 'fjl';
 
 export * from './console';
 export * from './raqLimiter';
+export * from './debounce';
 
 let _uuid = 0;
 

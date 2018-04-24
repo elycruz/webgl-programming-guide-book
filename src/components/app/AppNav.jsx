@@ -6,7 +6,8 @@ export default class AppNav extends Component {
     static defaultProps = {
         navContainer: {},
         navContainerItemsList: [],
-        onLinkClick: () => (undefined)
+        onLinkClick: () => (undefined),
+        innerRef: null
     };
 
     static onLinkClick (e) {
@@ -46,7 +47,7 @@ export default class AppNav extends Component {
 
     render () {
         const {props} = this;
-        return (<nav>
+        return (<nav ref={props.innerRef}>
             {this.renderUnorderedList(props.navContainerItemsList)}
         </nav>)
     }

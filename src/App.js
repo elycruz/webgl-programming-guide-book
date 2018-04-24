@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {objsToListsOnKey} from "./utils/utils";
+import {objsToListsOnKey, debounce} from "./utils/utils";
 import * as navContainer from './components/app/app.nav.json';
 
 import AppNav from "./components/app/AppNav";
@@ -29,12 +29,20 @@ const
 class App extends Component {
 
     static defaultProps = {
-        viewsElmVisbleClassName: 'visible'
+        viewsElmVisbleClassName: 'visible',
+        mobileNavActiveClassName: 'mobile-nav-active'
     };
 
     static onLinkClick (e) {
         this.currentLocationInfo = e.detail;
         this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
+        if (this.htmlElm.classList.contains('mobile-size')) {
+            this.boundHamburgerClick(e);
+        }
+    }
+
+    static onHamburgerClick () {
+        this.htmlElm.classList.toggle(this.props.mobileNavActiveClassName);
     }
 
     static onViewsAreaTransitionEnd (e) {
@@ -53,12 +61,36 @@ class App extends Component {
             uri: '/app/404-error'
         };
         this.viewsElmRef = React.createRef();
+        this.navRef = React.createRef();
+        // this.hamburgerRef = React.createRef();
         this.navContainerItemsList = objsToListsOnKey('items', navContainer).items;
         this.currentLocationInfo = this.navContainerItemsList
             .filter(x => x.uri === window.location.pathname).shift(); // assume flat list for now
         this.boundOnLinkClick = App.onLinkClick.bind(this);
         this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
+        this.boundHamburgerClick = App.onHamburgerClick.bind(this);
         this.state.CurrentView = this.getViewFor(!this.currentLocationInfo ? errorViewInfo : this.currentLocationInfo);
+        this.htmlElm = document.querySelector('html');
+    }
+
+    componentWillMount () {
+        // Listen for window size change so we can branch our logic for different
+        // screen sizes (from within business logic)
+        const onWindowResize = () => {
+                if (window.innerWidth <= 767) {
+                    this.htmlElm.classList.add('mobile-size');
+                }
+                else {
+                    this.htmlElm.classList.remove('mobile-size');
+                }
+            },
+            onWindowResizeDebounced = debounce(onWindowResize, 100);
+        window.addEventListener('load', onWindowResize);
+        window.addEventListener('resize', onWindowResizeDebounced);
+        window.addEventListener('orientationchange', onWindowResizeDebounced);
+    }
+
+    componentDidMount () {
         window.addEventListener('popstate', e => {
             e.detail = e.state;
             this.boundOnLinkClick(e);
@@ -86,7 +118,8 @@ class App extends Component {
                 <header>
                     <div>
                         <div className="flex-container">
-                            <a className="hamburger-btn">
+                            <a className="hamburger-btn"
+                                onClick={this.boundHamburgerClick}>
                                 <div className="slice">&nbsp;</div>
                                 <div className="slice">&nbsp;</div>
                                 <div className="slice">&nbsp;</div>
@@ -99,7 +132,9 @@ class App extends Component {
                     <div>
                         <AppNav navContainer={navContainer}
                                 navContainerItemsList={this.navContainerItemsList}
-                                onLinkClick={this.boundOnLinkClick} />
+                                onLinkClick={this.boundOnLinkClick}
+                                innerRef={this.navRef}
+                        />
                         <section ref={this.viewsElmRef}
                                  className="canvas-experiment-view view-area visible"
                                  onTransitionEnd={this.boundOnViewsAreaTransitionEnd}>
@@ -107,6 +142,8 @@ class App extends Component {
                         </section>
                     </div>
                 </main>
+                <div className="overlay-bg"
+                     onClick={this.boundHamburgerClick}>&nbsp;</div>
             </div>
         );
     }

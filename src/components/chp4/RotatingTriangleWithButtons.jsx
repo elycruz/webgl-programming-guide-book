@@ -151,7 +151,7 @@ export default class RotatingTriangleWithButtons extends Component {
                 </section>,
                 <section key={uuid(props.aliasName + '-element-')}>
                     <div className="form-field block visual-slider">
-                        <label>Angle step (speed):</label>
+                        <span>Angle step (speed):</span>
                         <div className="slider">
                             <span>-</span>
                             <input onChange={this.boundAngleStepChange} type="range" step="5" min="5" max="360" defaultValue="5" />

@@ -1,5 +1,4 @@
-> main > div > nav,
-> header + .mobile-nav {
+> main > div > nav {
   @include with-browser-prefixes(transform-origin, left);
 
   ul {
@@ -43,6 +42,47 @@
     &.active,
     &:active {
       color: $color-2-2;
+    }
+  }
+}
+
+@media (min-width: 320px) and (max-width: 767px) {
+  > main > div > nav {
+    position: fixed;
+    width: 72vw;
+    height: 100vh;
+    top: 0;
+    margin: 0;
+    box-sizing: border-box;
+    overflow: auto;
+    background: #FFF;
+    box-shadow: 0 0 55px 0 rgba(0,0,0,0.34);
+    @include opacity(0);
+    @include transform(translateX(-100%));
+    @include transition(fit-with-browser-prefixes((
+                    (transform $ani-speed-3 ease-in-out),
+                    (opacity $ani-speed-3 ease-in-out),
+                    (top $ani-speed-3 ease-in-out),
+    ), (transform, opacity)));
+    will-change: fit-with-browser-prefixes((transform,), transform);
+    z-index: 90;
+
+    &.active {
+      @include transform(translateX(0));
+      @include opacity(1);
+    }
+
+    .close-btn {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    ul {
+      position: absolute;
+      display: block;
+      width: 100%;
+      padding: 13px 13px 0;
     }
   }
 }
