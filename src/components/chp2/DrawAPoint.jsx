@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {uuid, error} from '../../utils/utils';
+import {error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
+import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 
 const
 
@@ -17,16 +18,7 @@ const
 
 ;
 
-export default class DrawAPoint extends Component {
-    static defaultProps = {
-        canvasId: 'draw-a-point-canvas'
-    };
-
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
-
+export default class DrawAPoint extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = WebGlUtils.getWebGlContext(canvasElm);
@@ -44,22 +36,6 @@ export default class DrawAPoint extends Component {
 
         // ctx.drawColor(1.0,0.0,0.0,1.0);
         // ctx.drawPoint(0,0,0,10);
-    }
-
-    render () {
-        const {props} = this;
-
-        return ([
-                <header key={uuid('draw-a-point-element-')}>
-                    <h3>DrawAPoint.jsx</h3>
-                    <p>Painting a red square in the view with a `gl` context.</p>
-                </header>,
-                <canvas key={uuid('draw-a-point-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            ]
-        );
     }
 
 }

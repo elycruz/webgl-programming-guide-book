@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {uuid, error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
+import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 
 const
 
@@ -20,7 +21,7 @@ const
         `
 ;
 
-export default class DrawAPoint2 extends Component {
+export default class DrawAPoint2 extends GenericCanvasExperimentView {
     static defaultProps = {
         canvasId: 'draw-a-point-2-canvas',
         mouseClickName: 'click'
@@ -28,7 +29,6 @@ export default class DrawAPoint2 extends Component {
 
     constructor (props) {
         super(props);
-        this.canvas = React.createRef();
         this.onCanvasClick = () => undefined;
     }
 
@@ -88,20 +88,6 @@ export default class DrawAPoint2 extends Component {
     componentWillUnmount () {
         this.canvas.current.removeEventListener(
             this.props.mouseClickName, this.onCanvasClick);
-    }
-
-    render () {
-        const {props} = this;
-        return ([
-                <header key={uuid('draw-a-point-2-element-')}>
-                    <h3>DrawPoint2.jsx</h3>
-                    <p>Click to paint a point on the canvas.</p>
-                </header>,
-                <canvas key={uuid('draw-a-point-2-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-        ]);
     }
 
 }

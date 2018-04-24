@@ -1347,7 +1347,7 @@ p {
       color: #269926; }
   #wrapper main > div > section.view-area {
     opacity: 0;
-    transition: opacity 0.13s linear; }
+    transition: opacity 0.13s linear, transform 0.34s ease-in-out; }
   #wrapper main > div > section.view-area.visible {
     opacity: 1; }
 

@@ -40,8 +40,6 @@ main {
   }
 
   section {
-
-
     p a {
       @include with-browser-prefixes(transition,
               fit-with-browser-prefixes((
@@ -59,16 +57,16 @@ main {
         color: $color-4-2;
       }
     }
-
   }
 
   > div > section.view-area {
     opacity: 0;
-    transition: opacity 0.13s linear;
+    //transform: translateX(8%);
+    transition: opacity 0.13s linear, transform 0.34s ease-in-out;
   }
 
   > div > section.view-area.visible {
     opacity: 1;
+    //transform: translateX(0);
   }
-
 }

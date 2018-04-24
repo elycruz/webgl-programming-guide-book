@@ -12,22 +12,33 @@ const
         return class LazyAsyncComponent extends Component {
             state = {FetchedComponent: null};
             componentWillMount() {
-                // const {viewsElmRef, viewsElmVisibleClassName} = metaProps,
-                //     viewsElm = viewsElmRef.current,
-                //     handler = e => {
-                //         log('fade-out transition completed');
-                //         e.currentTarget.removeEventListener('transitionend', handler);
-                //         log('awaiting component load...');
-                        fetchComponent().then(({ default: component }) => {
-                            log('Component fetched.  Setting component to state...');
-                            this.setState({ FetchedComponent: component });
-                            // metaProps.viewElmRef.current.classList.add(metaProps.viewsElmVisibleClassName);
-                        });
-                //     };
-                // log('awaiting fade-out transition');
-                // viewsElm.addEventListener('transitionend', handler);
-                // viewsElm.classList.remove(viewsElmVisibleClassName);
+
+                const runProcess = () => {
+                    const {viewsElmRef, viewsElmVisibleClassName} = metaProps,
+                        viewsElm = viewsElmRef.current,
+                        handler = e => {
+                            log('fade-out transition completed');
+                            log('awaiting component load...');
+                            e.currentTarget.removeEventListener('transitionend', handler);
+                            fetchComponent().then(({ default: component }) => {
+                                log('Component fetched.  Setting component to state...');
+                                this.setState({ FetchedComponent: component });
+                                metaProps.viewsElmRef.current.classList.add(metaProps.viewsElmVisibleClassName);
+                            });
+                        };
+                    log('awaiting fade-out transition');
+                    viewsElm.addEventListener('transitionend', handler);
+                    viewsElm.classList.remove(viewsElmVisibleClassName);
+                };
+
+                const interval = setInterval(() => {
+                    if (metaProps.viewsElmRef.current) {
+                        runProcess();
+                        clearInterval(interval);
+                    }
+                }, 100);
             }
+
             render() {
                 const { FetchedComponent } = this.state;
                 return FetchedComponent ? <FetchedComponent {...props} /> : null;
@@ -96,7 +107,8 @@ class App extends Component {
                         <div>
                             <AppNav navContainer={navContainer} />
                             <section ref={this.viewsElmRef}
-                                     className="canvas-experiment-view view-area visible">
+                                     className="canvas-experiment-view view-area visible"
+                                     onTransitionEnd={log}>
                                 {
                                     App.renderRoutes(navContainer, {
                                         viewsElmRef: this.viewsElmRef,
