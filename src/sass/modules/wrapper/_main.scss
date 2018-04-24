@@ -70,3 +70,11 @@ main {
     //transform: translateX(0);
   }
 }
+
+
+
+@media (min-width: 320px) and (max-width: 767px) {
+  main > div {
+    display: block;
+  }
+}

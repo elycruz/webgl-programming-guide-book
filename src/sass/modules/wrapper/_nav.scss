@@ -1,51 +1,48 @@
-#wrapper {
-  > main > div > nav,
-  > header + .mobile-nav {
-    @include with-browser-prefixes(transform-origin, left);
+> main > div > nav,
+> header + .mobile-nav {
+  @include with-browser-prefixes(transform-origin, left);
 
-    ul {
-      margin: 0;
-      padding: 0;
-    }
+  ul {
+    margin: 0;
+    padding: 0;
+  }
 
-    ul,
-    ul li,
-    ul li a {
-      display: block;
-    }
+  ul,
+  ul li,
+  ul li a {
+    display: block;
+  }
 
-    ul li {
-      margin-bottom: 8px;
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-
-    ul li a {
-      @extend %border-box;
-      color: $color-3-1;
-      font: normal 0.89rem "Roboto", $global-fonts;
-      border-radius: 3px;
-      text-decoration: none;
-      letter-spacing: 1px;
-      text-transform: lowercase;
-      @include with-browser-prefixes(
-        transition, (
-                        (color $ani-speed-1),
-                        (padding $ani-speed-1),
-                        (padding-bottom $ani-speed-1),
-              )
-      );
-
-      &:hover {
-        color: $color-2-1;
-      }
-
-      &.active,
-      &:active {
-        color: $color-2-2;
-      }
+  ul li {
+    margin-bottom: 8px;
+    &:last-child {
+      margin-right: 0;
     }
   }
 
+  ul li a {
+    @extend %border-box;
+    color: $color-3-1;
+    font: normal 0.89rem "Roboto", $global-fonts;
+    border-radius: 3px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    text-transform: lowercase;
+    @include with-browser-prefixes(
+      transition, (
+                      (color $ani-speed-1),
+                      (padding $ani-speed-1),
+                      (padding-bottom $ani-speed-1),
+            )
+    );
+
+    &:hover {
+      color: $color-2-1;
+    }
+
+    &.active,
+    &:active {
+      color: $color-2-2;
+    }
+  }
 }

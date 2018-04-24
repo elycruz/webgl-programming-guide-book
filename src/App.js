@@ -85,15 +85,13 @@ class App extends Component {
             <div id="wrapper" className="clearfix">
                 <header>
                     <div>
-                        <div className="logo">
-                            <div>
-                                <a className="hamburger-btn">
-                                    <div className="slice">&nbsp;</div>
-                                    <div className="slice">&nbsp;</div>
-                                    <div className="slice">&nbsp;</div>
-                                </a>
-                                <h1><a href="#">WebGl Programming Guide Book Examples</a></h1>
-                            </div>
+                        <div className="flex-container">
+                            <a className="hamburger-btn">
+                                <div className="slice">&nbsp;</div>
+                                <div className="slice">&nbsp;</div>
+                                <div className="slice">&nbsp;</div>
+                            </a>
+                            <h1><a href="/">WebGl Programming Guide Book Examples</a></h1>
                         </div>
                     </div>
                 </header>

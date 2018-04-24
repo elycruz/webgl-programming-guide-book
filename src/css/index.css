@@ -1186,7 +1186,9 @@ p {
 #wrapper {
   position: relative;
   width: 100%;
-  height: 100%; }
+  height: 100%;
+  /** Import: Header, Nav, and Footer **/
+  /** Hamburger Nav Setup **/ }
   #wrapper > * {
     width: 100%; }
   #wrapper > * > * {
@@ -1199,114 +1201,49 @@ p {
   #wrapper > header {
     background: #FFF; }
     #wrapper > header > div {
-      padding: 13px; }
-    #wrapper > header .logo {
-      cursor: pointer; }
-      #wrapper > header .logo h1 {
-        line-height: 0;
-        border-bottom: 1px solid #CCC; }
-      #wrapper > header .logo h1 a {
-        font: normal 18px "Lato", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
-        color: #1240AB;
-        text-decoration: none;
-        text-transform: uppercase; }
-      #wrapper > header .logo h1 a:hover {
-        color: #00CC00; }
-      #wrapper > header .logo h2 {
-        font: normal 1.3rem "Oswald", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
-        color: #1240AB; }
-  #wrapper > header.overlay-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 98;
-    box-shadow: 0 0 55px rgba(0, 0, 0, 0.34);
-    -o-opacity: 0;
-    -ms-opacity: 0;
-    -moz-opacity: 0;
-    -webkit-opacity: 0;
-    opacity: 0; }
-    #wrapper > header.overlay-header h2 {
-      display: none; }
-    #wrapper > header.overlay-header > div {
+      padding: 1rem; }
+    #wrapper > header .flex-container {
       display: flex;
-      align-items: center; }
-    #wrapper > header.overlay-header .logo h1,
-    #wrapper > header.overlay-header .logo,
-    #wrapper > header.overlay-header nav {
-      display: inline-block; }
-    #wrapper > header.overlay-header .logo h1,
-    #wrapper > header.overlay-header .logo {
-      margin: 0; }
-    #wrapper > header.overlay-header nav {
-      -o-transform: translateX(13px);
-      -ms-transform: translateX(13px);
-      -moz-transform: translateX(13px);
-      -webkit-transform: translateX(13px);
-      transform: translateX(13px); }
-    #wrapper > header.overlay-header nav ul li a {
-      color: #1240AB; }
-  #wrapper > header.overlay-header.active {
-    animation: slide-in-from-top;
-    animation-duration: 0.34s;
-    -o-transform: translateY(0);
-    -ms-transform: translateY(0);
-    -moz-transform: translateY(0);
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
-    -o-opacity: 1;
-    -ms-opacity: 1;
-    -moz-opacity: 1;
-    -webkit-opacity: 1;
-    opacity: 1; }
-  #wrapper > header.overlay-header.in-active {
-    animation: fade-away;
-    animation-duration: 0.34s; }
-  #wrapper > header.overlay-header.offscreen {
-    -o-transform: translateY(-100%);
-    -ms-transform: translateY(-100%);
-    -moz-transform: translateY(-100%);
-    -webkit-transform: translateY(-100%);
-    transform: translateY(-100%); }
+      border-bottom: 1px solid #CCC;
+      padding-bottom: 0.55rem; }
+    #wrapper > header h1 {
+      line-height: 0; }
+    #wrapper > header h1 a {
+      font: normal 18px "Lato", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
+      color: #1240AB;
+      text-decoration: none;
+      text-transform: uppercase; }
+    #wrapper > header h1 a:hover {
+      color: #00CC00; }
   @media (min-width: 320px) and (max-width: 767px) {
-    #wrapper > header > div .logo {
+    #wrapper > header > div .flex-container {
       margin-bottom: 0; }
-    #wrapper > header > div .logo,
-    #wrapper > header > div .logo > div {
-      width: 100%; }
-    #wrapper > header > div .logo > div {
+    #wrapper > header > div > div {
       display: flex;
       align-items: center;
-      flex-direction: row; }
-    #wrapper > header > div .logo h1,
+      flex-direction: row;
+      width: 100%; }
+    #wrapper > header > div h1,
     #wrapper > header > div .hamburger-btn {
       position: relative;
       display: inline-block; }
     #wrapper > header > div .hamburger-btn .slice {
       background: #1240AB; }
-    #wrapper > header > div .logo h1 {
+    #wrapper > header > div h1 {
+      padding-bottom: 8px;
+      line-height: 0;
       flex-basis: 100%; }
-      #wrapper > header > div .logo h1, #wrapper > header > div .logo h1 a {
-        line-height: 0; }
-      #wrapper > header > div .logo h1 a {
-        font-size: 1.5rem; }
-    #wrapper > header > div .logo h2 {
-      font-size: 1.1rem;
-      padding: 5px 0 0; }
-    #wrapper > header > div .logo + nav:last-child {
+      #wrapper > header > div h1 a {
+        font-size: 1.1rem;
+        line-height: 1.3rem; }
+    #wrapper > header > div + nav:last-child {
       display: none; }
     #wrapper > main > section > header:first-child {
-      padding: 21px 13px !important; } }
+      padding: 21px 13px; } }
   @media (min-device-width: 768px) and (max-device-width: 3840px) {
-    #wrapper > header .logo h1 a {
+    #wrapper > header h1 a {
       line-height: 34px; }
     #wrapper > header .hamburger-btn {
-      display: none; }
-    #wrapper > header nav {
-      display: block; }
-    #wrapper > header.overlay-header .logo + nav:last-child {
-      margin-left: 13px; }
-    #wrapper > header.overlay-header + .mobile-nav {
       display: none; } }
   #wrapper main > div {
     display: flex;
@@ -1350,163 +1287,157 @@ p {
     transition: opacity 0.13s linear, transform 0.34s ease-in-out; }
   #wrapper main > div > section.view-area.visible {
     opacity: 1; }
-
-/** Import: Header, Nav, and Footer **/
-/** Hamburger Nav Setup **/
-.hamburger-btn {
-  display: inline-block;
-  width: 34px;
-  height: 34px;
-  background: transparent;
-  -o-opacity: 1;
-  -ms-opacity: 1;
-  -moz-opacity: 1;
-  -webkit-opacity: 1;
-  opacity: 1;
-  margin: 0 21px 0 0;
-  cursor: pointer; }
-
-.hamburger-btn .slice {
-  height: 5px;
-  border-radius: 21px;
-  margin-bottom: 5.5px; }
-  .hamburger-btn .slice:last-child {
-    margin-bottom: 0; }
-
-#wrapper > main > div > nav,
-#wrapper > header + .mobile-nav {
-  -o-transform-origin: left;
-  -ms-transform-origin: left;
-  -moz-transform-origin: left;
-  -webkit-transform-origin: left;
-  transform-origin: left; }
-  #wrapper > main > div > nav ul,
-  #wrapper > header + .mobile-nav ul {
+  @media (min-width: 320px) and (max-width: 767px) {
+    #wrapper main > div {
+      display: block; } }
+  #wrapper .hamburger-btn {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    background: transparent;
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1;
+    margin: 0 21px 0 0;
+    cursor: pointer; }
+  #wrapper .hamburger-btn .slice {
+    height: 5px;
+    border-radius: 21px;
+    margin-bottom: 5.5px; }
+    #wrapper .hamburger-btn .slice:last-child {
+      margin-bottom: 0; }
+  #wrapper > main > div > nav,
+  #wrapper > header + .mobile-nav {
+    -o-transform-origin: left;
+    -ms-transform-origin: left;
+    -moz-transform-origin: left;
+    -webkit-transform-origin: left;
+    transform-origin: left; }
+    #wrapper > main > div > nav ul,
+    #wrapper > header + .mobile-nav ul {
+      margin: 0;
+      padding: 0; }
+    #wrapper > main > div > nav ul,
+    #wrapper > main > div > nav ul li,
+    #wrapper > main > div > nav ul li a,
+    #wrapper > header + .mobile-nav ul,
+    #wrapper > header + .mobile-nav ul li,
+    #wrapper > header + .mobile-nav ul li a {
+      display: block; }
+    #wrapper > main > div > nav ul li,
+    #wrapper > header + .mobile-nav ul li {
+      margin-bottom: 8px; }
+      #wrapper > main > div > nav ul li:last-child,
+      #wrapper > header + .mobile-nav ul li:last-child {
+        margin-right: 0; }
+    #wrapper > main > div > nav ul li a,
+    #wrapper > header + .mobile-nav ul li a {
+      color: #1240AB;
+      font: normal 0.89rem "Roboto", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
+      border-radius: 3px;
+      text-decoration: none;
+      letter-spacing: 1px;
+      text-transform: lowercase;
+      -o-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
+      -ms-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
+      -moz-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
+      -webkit-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
+      transition: color 0.13s, padding 0.13s, padding-bottom 0.13s; }
+      #wrapper > main > div > nav ul li a:hover,
+      #wrapper > header + .mobile-nav ul li a:hover {
+        color: #FFAA00; }
+      #wrapper > main > div > nav ul li a.active, #wrapper > main > div > nav ul li a:active,
+      #wrapper > header + .mobile-nav ul li a.active,
+      #wrapper > header + .mobile-nav ul li a:active {
+        color: #BF8F30; }
+  #wrapper > nav.mobile-nav {
+    position: fixed;
+    width: 55vw;
+    height: 100vh;
+    top: 0;
     margin: 0;
-    padding: 0; }
-  #wrapper > main > div > nav ul,
-  #wrapper > main > div > nav ul li,
-  #wrapper > main > div > nav ul li a,
-  #wrapper > header + .mobile-nav ul,
-  #wrapper > header + .mobile-nav ul li,
-  #wrapper > header + .mobile-nav ul li a {
-    display: block; }
-  #wrapper > main > div > nav ul li,
-  #wrapper > header + .mobile-nav ul li {
-    margin-bottom: 8px; }
-    #wrapper > main > div > nav ul li:last-child,
-    #wrapper > header + .mobile-nav ul li:last-child {
-      margin-right: 0; }
-  #wrapper > main > div > nav ul li a,
-  #wrapper > header + .mobile-nav ul li a {
-    color: #1240AB;
-    font: normal 0.89rem "Roboto", "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
-    border-radius: 3px;
-    text-decoration: none;
-    letter-spacing: 1px;
-    text-transform: lowercase;
-    -o-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
-    -ms-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
-    -moz-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
-    -webkit-transition: color 0.13s, padding 0.13s, padding-bottom 0.13s;
-    transition: color 0.13s, padding 0.13s, padding-bottom 0.13s; }
-    #wrapper > main > div > nav ul li a:hover,
-    #wrapper > header + .mobile-nav ul li a:hover {
-      color: #FFAA00; }
-    #wrapper > main > div > nav ul li a.active, #wrapper > main > div > nav ul li a:active,
-    #wrapper > header + .mobile-nav ul li a.active,
-    #wrapper > header + .mobile-nav ul li a:active {
-      color: #BF8F30; }
-
-#wrapper > nav.mobile-nav {
-  position: fixed;
-  width: 55vw;
-  height: 100vh;
-  top: 0;
-  margin: 0;
-  box-sizing: border-box;
-  background: #1240AB;
-  overflow: auto;
-  -o-opacity: 0;
-  -ms-opacity: 0;
-  -moz-opacity: 0;
-  -webkit-opacity: 0;
-  opacity: 0;
-  -o-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
-  -moz-transform: translateX(-100%);
-  -webkit-transform: translateX(-100%);
-  transform: translateX(-100%);
-  -o-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
-  -ms-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
-  -moz-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
-  -webkit-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
-  transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
-  will-change: -o-transform, -ms-transform, -moz-transform, -webkit-transform, transform;
-  z-index: 90; }
-  #wrapper > nav.mobile-nav .close-btn {
-    color: #fff;
-    font-weight: bold;
-    font-size: 1.3rem; }
-  #wrapper > nav.mobile-nav ul {
-    position: absolute;
-    display: block;
+    box-sizing: border-box;
+    background: #1240AB;
+    overflow: auto;
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -webkit-opacity: 0;
+    opacity: 0;
+    -o-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    -o-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
+    -ms-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
+    -moz-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
+    -webkit-transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
+    transition: -o-transform 0.34s ease-in-out, -ms-transform 0.34s ease-in-out, -moz-transform 0.34s ease-in-out, -webkit-transform 0.34s ease-in-out, transform 0.34s ease-in-out, -o-opacity 0.34s ease-in-out, -ms-opacity 0.34s ease-in-out, -moz-opacity 0.34s ease-in-out, -webkit-opacity 0.34s ease-in-out, opacity 0.34s ease-in-out, top 0.34s ease-in-out;
+    will-change: -o-transform, -ms-transform, -moz-transform, -webkit-transform, transform;
+    z-index: 90; }
+    #wrapper > nav.mobile-nav .close-btn {
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.3rem; }
+    #wrapper > nav.mobile-nav ul {
+      position: absolute;
+      display: block;
+      width: 100%;
+      padding: 13px 13px 0;
+      margin: 0; }
+    #wrapper > nav.mobile-nav ul li {
+      display: block;
+      clear: both;
+      float: none;
+      margin-bottom: 5px; }
+    #wrapper > nav.mobile-nav ul li a {
+      color: #FFF; }
+  #wrapper .overlay-header + .mobile-nav.active {
+    -o-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1; }
+  #wrapper .overlay-bg {
+    position: fixed;
+    height: 100%;
     width: 100%;
-    padding: 13px 13px 0;
-    margin: 0; }
-  #wrapper > nav.mobile-nav ul li {
-    display: block;
-    clear: both;
-    float: none;
-    margin-bottom: 5px; }
-  #wrapper > nav.mobile-nav ul li a {
-    color: #FFF; }
-
-#wrapper .overlay-header + .mobile-nav.active {
-  -o-transform: translateX(0);
-  -ms-transform: translateX(0);
-  -moz-transform: translateX(0);
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-  -o-opacity: 1;
-  -ms-opacity: 1;
-  -moz-opacity: 1;
-  -webkit-opacity: 1;
-  opacity: 1; }
-
-.overlay-bg {
-  position: fixed;
-  height: 100%;
-  width: 100%;
-  -o-opacity: 0;
-  -ms-opacity: 0;
-  -moz-opacity: 0;
-  -webkit-opacity: 0;
-  opacity: 0;
-  background-color: rgba(0, 0, 0, 0.55);
-  -o-transform: translateX(-100%);
-  -ms-transform: translateX(-100%);
-  -moz-transform: translateX(-100%);
-  -webkit-transform: translateX(-100%);
-  transform: translateX(-100%);
-  -o-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
-  -ms-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
-  -moz-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
-  -webkit-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
-  transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
-  z-index: 89; }
-
-.overlay-bg.active {
-  -o-transform: translateX(0);
-  -ms-transform: translateX(0);
-  -moz-transform: translateX(0);
-  -webkit-transform: translateX(0);
-  transform: translateX(0);
-  -o-opacity: 1;
-  -ms-opacity: 1;
-  -moz-opacity: 1;
-  -webkit-opacity: 1;
-  opacity: 1; }
+    -o-opacity: 0;
+    -ms-opacity: 0;
+    -moz-opacity: 0;
+    -webkit-opacity: 0;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.55);
+    -o-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    transform: translateX(-100%);
+    -o-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
+    -ms-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
+    -moz-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
+    -webkit-transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
+    transition: -o-opacity 0.34s, -ms-opacity 0.34s, -moz-opacity 0.34s, -webkit-opacity 0.34s, opacity 0.34s;
+    z-index: 89; }
+  #wrapper .overlay-bg.active {
+    -o-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -webkit-transform: translateX(0);
+    transform: translateX(0);
+    -o-opacity: 1;
+    -ms-opacity: 1;
+    -moz-opacity: 1;
+    -webkit-opacity: 1;
+    opacity: 1; }
 
 form legend {
   margin-bottom: 34px; }

@@ -23,12 +23,12 @@
     height: auto;
   }
 
+  /** Import: Header, Nav, and Footer **/
   @import "header";
   @import "main";
+  @import "hamburger-btn";
+  @import "nav";
+  @import "mobile-nav";
+  @import "overlay-bg";
 }
 
-/** Import: Header, Nav, and Footer **/
-@import "hamburger-btn";
-@import "nav";
-@import "mobile-nav";
-@import "overlay-bg";
