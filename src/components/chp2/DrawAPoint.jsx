@@ -1,4 +1,3 @@
-import React, {Component} from 'react';
 import {error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";

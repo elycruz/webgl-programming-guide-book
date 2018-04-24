@@ -1,4 +1,3 @@
-import React from 'react';
 import GenericCanvasExperimentView from '../app/GenericCanvasExperimentView';
 import {error} from '../../utils/utils';
 import {getWebGlContext, initProgram, toRadians} from "../../utils/WebGlUtils-2";

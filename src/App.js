@@ -57,8 +57,12 @@ class App extends Component {
         this.currentLocationInfo = this.navContainerItemsList
             .filter(x => x.uri === window.location.pathname).shift(); // assume flat list for now
         this.boundOnLinkClick = App.onLinkClick.bind(this);
-        this.boundonViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
+        this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
         this.state.CurrentView = this.getViewFor(!this.currentLocationInfo ? errorViewInfo : this.currentLocationInfo);
+        window.addEventListener('popstate', e => {
+            e.detail = e.state;
+            this.boundOnLinkClick(e);
+        });
     }
 
     getViewFor (linkInfo) {
@@ -100,7 +104,7 @@ class App extends Component {
                                 onLinkClick={this.boundOnLinkClick} />
                         <section ref={this.viewsElmRef}
                                  className="canvas-experiment-view view-area visible"
-                                 onTransitionEnd={this.boundonViewsAreaTransitionEnd}>
+                                 onTransitionEnd={this.boundOnViewsAreaTransitionEnd}>
                             <CurrentView />
                         </section>
                     </div>

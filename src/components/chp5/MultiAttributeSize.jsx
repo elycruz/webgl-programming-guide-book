@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {uuid, error, log} from '../../utils/utils';
 import {getWebGlContext, initProgram, toRadians, getAttribLoc as attribLoc, getUniformLoc as uniformLoc} from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
+import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 
 const ListF32 = from => new Float32Array(from);
 
@@ -9,28 +10,20 @@ const
 
     fragShader = `
         void main () {
-            gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0);
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }`,
 
     vertShader = `
         attribute vec4 a_Position;
-        uniform mat4 u_TransformMatrix;
+        attribute float a_PointSize;
         void main () {
-            gl_Position = u_TransformMatrix * a_Position;
+            gl_Position = a_Position;
+            gl_PointSize = a_PointSize;
         }`
 
 ;
 
-export default class MultiAttributeSize extends Component {
-    static defaultProps = {
-        canvasId: 'multi-attribute-size-canvas'
-    };
-
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
-
+export default class MultiAttributeSize extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),
@@ -120,20 +113,4 @@ export default class MultiAttributeSize extends Component {
         g_last = Date.now();
         getTick(mat4.create())();
     }
-
-    render () {
-        const {props} = this;
-
-        return ([
-                <header key={uuid('rotating-triangle-element-')}>
-                    <h3>AnimatedTriangle.jsx</h3>
-                </header>,
-                <canvas key={uuid('rotating-triangle-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            ]
-        );
-    }
-
 }

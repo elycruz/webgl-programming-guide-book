@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {uuid, error, noop} from '../../utils/utils';
+import {uuid, noop} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils';
 
 const

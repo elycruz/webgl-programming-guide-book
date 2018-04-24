@@ -14,7 +14,7 @@ export default class AppNav extends Component {
         const elm = e.currentTarget,
             {componentFilePath, uri, label} = elm.dataset;
         e.detail = {label, componentFilePath, uri};
-        window.history.pushState(null, label, uri);
+        window.history.pushState(e.detail, label, uri);
         this.props.onLinkClick(e);
     }
 
