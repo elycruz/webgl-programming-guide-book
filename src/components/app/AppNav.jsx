@@ -1,23 +1,43 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route, Link} from 'react-router-dom'
-import {isEmpty, keys, log} from 'fjl';
-import {objsToListsOnKey, uuid} from '../../utils/utils';
+import {isEmpty} from 'fjl';
+import {uuid} from '../../utils/utils';
 
 export default class AppNav extends Component {
     static defaultProps = {
         navContainer: {},
+        navContainerItemsList: [],
         onLinkClick: () => (undefined)
     };
+
+    static onLinkClick (e) {
+        e.preventDefault();
+        const elm = e.currentTarget,
+            {componentFilePath, uri, label} = elm.dataset;
+        e.detail = {label, componentFilePath, uri};
+        window.history.pushState(null, label, uri);
+        this.props.onLinkClick(e);
+    }
+
+    constructor (props) {
+        super(props);
+        this.boundOnLinkClick = AppNav.onLinkClick.bind(this);
+    }
 
     renderUnorderedList (items) {
         if (isEmpty(items)) {
             return null;
         }
         return (<ul key={uuid('ul-')}>
-            {items.map(item => (<li key={uuid('ul-li-')}>
-                    <Link to={item.uri} className={item.uri === window.location.pathname ? 'active' : ''} onClick={this.props.onLinkClick}>
+            {items.map((item, ind) => (<li key={uuid('ul-li-')}>
+                    <a href={item.uri}
+                       className={item.active ? 'active' : ''}
+                       onClick={this.boundOnLinkClick}
+                       data-component-file-path={item.componentFilePath}
+                       data-label={item.label}
+                       data-uri={item.uri}
+                    >
                         {item.label}
-                    </Link>
+                    </a>
                     {item.items ? this.renderUnorderedList(item.items) : null}
                 </li>)
             )}
@@ -27,7 +47,7 @@ export default class AppNav extends Component {
     render () {
         const {props} = this;
         return (<nav>
-            {this.renderUnorderedList(objsToListsOnKey('items', props.navContainer).items)}
+            {this.renderUnorderedList(props.navContainerItemsList)}
         </nav>)
     }
 }

@@ -1,50 +1,29 @@
 import React, {Component} from 'react';
-import {BrowserRouter, Route} from 'react-router-dom'
-import {uuid, objsToListsOnKey} from "./utils/utils";
+import {objsToListsOnKey} from "./utils/utils";
 import * as navContainer from './components/app/app.nav.json';
-import {isEmpty, error, log} from 'fjl';
 
 import AppNav from "./components/app/AppNav";
 
 const
 
-    lazyAsyncComponent = (fetchComponent = () => (Promise.resolve({})), props = {}, metaProps = {}) => {
+    defaultFetchComponent = () => (Promise.resolve({})),
+
+    lazyAsyncComponent = (fetchComponent = defaultFetchComponent, props = {}) => {
         return class LazyAsyncComponent extends Component {
             state = {FetchedComponent: null};
             componentWillMount() {
-
-                const runProcess = () => {
-                    const {viewsElmRef, viewsElmVisibleClassName} = metaProps,
-                        viewsElm = viewsElmRef.current,
-                        handler = e => {
-                            log('fade-out transition completed');
-                            log('awaiting component load...');
-                            e.currentTarget.removeEventListener('transitionend', handler);
-                            fetchComponent().then(({ default: component }) => {
-                                log('Component fetched.  Setting component to state...');
-                                this.setState({ FetchedComponent: component });
-                                metaProps.viewsElmRef.current.classList.add(metaProps.viewsElmVisibleClassName);
-                            });
-                        };
-                    log('awaiting fade-out transition');
-                    viewsElm.addEventListener('transitionend', handler);
-                    viewsElm.classList.remove(viewsElmVisibleClassName);
-                };
-
-                const interval = setInterval(() => {
-                    if (metaProps.viewsElmRef.current) {
-                        runProcess();
-                        clearInterval(interval);
-                    }
-                }, 100);
+                fetchComponent().then(({default: component}) => {
+                    this.setState({FetchedComponent: component});
+                });
             }
-
             render() {
                 const { FetchedComponent } = this.state;
                 return FetchedComponent ? <FetchedComponent {...props} /> : null;
             }
         };
-    }
+    },
+
+    returnErrorView = () => Promise.resolve((<h2>Page not found</h2>))
 ;
 
 class App extends Component {
@@ -53,73 +32,80 @@ class App extends Component {
         viewsElmVisbleClassName: 'visible'
     };
 
-    static renderRoutes(navContainer, metaProps) {
-        return isEmpty(navContainer.items) ?
-            null : objsToListsOnKey('items', navContainer).items.map(item => {
-                const uriParts = item.uri.split('/'),
-                    filePathParts = item.componentFilePath.split('/'),
-                    aliasName = uriParts.length ? uriParts[uriParts.length - 1] : null;
-                return (
-                    <Route
-                        key={uuid('route-')}
-                        path={item.uri}
-                        component={
-                            lazyAsyncComponent(
-                                () => import(item.componentFilePath + '.jsx').catch(error),
-                                {
-                                    fileName: filePathParts[filePathParts.length - 1] + '.jsx',
-                                    aliasName,
-                                    canvasId: aliasName
-                                },
-                                metaProps
-                            )
-                        }
-                        {...item.reactRouterRouteParams}
-                    />
-                );
-            });
+    static onLinkClick (e) {
+        this.currentLocationInfo = e.detail;
+        this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
     }
+
+    static onViewsAreaTransitionEnd (e) {
+        if (!e.currentTarget.classList.contains(this.props.viewsElmVisbleClassName)) {
+            this.setState({CurrentView: this.getViewFor(this.currentLocationInfo)});
+            e.currentTarget.classList.add(this.props.viewsElmVisbleClassName);
+        }
+    }
+
+    state = {CurrentView: null};
 
     constructor (props) {
         super(props);
+        const errorViewInfo = {
+            componentFilePath: './components/app/404',
+            uri: '/app/404-error'
+        };
         this.viewsElmRef = React.createRef();
+        this.navContainerItemsList = objsToListsOnKey('items', navContainer).items;
+        this.currentLocationInfo = this.navContainerItemsList
+            .filter(x => x.uri === window.location.pathname).shift(); // assume flat list for now
+        this.boundOnLinkClick = App.onLinkClick.bind(this);
+        this.boundonViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
+        this.state.CurrentView = this.getViewFor(!this.currentLocationInfo ? errorViewInfo : this.currentLocationInfo);
+    }
+
+    getViewFor (linkInfo) {
+        const uriParts = linkInfo.uri.split('/'),
+            filePathParts = linkInfo.componentFilePath.split('/'),
+            aliasName = uriParts.length ? uriParts[uriParts.length - 1] : null;
+        return lazyAsyncComponent(
+            () => import(linkInfo.componentFilePath + '.jsx').catch(returnErrorView),
+            {
+                fileName: filePathParts[filePathParts.length - 1] + '.jsx',
+                aliasName,
+                canvasId: aliasName
+            }
+        );
     }
 
     render() {
+        const {CurrentView} = this.state;
         return (
-            <BrowserRouter>
-                <div id="wrapper" className="clearfix">
-                    <header>
-                        <div>
-                            <div className="logo">
-                                <div>
-                                    <a className="hamburger-btn">
-                                        <div className="slice">&nbsp;</div>
-                                        <div className="slice">&nbsp;</div>
-                                        <div className="slice">&nbsp;</div>
-                                    </a>
-                                    <h1><a href="#">WebGl Programming Guide Book Examples</a></h1>
-                                </div>
+            <div id="wrapper" className="clearfix">
+                <header>
+                    <div>
+                        <div className="logo">
+                            <div>
+                                <a className="hamburger-btn">
+                                    <div className="slice">&nbsp;</div>
+                                    <div className="slice">&nbsp;</div>
+                                    <div className="slice">&nbsp;</div>
+                                </a>
+                                <h1><a href="#">WebGl Programming Guide Book Examples</a></h1>
                             </div>
                         </div>
-                    </header>
-                    <main>
-                        <div>
-                            <AppNav navContainer={navContainer} />
-                            <section ref={this.viewsElmRef}
-                                     className="canvas-experiment-view view-area visible"
-                                     onTransitionEnd={log}>
-                                {
-                                    App.renderRoutes(navContainer, {
-                                        viewsElmRef: this.viewsElmRef,
-                                        viewsElmVisibleClassName: this.props.viewsElmVisbleClassName
-                                    })
-                                }
-                            </section>
-                        </div>
-                    </main>
-                </div>
-            </BrowserRouter>
+                    </div>
+                </header>
+                <main>
+                    <div>
+                        <AppNav navContainer={navContainer}
+                                navContainerItemsList={this.navContainerItemsList}
+                                onLinkClick={this.boundOnLinkClick} />
+                        <section ref={this.viewsElmRef}
+                                 className="canvas-experiment-view view-area visible"
+                                 onTransitionEnd={this.boundonViewsAreaTransitionEnd}>
+                            <CurrentView />
+                        </section>
+                    </div>
+                </main>
+            </div>
         );
     }
 }
