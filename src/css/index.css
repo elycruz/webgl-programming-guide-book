@@ -1272,11 +1272,9 @@ p {
     #wrapper > main section p a.active, #wrapper > main section p a:active {
       color: #269926; }
   #wrapper > main > div > section.view-area {
-    transition: opacity 0.13s linear, transform 0.34s ease-in-out;
-    transform: translateX(8%);
+    transition: opacity 0.08s linear;
     opacity: 0; }
   #wrapper > main > div > section.view-area.visible {
-    transform: translateX(0);
     opacity: 1; }
   @media (min-width: 768px) and (max-width: 3840px) {
     #wrapper main > div {
