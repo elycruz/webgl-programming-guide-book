@@ -1245,51 +1245,51 @@ p {
       line-height: 34px; }
     #wrapper > header .hamburger-btn {
       display: none; } }
-  #wrapper main > div {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 0 13px; }
-    #wrapper main > div > * {
-      margin-right: 13px; }
-    #wrapper main > div > nav {
-      flex-basis: 21%; }
-    #wrapper main > div > section {
-      flex-basis: 89%; }
-  #wrapper main .h2 {
+  #wrapper > main .h2 {
     color: #1240AB;
     font: normal 21px "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
     line-height: 21px;
     letter-spacing: 3px;
     text-transform: uppercase; }
-  #wrapper main .h3 {
+  #wrapper > main .h3 {
     color: #1240AB;
     font: normal 1rem "Helvetica", "Geo Sans Light", "Verdana", "Sans-Serif";
     letter-spacing: 0;
     text-transform: uppercase; }
-  #wrapper main section, #wrapper main header {
+  #wrapper > main section, #wrapper > main header {
     margin-bottom: 13px; }
-    #wrapper main section:last-child, #wrapper main header:last-child {
+    #wrapper > main section:last-child, #wrapper > main header:last-child {
       margin-bottom: 0; }
-  #wrapper main section p a {
+  #wrapper > main section p a {
     -o-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     -ms-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     -moz-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     -webkit-transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     transition: -o-opacity 0.13s, -ms-opacity 0.13s, -moz-opacity 0.13s, -webkit-opacity 0.13s, opacity 0.13s, color 0.13s;
     color: #1240AB; }
-    #wrapper main section p a:hover {
+    #wrapper > main section p a:hover {
       color: #00CC00; }
-    #wrapper main section p a.active, #wrapper main section p a:active {
+    #wrapper > main section p a.active, #wrapper > main section p a:active {
       color: #269926; }
-  #wrapper main > div > section.view-area {
-    opacity: 0;
-    transition: opacity 0.13s linear, transform 0.34s ease-in-out; }
-  #wrapper main > div > section.view-area.visible {
+  #wrapper > main > div > section.view-area {
+    transition: opacity 0.13s linear, transform 0.34s ease-in-out;
+    transform: translateX(8%);
+    opacity: 0; }
+  #wrapper > main > div > section.view-area.visible {
+    transform: translateX(0);
     opacity: 1; }
-  @media (min-width: 320px) and (max-width: 767px) {
+  @media (min-width: 768px) and (max-width: 3840px) {
     #wrapper main > div {
-      display: block; } }
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 0 13px; }
+      #wrapper main > div > nav {
+        flex-basis: 21%; }
+      #wrapper main > div > section {
+        flex-basis: 89%; }
+      #wrapper main > div > * {
+        margin-right: 13px; } }
   #wrapper .hamburger-btn {
     display: inline-block;
     width: 34px;
