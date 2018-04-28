@@ -1,6 +1,6 @@
 {
-    "items": {
-        "home": {
+    "items": [
+        {
             "label": "Home",
             "uri": "/",
             "componentFilePath": "./components/home/Home",
@@ -8,110 +8,110 @@
                 "exact": true
             }
         },
-        "drawRectangle": {
+        {
             "label": "Draw Rectangle",
             "uri": "/chp2/draw-rectangle",
             "componentFilePath": "./components/chp2/DrawRectangle"
         },
-        "drawPoint": {
+        {
             "label": "Draw a Point",
             "uri": "/chp2/draw-a-point",
             "componentFilePath": "./components/chp2/DrawAPoint"
         },
-        "drawPoint2": {
+        {
             "label": "Draw a Point 2",
             "uri": "/chp2/draw-a-point-2",
             "componentFilePath": "./components/chp2/DrawAPoint2"
         },
-        "drawPoint3": {
+        {
             "label": "Draw a Point 3",
             "uri": "/chp2/draw-a-point-3",
             "componentFilePath": "./components/chp2/DrawAPoint3"
         },
-        "multiPoint": {
+        {
             "label": "Multi Point",
             "uri": "/chp3/multi-point",
             "componentFilePath": "./components/chp3/MultiPoint"
         },
-        "helloTriangle": {
+        {
             "label": "Hello Triangle",
             "uri": "/chp3/hello-triangle",
             "componentFilePath": "./components/chp3/HelloTriangle"
         },
-        "helloQuad": {
+        {
             "label": "Hello Quad",
             "uri": "/chp3/hello-quad",
             "componentFilePath": "./components/chp3/HelloQuad"
         },
-        "translatedTriangle": {
+        {
             "label": "Translated Triangle",
             "uri": "/chp3/translated-triangle",
             "componentFilePath": "./components/chp3/TranslatedTriangle"
         },
-        "rotatedTriangle": {
+        {
             "label": "Rotated Triangle",
             "uri": "/chp3/rotated-triangle",
             "componentFilePath": "./components/chp3/RotatedTriangle"
         },
-        "rotatedTriangleMatrix": {
+        {
             "label": "Rotated Triangle by Matrix",
             "uri": "/chp3/rotated-triangle-matrix",
             "componentFilePath": "./components/chp3/RotatedTriangle_Matrix"
         },
-        "translatedTriangleMatrix": {
+        {
             "label": "Translate Triangle by Matrix",
             "uri": "/chp3/translated-triangle-matrix",
             "componentFilePath": "./components/chp3/TranslatedTriangle_Matrix"
         },
-        "scaledTriangleMatrix": {
+        {
             "label": "Scaled Triangle by Matrix",
             "uri": "/chp3/scaled-triangle-matrix",
             "componentFilePath": "./components/chp3/ScaledTriangle_Matrix"
         },
-        "rotatedTranslatedTriangleMatrix": {
+        {
             "label": "Rotated and Translated Triangle",
             "uri": "/chp4/rotated-translated-triangle",
             "componentFilePath": "./components/chp4/RotatedTranslatedTriangle"
         },
-        "rotatingTriangleMatrix": {
+        {
             "label": "Rotating Triangle",
             "uri": "/chp4/rotating-triangle",
             "componentFilePath": "./components/chp4/RotatingTriangle"
         },
-        "orbitingTriangleMatrix": {
+        {
             "label": "Orbiting Triangle",
             "uri": "/chp4/orbiting-triangle",
             "componentFilePath": "./components/chp4/OrbitingTriangle"
         },
-        "rotatingTriangleWithButtons": {
+        {
             "label": "Rotating Triangle with Buttons",
             "uri": "/chp4/rotating-triangle-with-buttons",
             "componentFilePath": "./components/chp4/RotatingTriangleWithButtons"
         },
-        "multiAttributeSize": {
+        {
             "label": "Multi Attribute Size",
             "uri": "/chp5/multi-attribute-size",
             "componentFilePath": "./components/chp5/MultiAttributeSize"
         },
-        "multiAttributeSizeInterleaved": {
+        {
             "label": "Multi Attribute Size Interleaved",
             "uri": "/chp5/multi-attribute-size-interleaved",
             "componentFilePath": "./components/chp5/MultiAttributeSize_Interleaved"
         },
-        "multiAttributeColor": {
+        {
             "label": "Multi Attribute Color",
             "uri": "/chp5/multi-attribute-color",
             "componentFilePath": "./components/chp5/MultiAttributeColor"
         },
-        "coloredTriangle": {
+        {
             "label": "Colored Triangle",
             "uri": "/chp5/colored-triangle",
             "componentFilePath": "./components/chp5/ColoredTriangle"
         },
-        "helloTriangleFragCoord": {
+        {
             "label": "Hello Triangle Frag Coord",
             "uri": "/chp5/hello-triangle-frag-coord",
             "componentFilePath": "./components/chp5/HelloTriangle_FragCoord"
         }
-    }
+    ]
 }

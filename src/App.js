@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {objsToListsOnKey, debounce} from "./utils/utils";
+import {debounce} from "./utils/utils";
 import * as navContainer from './components/app/app.nav.json';
 
 import AppNav from "./components/app/AppNav";
@@ -63,8 +63,8 @@ class App extends Component {
         this.viewsElmRef = React.createRef();
         this.navRef = React.createRef();
         // this.hamburgerRef = React.createRef();
-        this.navContainerItemsList = objsToListsOnKey('items', navContainer).items;
-        this.currentLocationInfo = this.navContainerItemsList
+        this.navContainer = navContainer;
+        this.currentLocationInfo = this.navContainer.items
             .filter(x => x.uri === window.location.pathname).shift(); // assume flat list for now
         this.boundOnLinkClick = App.onLinkClick.bind(this);
         this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
@@ -130,8 +130,7 @@ class App extends Component {
                 </header>
                 <main>
                     <div>
-                        <AppNav navContainer={navContainer}
-                                navContainerItemsList={this.navContainerItemsList}
+                        <AppNav navContainer={this.navContainer}
                                 onLinkClick={this.boundOnLinkClick}
                                 innerRef={this.navRef}
                         />
