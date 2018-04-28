@@ -112,6 +112,11 @@
             "label": "Hello Triangle Frag Coord",
             "uri": "/chp5/hello-triangle-frag-coord",
             "componentFilePath": "./components/chp5/HelloTriangle_FragCoord"
+        },
+        {
+            "label": "Texture Quad",
+            "uri": "/chp5/texture-quad",
+            "componentFilePath": "./components/chp5/TextureQuad"
         }
     ]
 }

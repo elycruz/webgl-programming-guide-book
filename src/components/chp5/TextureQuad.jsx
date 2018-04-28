@@ -1,0 +1,88 @@
+import React, {Component} from 'react';
+import {error} from '../../utils/utils';
+import {
+    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
+    loadTexture
+} from "../../utils/WebGlUtils-2";
+import {mat4, vec3} from 'gl-matrix';
+import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
+import texImage from '../../assets/sky.jpg';
+
+const
+
+    fragShader = `
+        precision highp float;
+        uniform sampler2D u_Sampler;
+        varying highp vec2 v_TexCoord;
+        void main () {
+            gl_FragColor = texture2D(u_Sampler, v_TexCoord);
+        }`,
+
+    vertShader = `
+        attribute vec4 a_Position;
+        attribute vec2 a_TexCoord;
+        varying highp vec2 v_TexCoord;
+        void main () {
+            gl_Position = a_Position;
+            v_TexCoord = a_TexCoord;
+        }`,
+
+    imageFilePath = texImage // Normalize texture-image's filepath based on
+                             // react-scripts development server
+
+;
+
+export default class TextureQuad extends GenericCanvasExperimentView {
+    componentDidMount () {
+        const canvasElm = this.canvas.current,
+            gl = getWebGlContext(canvasElm),
+            shadersAssocList = [
+                [gl.VERTEX_SHADER, vertShader],
+                [gl.FRAGMENT_SHADER, fragShader]
+            ],
+            program = initProgram(gl, shadersAssocList);
+
+        if (!program) {
+            error('Error while creating and linking program.');
+            return;
+        }
+
+        function initVertexBuffers (gl) {
+            const vertexCoords = new Float32Array([
+                    -0.5,  0.5, 0.0, 1.0,
+                    -0.5, -0.5, 0.0, 0.0,
+                    0.5,  0.5, 1.0, 1.0,
+                    0.5, -0.5, 1.0, 0.0
+                ]),
+                FSIZE = vertexCoords.BYTES_PER_ELEMENT,
+                vertexBuffer = gl.createBuffer(),
+                a_Position = attribLoc(gl, 'a_Position'),
+                a_TexCoord = attribLoc(gl, 'a_TexCoord')
+            ;
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertexCoords, gl.STATIC_DRAW);
+
+            gl.vertexAttribPointer(a_Position, 2, gl.FLOAT,  false, FSIZE * 4, 0);
+            gl.enableVertexAttribArray(a_Position);
+
+            gl.vertexAttribPointer(a_TexCoord, 1, gl.FLOAT,  false, FSIZE * 4, FSIZE * 2);
+            gl.enableVertexAttribArray(a_TexCoord);
+
+            return !vertexBuffer ? -1 : 4; // num sides in shape
+        }
+
+        const numCreatedVertices = initVertexBuffers(gl);
+
+        if (numCreatedVertices === -1) {
+            error('Error while creating vertices buffer.');
+        }
+
+        loadTexture(gl, imageFilePath, () => {
+            gl.uniform1i(uniformLoc(gl, 'u_Sampler'), 0);
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, numCreatedVertices);
+        });
+    }
+}
