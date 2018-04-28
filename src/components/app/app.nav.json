@@ -92,6 +92,21 @@
             "label": "Multi Attribute Size",
             "uri": "/chp5/multi-attribute-size",
             "componentFilePath": "./components/chp5/MultiAttributeSize"
+        },
+        "multiAttributeSizeInterleaved": {
+            "label": "Multi Attribute Size Interleaved",
+            "uri": "/chp5/multi-attribute-size-interleaved",
+            "componentFilePath": "./components/chp5/MultiAttributeSize_Interleaved"
+        },
+        "multiAttributeColor": {
+            "label": "Multi Attribute Color",
+            "uri": "/chp5/multi-attribute-color",
+            "componentFilePath": "./components/chp5/MultiAttributeColor"
+        },
+        "coloredTriangle": {
+            "label": "Colored Triangle",
+            "uri": "/chp5/colored-triangle",
+            "componentFilePath": "./components/chp5/ColoredTriangle"
         }
     }
 }
