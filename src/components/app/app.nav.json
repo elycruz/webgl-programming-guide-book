@@ -127,6 +127,26 @@
             "label": "Texture Quad Clamp Mirrored",
             "uri": "/chp5/texture-quad-clamp-mirror",
             "componentFilePath": "./components/chp5/TextureQuad_Clamp_Mirror"
+        },
+        {
+            "label": "Multi Texture",
+            "uri": "/chp5/multi-texture",
+            "componentFilePath": "./components/chp5/MultiTexture"
+        },
+        {
+            "label": "Look at Triangles",
+            "uri": "/chp7/look-at-triangles",
+            "componentFilePath": "./components/chp7/LookAtTriangles"
+        },
+        {
+            "label": "Look at Rotated Triangles",
+            "uri": "/chp7/look-at-rotated-triangles",
+            "componentFilePath": "./components/chp7/LookAtRotatedTriangles"
+        },
+        {
+            "label": "Look at Rotated Triangles (Model View Matrix)",
+            "uri": "/chp7/look-at-rotated-triangles_mvMatrix",
+            "componentFilePath": "./components/chp7/LookAtRotatedTriangles_mvMatrix"
         }
     ]
 }
