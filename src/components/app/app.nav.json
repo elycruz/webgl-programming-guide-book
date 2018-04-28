@@ -107,6 +107,11 @@
             "label": "Colored Triangle",
             "uri": "/chp5/colored-triangle",
             "componentFilePath": "./components/chp5/ColoredTriangle"
+        },
+        "helloTriangleFragCoord": {
+            "label": "Hello Triangle Frag Coord",
+            "uri": "/chp5/hello-triangle-frag-coord",
+            "componentFilePath": "./components/chp5/HelloTriangle_FragCoord"
         }
     }
 }
