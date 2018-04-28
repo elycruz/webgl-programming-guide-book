@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {uuid, error} from '../../utils/utils';
+import {error} from '../../utils/utils';
 import * as WebGlUtils from '../../utils/WebGlUtils-2';
+import GenericCanvasExperimentView from '../app/GenericCanvasExperimentView';
 
 const
 
@@ -17,15 +18,7 @@ const
 
 ;
 
-export default class HelloQuad extends Component {
-    static defaultProps = {
-        canvasId: 'hello-rectangle-canvas'
-    };
-
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
+export default class HelloQuad extends GenericCanvasExperimentView {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,
@@ -68,21 +61,6 @@ export default class HelloQuad extends Component {
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, numCreatedVertices);
-    }
-
-    render () {
-        const {props} = this;
-
-        return ([
-                <header key={uuid('hello-rectangle-element-')}>
-                    <h3>HelloQuad.jsx</h3>
-                </header>,
-                <canvas key={uuid('hello-rectangle-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            ]
-        );
     }
 
 }

@@ -117,6 +117,16 @@
             "label": "Texture Quad",
             "uri": "/chp5/texture-quad",
             "componentFilePath": "./components/chp5/TextureQuad"
+        },
+        {
+            "label": "Texture Quad Repeat",
+            "uri": "/chp5/texture-quad-repeat",
+            "componentFilePath": "./components/chp5/TextureQuad_Repeat"
+        },
+        {
+            "label": "Texture Quad Clamp Mirrored",
+            "uri": "/chp5/texture-quad-clamp-mirror",
+            "componentFilePath": "./components/chp5/TextureQuad_Clamp_Mirror"
         }
     ]
 }

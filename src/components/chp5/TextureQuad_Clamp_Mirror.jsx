@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {error} from '../../utils/utils';
 import {
-    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc
+    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
+    loadTexture
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
@@ -10,9 +11,9 @@ import texImage from '../../assets/sky.jpg';
 const
 
     fragShader = `
-        precision highp float;
+        precision mediump float;
         uniform sampler2D u_Sampler;
-        varying highp vec2 v_TexCoord;
+        varying vec2 v_TexCoord;
         void main () {
             gl_FragColor = texture2D(u_Sampler, v_TexCoord);
         }`,
@@ -20,7 +21,7 @@ const
     vertShader = `
         attribute vec4 a_Position;
         attribute vec2 a_TexCoord;
-        varying highp vec2 v_TexCoord;
+        varying vec2 v_TexCoord;
         void main () {
             gl_Position = a_Position;
             v_TexCoord = a_TexCoord;
@@ -31,7 +32,7 @@ const
 
 ;
 
-export default class TextureQuad extends GenericCanvasExperimentView {
+export default class TextureQuadRepeat extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),
@@ -48,12 +49,11 @@ export default class TextureQuad extends GenericCanvasExperimentView {
 
         function initVertexBuffers (gl) {
             const vertexCoords = new Float32Array([
-                    -0.5,  0.5, 0.0, 1.0,
-                    -0.5, -0.5, 0.0, 0.0,
-                    0.5,  0.5, 1.0, 1.0,
-                    0.5, -0.5, 1.0, 0.0
+                    -0.5,  0.5, -0.3, 1.7,
+                    -0.5, -0.5, -0.3, -0.2,
+                    0.5,  0.5, 1.7, 1.7,
+                    0.5, -0.5, 1.7, -0.2
                 ]),
-                FSIZE = vertexCoords.BYTES_PER_ELEMENT,
                 vertexBuffer = gl.createBuffer(),
                 a_Position = attribLoc(gl, 'a_Position'),
                 a_TexCoord = attribLoc(gl, 'a_TexCoord')
@@ -61,6 +61,8 @@ export default class TextureQuad extends GenericCanvasExperimentView {
 
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexCoords, gl.STATIC_DRAW);
+
+            const FSIZE = vertexCoords.BYTES_PER_ELEMENT;
 
             gl.vertexAttribPointer(a_Position, 2, gl.FLOAT,  false, FSIZE * 4, 0);
             gl.enableVertexAttribArray(a_Position);
@@ -93,7 +95,10 @@ export default class TextureQuad extends GenericCanvasExperimentView {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.MIRRORED_REPEAT);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+            // gl.generateMipmap(gl.TEXTURE_2D); // alternative to texParameteri above
             gl.uniform1i(u_Sampler, 0);
 
             // Clear then draw
