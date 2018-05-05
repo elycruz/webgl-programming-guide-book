@@ -147,6 +147,36 @@
             "label": "Look at Rotated Triangles (Model View Matrix)",
             "uri": "/chp7/look-at-rotated-triangles_mvMatrix",
             "componentFilePath": "./components/chp7/LookAtRotatedTriangles_mvMatrix"
+        },
+        {
+            "label": "Look at Rotated Triangles With Keys",
+            "uri": "/chp7/look-at-rotated-triangles-with-keys",
+            "componentFilePath": "./components/chp7/LookAtRotatedTrianglesWithKeys"
+        },
+        {
+            "label": "Orthographic View",
+            "uri": "/chp7/ortho-view",
+            "componentFilePath": "./components/chp7/OrthoView"
+        },
+        {
+            "label": "Look at Rotated Triangles With Keys (View Volume)",
+            "uri": "/chp7/look-at-rotated-triangles-with-keys-view-volume",
+            "componentFilePath": "./components/chp7/LookAtRotatedTrianglesWithKeys_ViewVolume"
+        },
+        {
+            "label": "Perspective View",
+            "uri": "/chp7/perspective-view",
+            "componentFilePath": "./components/chp7/PerspectiveView"
+        },
+        {
+            "label": "Perspective View (mvp)",
+            "uri": "/chp7/perspective-view-mvp",
+            "componentFilePath": "./components/chp7/PerspectiveView_mvp"
+        },
+        {
+            "label": "Perspective View (Mvp Matrix)",
+            "uri": "/chp7/perspective-view-mvp-matrix",
+            "componentFilePath": "./components/chp7/PerspectiveView_mvpMatrix"
         }
     ]
 }
