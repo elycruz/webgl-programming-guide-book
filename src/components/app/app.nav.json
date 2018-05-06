@@ -177,6 +177,11 @@
             "label": "Perspective View (Mvp Matrix)",
             "uri": "/chp7/perspective-view-mvp-matrix",
             "componentFilePath": "./components/chp7/PerspectiveView_mvpMatrix"
+        },
+        {
+            "label": "Depth Buffer",
+            "uri": "/chp7/depth-buffer",
+            "componentFilePath": "./components/chp7/DepthBuffer"
         }
     ]
 }
