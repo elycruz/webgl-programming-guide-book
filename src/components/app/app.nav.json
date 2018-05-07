@@ -192,6 +192,16 @@
             "label": "Hello Cube",
             "uri": "/chp7/hello-cube",
             "componentFilePath": "./components/chp7/HelloCube"
+        },
+        {
+            "label": "Colored Cube",
+            "uri": "/chp7/colored-cube",
+            "componentFilePath": "./components/chp7/ColoredCube"
+        },
+        {
+            "label": "Colored Cube (single color)",
+            "uri": "/chp7/colored-cube-single-color",
+            "componentFilePath": "./components/chp7/ColoredCube_singleColor"
         }
     ]
 }
