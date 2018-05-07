@@ -182,6 +182,16 @@
             "label": "Depth Buffer",
             "uri": "/chp7/depth-buffer",
             "componentFilePath": "./components/chp7/DepthBuffer"
+        },
+        {
+            "label": "Z-Fighting",
+            "uri": "/chp7/z-fighting",
+            "componentFilePath": "./components/chp7/ZFighting"
+        },
+        {
+            "label": "Hello Cube",
+            "uri": "/chp7/hello-cube",
+            "componentFilePath": "./components/chp7/HelloCube"
         }
     ]
 }
