@@ -2823,6 +2823,10 @@ fjl-mutable@^0.16.5:
     fjl "0.19.0"
     fjl-error-throwing "^0.7.7"
 
+fjl-range@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/fjl-range/-/fjl-range-1.0.4.tgz#f29172ad50690e433ae6f7b45bb9e9b72a0f52c8"
+
 fjl@0.19.0:
   version "0.19.0"
   resolved "https://registry.yarnpkg.com/fjl/-/fjl-0.19.0.tgz#aeec6eb469a12f00c1204af2ab5fbd1f94a4e6c5"
