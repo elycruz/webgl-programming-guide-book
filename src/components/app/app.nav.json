@@ -217,6 +217,11 @@
             "label": "Lighted, Translated, and Rotated Cube",
             "uri": "/chp8/lighted-cube-translated-rotated-cube",
             "componentFilePath": "./components/chp8/LightedTranslatedRotatedCube"
+        },
+        {
+            "label": "Point Lighted Cube",
+            "uri": "/chp8/point-lighted-cube",
+            "componentFilePath": "./components/chp8/PointLightedCube"
         }
     ]
 }
