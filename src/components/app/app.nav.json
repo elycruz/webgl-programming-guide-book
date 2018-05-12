@@ -222,6 +222,11 @@
             "label": "Point Lighted Cube",
             "uri": "/chp8/point-lighted-cube",
             "componentFilePath": "./components/chp8/PointLightedCube"
+        },
+        {
+            "label": "Point Lighted Cube Animated",
+            "uri": "/chp8/point-lighted-cube-animated",
+            "componentFilePath": "./components/chp8/PointLightedCubeAnimated"
         }
     ]
 }

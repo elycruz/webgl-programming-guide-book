@@ -7,6 +7,7 @@ import {
 import {mat4, vec3} from 'gl-matrix';
 import {range$} from 'fjl-range';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
+import rafLimiter from "../../utils/raqLimiter";
 
 const
 
@@ -150,7 +151,9 @@ export default class LightedCube extends GenericCanvasExperimentView {
         if (numCreatedVertices === -1) {
             error('Error while creating vertices buffer.');
         }
-                                //  x   y   z
+
+        let angle = 0;
+                                      //  x   y   z
         const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
             currFocal =   vec3.fromValues(0,  0,  0),
             upFocal =     vec3.fromValues(0,  1,  0),
@@ -159,45 +162,52 @@ export default class LightedCube extends GenericCanvasExperimentView {
             u_ModelMatrix= uniformLoc(gl, 'u_ModelMatrix'),
             u_LightColor = uniformLoc(gl, 'u_LightColor'),
             u_LightDirection = uniformLoc(gl, 'u_LightDirection'),
-            u_LightPosition =   uniformLoc(gl, 'u_LightPosition'),
+            u_LightPosition = uniformLoc(gl, 'u_LightPosition'),
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
             modelMatrix = mat4.create(),
             mvpMatrix =   mat4.create(),
             normalMatrix = mat4.create(),
-            lightDirection = vec3.fromValues(0.0, 3.0, 4.0)
-        ;
+            lightDirection = vec3.fromValues(0.0, 3.0, 4.0);
 
         vec3.normalize(lightDirection, lightDirection);
         mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
-        mat4.rotateZ(modelMatrix, modelMatrix, toRadians(90));
-
-        // Magic Matrix: Inverse transpose matrix (for affecting normals on
-        //  shape when translating, scaling etc.)
-        mat4.copy(normalMatrix, modelMatrix);
-        mat4.invert(normalMatrix, normalMatrix);
-        mat4.transpose(normalMatrix, normalMatrix);
-
-        mat4.perspective(projMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
-        mat4.multiply(mvpMatrix, projMatrix, viewMatrix);
-        mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
 
         gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
         gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
         gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
         gl.uniform3fv(u_LightDirection, lightDirection);
-        gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
-        gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
-        gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
 
-        // Clear then draw
-        gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.POLYGON_OFFSET_FILL);
-        gl.polygonOffset(1.0, 1.0);
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-        gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
+        const draw = delta => {
+                angle = (delta * 0.001) % 360.0;
+                mat4.rotateY(modelMatrix, modelMatrix, angle);
+
+                // Magic Matrix: Inverse transpose matrix (for affecting normals on
+                //  shape when translating, scaling etc.)
+                mat4.copy(normalMatrix, modelMatrix);
+                mat4.invert(normalMatrix, normalMatrix);
+                mat4.transpose(normalMatrix, normalMatrix);
+
+                mat4.perspective(projMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+                mat4.multiply(mvpMatrix, projMatrix, viewMatrix);
+                mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
+
+                gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
+                gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
+                gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
+
+                // Clear then draw
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.enable(gl.DEPTH_TEST);
+                gl.enable(gl.POLYGON_OFFSET_FILL);
+                gl.polygonOffset(1.0, 1.0);
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
+            }
+        ;
+
+        rafLimiter(draw, 144);
     }
 
     render () {

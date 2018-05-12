@@ -1,8 +1,8 @@
-export default function raqLimiter (fn, fps = 60) {
+export default function rafLimiter (fn, fps = 60) {
     const interval = 1000 / fps;
     let then = Date.now();
 
-    return (function loop(timestamp) {
+    return (function loop (timestamp) {
         let animationFrameId = requestAnimationFrame(loop),
 
             // again, Date.now() if it's available
@@ -16,7 +16,7 @@ export default function raqLimiter (fn, fps = 60) {
             then = now - (delta % interval);
 
             // call the fn
-            fn(timestamp, animationFrameId);
+            fn(delta, animationFrameId);
         }
-    }());
+    }(then));
 }
