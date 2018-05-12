@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {uuid, error, log} from '../../utils/utils';
+import {error} from '../../utils/utils';
 import {getWebGlContext, initProgram, toRadians} from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
-
-const ListF32 = from => new Float32Array(from);
+import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
+import rafLimiter from '../../utils/raqLimiter';
 
 const
 
@@ -21,15 +21,7 @@ const
 
 ;
 
-export default class RotatingTriangle extends Component {
-    static defaultProps = {
-        canvasId: 'rotating-triangle-canvas'
-    };
-
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
+export default class RotatingTriangle extends GenericCanvasExperimentView {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,
@@ -41,8 +33,7 @@ export default class RotatingTriangle extends Component {
             program = initProgram(gl, shadersAssocList),
             angleStep = 45.0;
 
-        let g_last,
-            currentAngle = 0.0
+        let currentAngle = 0.0
         ;
 
         if (!program) {
@@ -50,7 +41,8 @@ export default class RotatingTriangle extends Component {
             return;
         }
 
-        const u_TransformMatrix = gl.getUniformLocation(program, 'u_TransformMatrix');
+        const u_TransformMatrix = gl.getUniformLocation(program, 'u_TransformMatrix'),
+            modelMatrix = mat4.create();
 
         function initVertexBuffers (glContext) {
             const vertices = new Float32Array([
@@ -65,15 +57,9 @@ export default class RotatingTriangle extends Component {
             return !vertexBuffer ? -1 : 3; // num sides in shape
         }
 
-        function getTick (modelMatrix) {
-            return function tick () {
-                currentAngle = animate(currentAngle);
-                draw(currentAngle, modelMatrix, u_TransformMatrix);
-                requestAnimationFrame(tick);
-            }
-        }
+        function draw (delta) {
+            currentAngle = (angleStep * delta * 0.001) % 360;
 
-        function draw (currentAngle, modelMatrix, u_TransformMatrix) {
             // Create vertices for shape
             const numCreatedVertices = initVertexBuffers(gl);
 
@@ -82,13 +68,10 @@ export default class RotatingTriangle extends Component {
                 // return;
             }
 
-            const radians = toRadians(currentAngle),
-                out = mat4.create();
-
-            mat4.rotateZ(out, out, radians);
+            mat4.rotateZ(modelMatrix, modelMatrix, toRadians(currentAngle));
 
             // Pass rotation values
-            gl.uniformMatrix4fv(u_TransformMatrix, false, out);
+            gl.uniformMatrix4fv(u_TransformMatrix, false, modelMatrix);
 
             // Clear then draw
             gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -96,32 +79,8 @@ export default class RotatingTriangle extends Component {
             gl.drawArrays(gl.TRIANGLES, 0, numCreatedVertices);
         }
 
-        function animate (angle) {
-            let now = Date.now(),
-                elapsed = now - g_last,
-                newAngle;
-            g_last = now;
-            newAngle = (angle + (angleStep * elapsed) / 1000.0);
-            return newAngle % 360;
-        }
-
-        g_last = Date.now();
-        getTick(mat4.create())();
+        rafLimiter(draw, 144);
     }
 
-    render () {
-        const {props} = this;
-
-        return ([
-                <header key={uuid('rotating-triangle-element-')}>
-                    <h3>AnimatedTriangle.jsx</h3>
-                </header>,
-                <canvas key={uuid('rotating-triangle-element-')} width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            ]
-        );
-    }
 
 }

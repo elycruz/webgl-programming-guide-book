@@ -227,6 +227,11 @@
             "label": "Point Lighted Cube Animated",
             "uri": "/chp8/point-lighted-cube-animated",
             "componentFilePath": "./components/chp8/PointLightedCubeAnimated"
+        },
+        {
+            "label": "Point Lighted Cube (per fragment)",
+            "uri": "/chp8/point-lighted-cube-per-fragment",
+            "componentFilePath": "./components/chp8/PointLightedCube_perFragment"
         }
     ]
 }
