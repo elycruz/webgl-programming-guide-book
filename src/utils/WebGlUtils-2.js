@@ -69,6 +69,16 @@ export const
         .filter(shader => !!shader);
     },
 
+    initBufferWithData = (gl, bufferType, numParts, attribType, attribName, bufferData) => {
+        const buffer = gl.createBuffer(),
+            a_Attrib = getAttribLoc(gl, attribName);
+        gl.bindBuffer(bufferType, buffer);
+        gl.bufferData(bufferType, bufferData, gl.STATIC_DRAW);
+        gl.vertexAttribPointer(a_Attrib, numParts, attribType || gl.FLOAT,  false, 0, 0);
+        gl.enableVertexAttribArray(a_Attrib);
+        return !!buffer;
+    },
+
     onTextureImageLoad = e => {
         const image = e.currentTarget,
             {gl, texture, level, internalFormat, srcFormat, srcType} = e.detail;

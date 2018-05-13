@@ -232,6 +232,11 @@
             "label": "Point Lighted Cube (per fragment)",
             "uri": "/chp8/point-lighted-cube-per-fragment",
             "componentFilePath": "./components/chp8/PointLightedCube_perFragment"
+        },
+        {
+            "label": "Joint Model",
+            "uri": "/chp9/joint-model",
+            "componentFilePath": "./components/chp9/JointModel"
         }
     ]
 }

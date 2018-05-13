@@ -1,12 +1,11 @@
+import {peek} from "./console";
+
 export default function rafLimiter (fn, fps = 60) {
     const interval = 1000 / fps;
     let then = Date.now();
 
     return (function loop (timestamp) {
-        let animationFrameId = requestAnimationFrame(loop),
-
-            // again, Date.now() if it's available
-            now = Date.now(),
+        let now = Date.now(),
             delta = now - then;
 
         if (delta > interval) {
@@ -16,7 +15,10 @@ export default function rafLimiter (fn, fps = 60) {
             then = now - (delta % interval);
 
             // call the fn
-            fn(delta, animationFrameId);
+            fn(delta);
         }
+
+        return peek(requestAnimationFrame(loop));
+
     }(then));
 }
