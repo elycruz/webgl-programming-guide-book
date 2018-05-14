@@ -158,6 +158,9 @@ export default class LightedCube extends GenericCanvasExperimentView {
             lightDirection = vec3.fromValues(0.0, 3.0, 4.0),
 
             onKeyDown = e => {
+                if (e.key.indexOf('Arrow') === 0) {
+                    e.preventDefault();
+                }
                 switch (e.key) {
                     case 'ArrowUp':
                         if (vertAngle < 135.0) {
@@ -178,56 +181,65 @@ export default class LightedCube extends GenericCanvasExperimentView {
                     default:
                         return;
                 }
+                console.log('hello');
                 draw();
-            },
-
-            initLighting = () => {
-                vec3.normalize(lightDirection, lightDirection);
-                mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
-                gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
-                gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
-                gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
-                gl.uniform3fv(u_LightDirection, lightDirection);
             },
 
             drawBox = () => {
                 mat4.copy(mvpMatrix, viewMatrix);
+
+                // Magic Matrix: Inverse transpose matrix (for affecting normals on
+                //  shape when translating, scaling etc.)
+                mat4.copy(normalMatrix, modelMatrix);
+                mat4.invert(normalMatrix, normalMatrix);
+                mat4.transpose(normalMatrix, normalMatrix);
+
+                mat4.multiply(mvpMatrix, projMatrix, viewMatrix);
+                mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
+
+                gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
+                gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
+                gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
+
+                gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
             },
 
-            draw = delta => {
-            mat4.rotateY(modelMatrix, modelMatrix, horizAngle);
+            draw = () => {
+                gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            // Magic Matrix: Inverse transpose matrix (for affecting normals on
-            //  shape when translating, scaling etc.)
-            mat4.copy(normalMatrix, modelMatrix);
-            mat4.invert(normalMatrix, normalMatrix);
-            mat4.transpose(normalMatrix, normalMatrix);
+                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
+                mat4.rotateY(modelMatrix, modelMatrix, horizAngle);
+                drawBox();
 
-            mat4.perspective(projMatrix, toRadians(50), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
-            mat4.multiply(mvpMatrix, projMatrix, viewMatrix);
-            mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
-
-            gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
-            gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
-            gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
-
-            // Clear then draw
-            gl.clearColor(0.0, 0.0, 0.0, 1.0);
-            gl.enable(gl.DEPTH_TEST);
-            gl.enable(gl.POLYGON_OFFSET_FILL);
-            gl.polygonOffset(1.0, 1.0);
-            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
-        },
+                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, 10.0, 0.0));
+                mat4.rotateZ(modelMatrix, modelMatrix, vertAngle);
+                // mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
+                drawBox();
+            },
 
             init = () => {
                 this.onKeyDown = onKeyDown;
                 window.addEventListener('keydown', this.onKeyDown);
+
+                vec3.normalize(lightDirection, lightDirection);
+
+                mat4.perspective(projMatrix, toRadians(50), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+                mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
+
+                gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
+                gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
+                gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
+                gl.uniform3fv(u_LightDirection, lightDirection);
+
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.enable(gl.DEPTH_TEST);
+                gl.enable(gl.POLYGON_OFFSET_FILL);
+                gl.polygonOffset(1.0, 1.0);
+
                 draw();
             }
         ;
 
-        initLighting();
         init();
     }
 
