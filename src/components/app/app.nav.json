@@ -237,6 +237,11 @@
             "label": "Joint Model",
             "uri": "/chp9/joint-model",
             "componentFilePath": "./components/chp9/JointModel"
+        },
+        {
+            "label": "Multi Joint Model",
+            "uri": "/chp9/multi-joint-model",
+            "componentFilePath": "./components/chp9/MultiJointModel"
         }
     ]
 }

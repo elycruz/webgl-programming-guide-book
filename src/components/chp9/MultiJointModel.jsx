@@ -112,12 +112,12 @@ export default class LightedCube extends GenericCanvasExperimentView {
 
         function initVertexBuffers () {
             const vertices = new Float32Array([
-                    1.5, 10.0, 1.5, -1.5, 10.0, 1.5, -1.5, 0.0, 1.5, 1.5, 0.0, 1.5, // v0-v1-v2-v3 front
-                    1.5, 10.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, -1.5, 1.5, 10.0, -1.5, // v0-v3-v4-v5 right
-                    1.5, 10.0, 1.5, 1.5, 10.0, -1.5, -1.5, 10.0, -1.5, -1.5, 10.0, 1.5, // v0-v5-v6-v1 up
-                    -1.5, 10.0, 1.5, -1.5, 10.0, -1.5, -1.5, 0.0, -1.5, -1.5, 0.0, 1.5, // v1-v6-v7-v2 left
-                    -1.5, 0.0, -1.5, 1.5, 0.0, -1.5, 1.5, 0.0, 1.5, -1.5, 0.0, 1.5, // v7-v4-v3-v2 down
-                    1.5, 0.0, -1.5, -1.5, 0.0, -1.5, -1.5, 10.0, -1.5, 1.5, 10.0, -1.5  // v4-v7-v6-v5 back
+                    0.5, 1.0, 0.5, -0.5, 1.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, // v0-v1-v2-v3 front
+                    0.5, 1.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5, // v0-v3-v4-v5 right
+                    0.5, 1.0, 0.5, 0.5, 1.0, -0.5, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5, // v0-v5-v6-v1 up
+                    -0.5, 1.0, 0.5, -0.5, 1.0, -0.5, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
+                    -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
+                    0.5, 0.0, -0.5, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5  // v4-v7-v6-v5 back
                 ]),
                 normals = new Float32Array([
                     0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, // v0-v1-v2-v3 front
@@ -166,8 +166,15 @@ export default class LightedCube extends GenericCanvasExperimentView {
         let vertAngle = 0,
             horizAngle = 0,
             angleStep = 3.0;
-                                      //  x   y   z
-        const eye =       vec3.fromValues(20.0,  10.0,  30.0),  // Get converted to floating point
+
+        const
+
+            baseHeight = 2.0,
+            armLength = 10.0,
+            arm2Length = 10.0,
+            palmLength = 2.0,
+
+            eye =       vec3.fromValues(20.0,  10.0,  30.0),  // Get converted to floating point
             currFocal =   vec3.fromValues(0,  0,  0),
             upFocal =     vec3.fromValues(0,  1,  0),
             u_MvpMatrix = uniformLoc(gl, 'u_MvpMatrix'),
@@ -228,17 +235,34 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
             },
 
+            vec3Radians = (x, y, z) => vec3.fromValues.apply(vec3, [x, y, z].map(toRadians)),
+
             draw = modelMatrix => {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
                 mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
-                mat4.rotateY(modelMatrix, modelMatrix, toRadians(horizAngle));
+                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(10.0, baseHeight, 10.0));
                 drawBox(modelMatrix);
 
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, 10.0, 0.0));
-                mat4.rotateX(modelMatrix, modelMatrix, toRadians(vertAngle));
-                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
+                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, baseHeight, 0.0));
+                mat4.rotateY(modelMatrix, modelMatrix, toRadians(horizAngle));
+                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(3.0, armLength, 3.0));
                 drawBox(modelMatrix);
+
+                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, baseHeight, 0.0));
+                mat4.rotateZ(modelMatrix, modelMatrix, toRadians(horizAngle));
+                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(4.0, arm2Length, 4.0));
+                drawBox(modelMatrix);
+
+                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, arm2Length, 0.0));
+                mat4.rotateZ(modelMatrix, modelMatrix, toRadians(horizAngle));
+                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(2.0, palmLength, 6.0));
+                drawBox(modelMatrix);
+                //
+                // mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, 10.0, 0.0));
+                // mat4.rotateX(modelMatrix, modelMatrix, toRadians(vertAngle));
+                // mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
+                // drawBox(modelMatrix);
             },
 
             init = () => {
