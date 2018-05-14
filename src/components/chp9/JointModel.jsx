@@ -136,7 +136,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
             error('Error while creating vertices buffer.');
         }
 
-        let vertAngle = -90,
+        let vertAngle = 0,
             horizAngle = 0,
             angleStep = 3.0;
                                       //  x   y   z
@@ -152,7 +152,6 @@ export default class LightedCube extends GenericCanvasExperimentView {
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
-            modelMatrix = mat4.create(),
             mvpMatrix =   mat4.create(),
             normalMatrix = mat4.create(),
             lightDirection = vec3.fromValues(0.0, 3.0, 4.0),
@@ -173,20 +172,18 @@ export default class LightedCube extends GenericCanvasExperimentView {
                         }
                         break;
                     case 'ArrowLeft':
-                        horizAngle = (horizAngle - angleStep) % 360.0 * 0.013;
+                        horizAngle = (horizAngle - angleStep) % 360.0;
                         break;
                     case 'ArrowRight':
-                        horizAngle = (horizAngle + angleStep) % 360.0 * 0.013;
+                        horizAngle = (horizAngle + angleStep) % 360.0;
                         break;
                     default:
                         return;
                 }
-                console.log('hello');
-                draw();
+                draw(mat4.create());
             },
 
-            drawBox = () => {
-                mat4.copy(mvpMatrix, viewMatrix);
+            drawBox = modelMatrix => {
 
                 // Magic Matrix: Inverse transpose matrix (for affecting normals on
                 //  shape when translating, scaling etc.)
@@ -204,17 +201,17 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
             },
 
-            draw = () => {
+            draw = modelMatrix => {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
                 mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
-                mat4.rotateY(modelMatrix, modelMatrix, horizAngle);
-                drawBox();
+                mat4.rotateY(modelMatrix, modelMatrix, toRadians(horizAngle));
+                drawBox(modelMatrix);
 
                 mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, 10.0, 0.0));
-                mat4.rotateZ(modelMatrix, modelMatrix, vertAngle);
-                // mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
-                drawBox();
+                mat4.rotateZ(modelMatrix, modelMatrix, toRadians(vertAngle));
+                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
+                drawBox(modelMatrix);
             },
 
             init = () => {
@@ -222,7 +219,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 window.addEventListener('keydown', this.onKeyDown);
 
                 vec3.normalize(lightDirection, lightDirection);
-
+                mat4.copy(mvpMatrix, viewMatrix);
                 mat4.perspective(projMatrix, toRadians(50), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
                 mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
 
@@ -236,7 +233,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 gl.enable(gl.POLYGON_OFFSET_FILL);
                 gl.polygonOffset(1.0, 1.0);
 
-                draw();
+                draw(mat4.create());
             }
         ;
 
