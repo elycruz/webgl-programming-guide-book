@@ -91,7 +91,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>
-                <p>←→: arm1 rotation(y-axis), ↑↓: joint1 rotation(z-axis)</p>
+                <p>←→: arm1 rotation,↑↓: joint1 rotation, xz: joint2(wrist) rotation, cv: finger rotation</p>
             </div>
         );
     }
