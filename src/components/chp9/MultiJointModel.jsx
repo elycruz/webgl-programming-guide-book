@@ -163,9 +163,12 @@ export default class LightedCube extends GenericCanvasExperimentView {
             error('Error while creating vertices buffer.');
         }
 
-        let vertAngle = 0,
-            horizAngle = 0,
-            angleStep = 3.0;
+        let
+            g_arm1Angle = 90.0,
+            g_joint1Angle = 45.0,
+            g_joint2Angle = 0.0,
+            g_joint3Angle = 0.0,
+            angleStep = 21.0;
 
         const
 
@@ -175,41 +178,53 @@ export default class LightedCube extends GenericCanvasExperimentView {
             palmLength = 2.0,
 
             eye =       vec3.fromValues(20.0,  10.0,  30.0),  // Get converted to floating point
-            currFocal =   vec3.fromValues(0,  0,  0),
-            upFocal =     vec3.fromValues(0,  1,  0),
-            u_MvpMatrix = uniformLoc(gl, 'u_MvpMatrix'),
+            currFocal = vec3.fromValues(0,  0,  0),
+            upFocal =   vec3.fromValues(0,  1,  0),
+            u_MvpMatrix =   uniformLoc(gl, 'u_MvpMatrix'),
             u_NormalMatrix= uniformLoc(gl, 'u_NormalMatrix'),
-            u_ModelMatrix= uniformLoc(gl, 'u_ModelMatrix'),
-            u_LightColor = uniformLoc(gl, 'u_LightColor'),
+            u_ModelMatrix=  uniformLoc(gl, 'u_ModelMatrix'),
+            u_LightColor =  uniformLoc(gl, 'u_LightColor'),
             u_LightDirection = uniformLoc(gl, 'u_LightDirection'),
-            u_LightPosition = uniformLoc(gl, 'u_LightPosition'),
-            u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
-            viewMatrix =  mat4.create(),
-            projMatrix =  mat4.create(),
-            mvpMatrix =   mat4.create(),
-            normalMatrix = mat4.create(),
+            u_LightPosition =  uniformLoc(gl, 'u_LightPosition'),
+            u_AmbientLight =   uniformLoc(gl, 'u_AmbientLight'),
+            viewMatrix =    mat4.create(),
+            projMatrix =    mat4.create(),
+            mvpMatrix =     mat4.create(),
+            normalMatrix =  mat4.create(),
             lightDirection = vec3.fromValues(0.0, 3.0, 4.0),
 
             onKeyDown = e => {
                 if (e.key.indexOf('Arrow') === 0) {
                     e.preventDefault();
                 }
-                switch (e.key) {
-                    case 'ArrowUp':
-                        if (vertAngle < 135.0) {
-                            vertAngle += angleStep;
+                switch (e.key.toLowerCase()) {
+                    case 'arrowup':
+                        if (g_joint1Angle < 135.0) {
+                            g_joint1Angle += angleStep;
                         }
                         break;
-                    case 'ArrowDown':
-                        if (vertAngle > -135.0) {
-                            vertAngle -= angleStep;
+                    case 'arrowdown':
+                        if (g_joint1Angle > -135.0) {
+                            g_joint1Angle -= angleStep;
                         }
                         break;
-                    case 'ArrowLeft':
-                        horizAngle = (horizAngle - angleStep) % 360.0;
+                    case 'arrowleft':
+                        g_arm1Angle = (g_arm1Angle - angleStep) % 360.0;
                         break;
-                    case 'ArrowRight':
-                        horizAngle = (horizAngle + angleStep) % 360.0;
+                    case 'arrowright':
+                        g_arm1Angle = (g_arm1Angle + angleStep) % 360.0;
+                        break;
+                    case 'z':
+                        g_joint2Angle = (g_joint2Angle + angleStep) % 360;
+                        break;
+                    case 'x':
+                        g_joint2Angle = (g_joint2Angle - angleStep) % 360;
+                        break;
+                    case 'v':
+                        if (g_joint3Angle < 60.0)  g_joint3Angle = (g_joint3Angle + angleStep) % 360;
+                        break;
+                    case 'c':
+                        if (g_joint3Angle > -60.0) g_joint3Angle = (g_joint3Angle - angleStep) % 360;
                         break;
                     default:
                         return;
@@ -239,30 +254,46 @@ export default class LightedCube extends GenericCanvasExperimentView {
 
             draw = modelMatrix => {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+                let scaled, last;
 
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
-                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(10.0, baseHeight, 10.0));
-                drawBox(modelMatrix);
+                // Base
+                last = mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
+                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(10.0, baseHeight, 10.0));
+                drawBox(scaled);
 
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, baseHeight, 0.0));
-                mat4.rotateY(modelMatrix, modelMatrix, toRadians(horizAngle));
-                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(3.0, armLength, 3.0));
-                drawBox(modelMatrix);
+                // Arm 1
+                mat4.translate(last, last, vec3.fromValues(0.0,  baseHeight , 0.0));
+                mat4.rotateY(last, last, toRadians(g_arm1Angle));
+                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(3.0, armLength, 3.0));
+                drawBox(scaled);
 
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, baseHeight, 0.0));
-                mat4.rotateZ(modelMatrix, modelMatrix, toRadians(horizAngle));
-                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(4.0, arm2Length, 4.0));
-                drawBox(modelMatrix);
+                // Arm 2
+                mat4.translate(last, last, vec3.fromValues(0.0, armLength, 0.0));
+                mat4.rotateZ(last, last, toRadians(g_joint1Angle));
+                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(4.0, arm2Length, 4.0));
+                drawBox(scaled);
 
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, arm2Length, 0.0));
-                mat4.rotateZ(modelMatrix, modelMatrix, toRadians(horizAngle));
-                mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(2.0, palmLength, 6.0));
-                drawBox(modelMatrix);
-                //
-                // mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, 10.0, 0.0));
-                // mat4.rotateX(modelMatrix, modelMatrix, toRadians(vertAngle));
-                // mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(1.3, 1.0, 1.3));
-                // drawBox(modelMatrix);
+                // Palm length
+                mat4.translate(last, last, vec3.fromValues(0.0, arm2Length, 0.0));
+                mat4.rotateY(last, last, toRadians(g_joint2Angle));
+                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(2.0, palmLength, 6.0));
+                drawBox(scaled);
+
+                // Move to palm tip center
+                mat4.translate(last, last, vec3.fromValues(0.0, palmLength, 0.0));
+
+                // Finger 1
+                const finger1Matrix = mat4.clone(last);
+                mat4.translate(finger1Matrix, finger1Matrix, vec3.fromValues(0.0, 0.0, 2.0));
+                mat4.rotateX(finger1Matrix, finger1Matrix, toRadians(g_joint3Angle));
+                mat4.scale(finger1Matrix, finger1Matrix, vec3.fromValues(1.0, 2.0, 1.0));
+                drawBox(finger1Matrix);
+
+                // Finger 2
+                mat4.translate(last, last, vec3.fromValues(0.0, 0.0, -2.0));
+                mat4.rotateX(last, last, toRadians(g_joint3Angle));
+                scaled = mat4.scale(last, last, vec3.fromValues(1.0, 2.0, 1.0));
+                drawBox(scaled);
             },
 
             init = () => {
@@ -271,12 +302,12 @@ export default class LightedCube extends GenericCanvasExperimentView {
 
                 vec3.normalize(lightDirection, lightDirection);
                 mat4.copy(mvpMatrix, viewMatrix);
-                mat4.perspective(projMatrix, toRadians(50), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+                mat4.perspective(projMatrix, toRadians(50), canvasElm.offsetWidth / canvasElm.offsetHeight, 1.0, 100.0);
                 mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
 
                 gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
                 gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
-                gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
+                gl.uniform3f(u_LightPosition, 13.0, 21.0, 21.0);
                 gl.uniform3fv(u_LightDirection, lightDirection);
 
                 gl.clearColor(0.0, 0.0, 0.0, 1.0);
