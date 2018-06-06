@@ -9,65 +9,77 @@
             }
         },
         {
-            "label": "Draw Rectangle",
-            "uri": "/chp2/draw-rectangle",
-            "componentFilePath": "./components/chp2/DrawRectangle"
+            "label": "Chapter 2",
+            "uri": "/chp2/index",
+            "componentFilePath": "./components/chp2/Chapter2",
+            "items": [{
+                    "label": "Draw a Rectangle",
+                    "uri": "/chp2/draw-rectangle",
+                    "componentFilePath": "./components/chp2/DrawRectangle"
+                },
+                {
+                    "label": "Draw a Point",
+                    "uri": "/chp2/draw-a-point",
+                    "componentFilePath": "./components/chp2/DrawAPoint"
+                },
+                {
+                    "label": "Draw a Point 2",
+                    "uri": "/chp2/draw-a-point-2",
+                    "componentFilePath": "./components/chp2/DrawAPoint2"
+                },
+                {
+                    "label": "Draw a Point 3",
+                    "uri": "/chp2/draw-a-point-3",
+                    "componentFilePath": "./components/chp2/DrawAPoint3"
+                }
+            ]
         },
         {
-            "label": "Draw a Point",
-            "uri": "/chp2/draw-a-point",
-            "componentFilePath": "./components/chp2/DrawAPoint"
-        },
-        {
-            "label": "Draw a Point 2",
-            "uri": "/chp2/draw-a-point-2",
-            "componentFilePath": "./components/chp2/DrawAPoint2"
-        },
-        {
-            "label": "Draw a Point 3",
-            "uri": "/chp2/draw-a-point-3",
-            "componentFilePath": "./components/chp2/DrawAPoint3"
-        },
-        {
-            "label": "Multi Point",
-            "uri": "/chp3/multi-point",
-            "componentFilePath": "./components/chp3/MultiPoint"
-        },
-        {
-            "label": "Hello Triangle",
-            "uri": "/chp3/hello-triangle",
-            "componentFilePath": "./components/chp3/HelloTriangle"
-        },
-        {
-            "label": "Hello Quad",
-            "uri": "/chp3/hello-quad",
-            "componentFilePath": "./components/chp3/HelloQuad"
-        },
-        {
-            "label": "Translated Triangle",
-            "uri": "/chp3/translated-triangle",
-            "componentFilePath": "./components/chp3/TranslatedTriangle"
-        },
-        {
-            "label": "Rotated Triangle",
-            "uri": "/chp3/rotated-triangle",
-            "componentFilePath": "./components/chp3/RotatedTriangle"
-        },
-        {
-            "label": "Rotated Triangle by Matrix",
-            "uri": "/chp3/rotated-triangle-matrix",
-            "componentFilePath": "./components/chp3/RotatedTriangle_Matrix"
-        },
-        {
-            "label": "Translate Triangle by Matrix",
-            "uri": "/chp3/translated-triangle-matrix",
-            "componentFilePath": "./components/chp3/TranslatedTriangle_Matrix"
-        },
-        {
-            "label": "Scaled Triangle by Matrix",
-            "uri": "/chp3/scaled-triangle-matrix",
-            "componentFilePath": "./components/chp3/ScaledTriangle_Matrix"
-        },
+            "label": "Chapter 3",
+            "uri": "/chp3/index",
+            "componentFilePath": "./components/chp3/Chapter3",
+            "items": [
+            {
+                "label": "Multi Point",
+                "uri": "/chp3/multi-point",
+                "componentFilePath": "./components/chp3/MultiPoint"
+            },
+            {
+                "label": "Hello Triangle",
+                "uri": "/chp3/hello-triangle",
+                "componentFilePath": "./components/chp3/HelloTriangle"
+            },
+            {
+                "label": "Hello Quad",
+                "uri": "/chp3/hello-quad",
+                "componentFilePath": "./components/chp3/HelloQuad"
+            },
+            {
+                "label": "Translated Triangle",
+                "uri": "/chp3/translated-triangle",
+                "componentFilePath": "./components/chp3/TranslatedTriangle"
+            },
+            {
+                "label": "Rotated Triangle",
+                "uri": "/chp3/rotated-triangle",
+                "componentFilePath": "./components/chp3/RotatedTriangle"
+            },
+            {
+                "label": "Rotated Triangle by Matrix",
+                "uri": "/chp3/rotated-triangle-matrix",
+                "componentFilePath": "./components/chp3/RotatedTriangle_Matrix"
+            },
+            {
+                "label": "Translate Triangle by Matrix",
+                "uri": "/chp3/translated-triangle-matrix",
+                "componentFilePath": "./components/chp3/TranslatedTriangle_Matrix"
+            },
+            {
+                "label": "Scaled Triangle by Matrix",
+                "uri": "/chp3/scaled-triangle-matrix",
+                "componentFilePath": "./components/chp3/ScaledTriangle_Matrix"
+            }
+        ]},
         {
             "label": "Rotated and Translated Triangle",
             "uri": "/chp4/rotated-translated-triangle",

@@ -44,6 +44,10 @@
       color: $color-2-2;
     }
   }
+
+  ul li ul {
+    margin: 13px;
+  }
 }
 
 @media (min-width: 320px) and (max-width: 767px) {
