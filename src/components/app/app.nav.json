@@ -254,6 +254,11 @@
             "label": "Multi Joint Model",
             "uri": "/chp9/multi-joint-model",
             "componentFilePath": "./components/chp9/MultiJointModel"
+        },
+        {
+            "label": "Multi Joint Model (segment)",
+            "uri": "/chp9/multi-joint-model-segment",
+            "componentFilePath": "./components/chp9/MultiJointModel_segment"
         }
     ]
 }

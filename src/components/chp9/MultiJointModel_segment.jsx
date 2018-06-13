@@ -2,11 +2,12 @@ import React from 'react';
 import {error} from '../../utils/utils';
 import {
     getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
-    toRadians, initBufferWithData
+    toRadians, initBufferWithData, initBufferNoEnable
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
 import {range$} from 'fjl-range';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
+import {and} from 'fjl';
 
 const
 
@@ -110,15 +111,58 @@ export default class LightedCube extends GenericCanvasExperimentView {
             return;
         }
 
+        let g_baseBuffer, g_arm1Buffer, g_arm2Buffer,
+            g_palmBuffer, g_fingerBuffer;
+
         function initVertexBuffers () {
-            const vertices = new Float32Array([
-                    0.5, 1.0, 0.5, -0.5, 1.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, // v0-v1-v2-v3 front
-                    0.5, 1.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 1.0, -0.5, // v0-v3-v4-v5 right
-                    0.5, 1.0, 0.5, 0.5, 1.0, -0.5, -0.5, 1.0, -0.5, -0.5, 1.0, 0.5, // v0-v5-v6-v1 up
-                    -0.5, 1.0, 0.5, -0.5, 1.0, -0.5, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
-                    -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
-                    0.5, 0.0, -0.5, -0.5, 0.0, -0.5, -0.5, 1.0, -0.5, 0.5, 1.0, -0.5  // v4-v7-v6-v5 back
+            // Vertex coordinate (prepare coordinates of cuboids for all segments)
+            const
+
+                vertices_base = new Float32Array([ // Base(10x2x10)
+                    5.0, 2.0, 5.0, -5.0, 2.0, 5.0, -5.0, 0.0, 5.0, 5.0, 0.0, 5.0, // v0-v1-v2-v3 front
+                    5.0, 2.0, 5.0, 5.0, 0.0, 5.0, 5.0, 0.0, -5.0, 5.0, 2.0, -5.0, // v0-v3-v4-v5 right
+                    5.0, 2.0, 5.0, 5.0, 2.0, -5.0, -5.0, 2.0, -5.0, -5.0, 2.0, 5.0, // v0-v5-v6-v1 up
+                    -5.0, 2.0, 5.0, -5.0, 2.0, -5.0, -5.0, 0.0, -5.0, -5.0, 0.0, 5.0, // v1-v6-v7-v2 left
+                    -5.0, 0.0, -5.0, 5.0, 0.0, -5.0, 5.0, 0.0, 5.0, -5.0, 0.0, 5.0, // v7-v4-v3-v2 down
+                    5.0, 0.0, -5.0, -5.0, 0.0, -5.0, -5.0, 2.0, -5.0, 5.0, 2.0, -5.0  // v4-v7-v6-v5 back
                 ]),
+
+                vertices_arm1 = new Float32Array([  // Arm1(3x10x3)
+                    1.5, 10.0, 1.5, -1.5, 10.0, 1.5, -1.5, 0.0, 1.5, 1.5, 0.0, 1.5, // v0-v1-v2-v3 front
+                    1.5, 10.0, 1.5, 1.5, 0.0, 1.5, 1.5, 0.0, -1.5, 1.5, 10.0, -1.5, // v0-v3-v4-v5 right
+                    1.5, 10.0, 1.5, 1.5, 10.0, -1.5, -1.5, 10.0, -1.5, -1.5, 10.0, 1.5, // v0-v5-v6-v1 up
+                    -1.5, 10.0, 1.5, -1.5, 10.0, -1.5, -1.5, 0.0, -1.5, -1.5, 0.0, 1.5, // v1-v6-v7-v2 left
+                    -1.5, 0.0, -1.5, 1.5, 0.0, -1.5, 1.5, 0.0, 1.5, -1.5, 0.0, 1.5, // v7-v4-v3-v2 down
+                    1.5, 0.0, -1.5, -1.5, 0.0, -1.5, -1.5, 10.0, -1.5, 1.5, 10.0, -1.5  // v4-v7-v6-v5 back
+                ]),
+
+                vertices_arm2 = new Float32Array([  // Arm2(4x10x4)
+                    2.0, 10.0, 2.0, -2.0, 10.0, 2.0, -2.0, 0.0, 2.0, 2.0, 0.0, 2.0, // v0-v1-v2-v3 front
+                    2.0, 10.0, 2.0, 2.0, 0.0, 2.0, 2.0, 0.0, -2.0, 2.0, 10.0, -2.0, // v0-v3-v4-v5 right
+                    2.0, 10.0, 2.0, 2.0, 10.0, -2.0, -2.0, 10.0, -2.0, -2.0, 10.0, 2.0, // v0-v5-v6-v1 up
+                    -2.0, 10.0, 2.0, -2.0, 10.0, -2.0, -2.0, 0.0, -2.0, -2.0, 0.0, 2.0, // v1-v6-v7-v2 left
+                    -2.0, 0.0, -2.0, 2.0, 0.0, -2.0, 2.0, 0.0, 2.0, -2.0, 0.0, 2.0, // v7-v4-v3-v2 down
+                    2.0, 0.0, -2.0, -2.0, 0.0, -2.0, -2.0, 10.0, -2.0, 2.0, 10.0, -2.0  // v4-v7-v6-v5 back
+                ]),
+
+                vertices_palm = new Float32Array([  // Palm(2x2x6)
+                    1.0, 2.0, 3.0, -1.0, 2.0, 3.0, -1.0, 0.0, 3.0, 1.0, 0.0, 3.0, // v0-v1-v2-v3 front
+                    1.0, 2.0, 3.0, 1.0, 0.0, 3.0, 1.0, 0.0, -3.0, 1.0, 2.0, -3.0, // v0-v3-v4-v5 right
+                    1.0, 2.0, 3.0, 1.0, 2.0, -3.0, -1.0, 2.0, -3.0, -1.0, 2.0, 3.0, // v0-v5-v6-v1 up
+                    -1.0, 2.0, 3.0, -1.0, 2.0, -3.0, -1.0, 0.0, -3.0, -1.0, 0.0, 3.0, // v1-v6-v7-v2 left
+                    -1.0, 0.0, -3.0, 1.0, 0.0, -3.0, 1.0, 0.0, 3.0, -1.0, 0.0, 3.0, // v7-v4-v3-v2 down
+                    1.0, 0.0, -3.0, -1.0, 0.0, -3.0, -1.0, 2.0, -3.0, 1.0, 2.0, -3.0  // v4-v7-v6-v5 back
+                ]),
+
+                vertices_finger = new Float32Array([  // Fingers(1x2x1)
+                    0.5, 2.0, 0.5, -0.5, 2.0, 0.5, -0.5, 0.0, 0.5, 0.5, 0.0, 0.5, // v0-v1-v2-v3 front
+                    0.5, 2.0, 0.5, 0.5, 0.0, 0.5, 0.5, 0.0, -0.5, 0.5, 2.0, -0.5, // v0-v3-v4-v5 right
+                    0.5, 2.0, 0.5, 0.5, 2.0, -0.5, -0.5, 2.0, -0.5, -0.5, 2.0, 0.5, // v0-v5-v6-v1 up
+                    -0.5, 2.0, 0.5, -0.5, 2.0, -0.5, -0.5, 0.0, -0.5, -0.5, 0.0, 0.5, // v1-v6-v7-v2 left
+                    -0.5, 0.0, -0.5, 0.5, 0.0, -0.5, 0.5, 0.0, 0.5, -0.5, 0.0, 0.5, // v7-v4-v3-v2 down
+                    0.5, 0.0, -0.5, -0.5, 0.0, -0.5, -0.5, 2.0, -0.5, 0.5, 2.0, -0.5  // v4-v7-v6-v5 back
+                ]),
+
                 normals = new Float32Array([
                     0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, // v0-v1-v2-v3 front
                     1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, // v0-v3-v4-v5 right
@@ -127,6 +171,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
                     0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, // v7-v4-v3-v2 down
                     0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0  // v4-v7-v6-v5 back
                 ]),
+
                 indices = new Uint8Array([
                     0, 1, 2, 0, 2, 3,    // front
                     4, 5, 6, 4, 6, 7,    // right
@@ -135,19 +180,33 @@ export default class LightedCube extends GenericCanvasExperimentView {
                     16, 17, 18, 16, 18, 19,    // down
                     20, 21, 22, 20, 22, 23     // back
                 ]),
+
                 colors = new Float32Array(
                     [].concat.apply(
-                        [], range$(0, vertices.length / 3)
+                        [], range$(0, vertices_base.length / 3)
                             .map(() => [1.0, 0.0, 0.0])
                     )
                 ),
-                indexBuffer = gl.createBuffer()
-            ;
 
-            if (
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Position', vertices) ||
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Color', colors) ||
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)) {
+                indexBuffer = gl.createBuffer(),
+
+                colorBufferInitialized = initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Color', colors),
+
+                normalBufferInitialized = initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)
+
+            ;
+            
+            g_baseBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_base);
+            g_arm1Buffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_arm1);
+            g_arm2Buffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_arm2);
+            g_palmBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_palm);
+            g_fingerBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_finger);
+
+            // !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Position', vertices) ||
+            if (!and([
+                    colorBufferInitialized, normalBufferInitialized, g_baseBuffer,
+                    g_arm1Buffer, g_arm2Buffer, g_palmBuffer, g_fingerBuffer
+                ])) {
                     return -1;
                 }
 
@@ -172,7 +231,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
 
         const
 
-            baseHeight = 2.0,
+            baseHeight = 1.0,
             armLength = 10.0,
             arm2Length = 10.0,
             palmLength = 2.0,
@@ -187,6 +246,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
             u_LightDirection = uniformLoc(gl, 'u_LightDirection'),
             u_LightPosition =  uniformLoc(gl, 'u_LightPosition'),
             u_AmbientLight =   uniformLoc(gl, 'u_AmbientLight'),
+            a_Position = attribLoc(gl, 'a_Position'),
             viewMatrix =    mat4.create(),
             projMatrix =    mat4.create(),
             mvpMatrix =     mat4.create(),
@@ -232,7 +292,10 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 draw(mat4.create());
             },
 
-            drawBox = modelMatrix => {
+            drawBox = (buffer, modelMatrix) => {
+                gl.bindBuffer(buffer.type, buffer);
+                gl.vertexAttribPointer(a_Position, buffer.numParts, buffer.vertAttribType, false, 0, 0);
+                gl.enableVertexAttribArray(a_Position);
 
                 // Magic Matrix: Inverse transpose matrix (for affecting normals on
                 //  shape when translating, scaling etc.)
@@ -257,25 +320,25 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 // Base
                 last = mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
                 scaled = mat4.scale(mat4.create(), last, vec3.fromValues(10.0, baseHeight, 10.0));
-                drawBox(scaled);
+                drawBox(g_baseBuffer, scaled);
 
                 // Arm 1
-                mat4.translate(last, last, vec3.fromValues(0.0,  baseHeight , 0.0));
+                mat4.translate(last, last, vec3.fromValues(0.0,  baseHeight, 0.0));
                 mat4.rotateY(last, last, toRadians(g_arm1Angle));
                 scaled = mat4.scale(mat4.create(), last, vec3.fromValues(3.0, armLength, 3.0));
-                drawBox(scaled);
+                drawBox(g_arm1Buffer, scaled);
 
                 // Arm 2
                 mat4.translate(last, last, vec3.fromValues(0.0, armLength, 0.0));
                 mat4.rotateZ(last, last, toRadians(g_joint1Angle));
                 scaled = mat4.scale(mat4.create(), last, vec3.fromValues(4.0, arm2Length, 4.0));
-                drawBox(scaled);
+                drawBox(g_arm2Buffer, scaled);
 
                 // Palm length
-                mat4.translate(last, last, vec3.fromValues(0.0, arm2Length, 0.0));
+                mat4.translate(last, last, vec3.fromValues(0.0, arm2Length + armLength, 0.0));
                 mat4.rotateY(last, last, toRadians(g_joint2Angle));
                 scaled = mat4.scale(mat4.create(), last, vec3.fromValues(2.0, palmLength, 6.0));
-                drawBox(scaled);
+                drawBox(g_palmBuffer, scaled);
 
                 // Move to palm tip center
                 mat4.translate(last, last, vec3.fromValues(0.0, palmLength, 0.0));
@@ -285,13 +348,13 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 mat4.translate(finger1Matrix, finger1Matrix, vec3.fromValues(0.0, 0.0, 2.0));
                 mat4.rotateX(finger1Matrix, finger1Matrix, toRadians(g_joint3Angle));
                 mat4.scale(finger1Matrix, finger1Matrix, vec3.fromValues(1.0, 2.0, 1.0));
-                drawBox(finger1Matrix);
+                drawBox(g_fingerBuffer, finger1Matrix);
 
                 // Finger 2
                 mat4.translate(last, last, vec3.fromValues(0.0, 0.0, -2.0));
                 mat4.rotateX(last, last, toRadians(g_joint3Angle));
                 scaled = mat4.scale(last, last, vec3.fromValues(1.0, 2.0, 1.0));
-                drawBox(scaled);
+                drawBox(g_fingerBuffer, scaled);
             },
 
             init = () => {

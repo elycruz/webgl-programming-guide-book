@@ -79,6 +79,19 @@ export const
         return !!buffer;
     },
 
+    initBufferNoEnable = (gl, vertAttribType, numParts, bufferData) => {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW)
+        if (!buffer) {
+            error('Falied to create buffer for later use');
+            return;
+        }
+        buffer.numParts = numParts;
+        buffer.vertAttribType = vertAttribType;
+        return buffer;
+    },
+
     onTextureImageLoad = e => {
         const image = e.currentTarget,
             {gl, texture, level, internalFormat, srcFormat, srcType} = e.detail;
