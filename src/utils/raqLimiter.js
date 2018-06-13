@@ -18,7 +18,7 @@ export default function rafLimiter (fn, fps = 60) {
             fn(delta);
         }
 
-        return peek(requestAnimationFrame(loop));
+        return requestAnimationFrame(loop);
 
     }(then));
 }

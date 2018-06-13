@@ -259,6 +259,11 @@
             "label": "Multi Joint Model (segment)",
             "uri": "/chp9/multi-joint-model-segment",
             "componentFilePath": "./components/chp9/MultiJointModel_segment"
+        },
+        {
+            "label": "Rotate Object",
+            "uri": "/chp10/rotate-object",
+            "componentFilePath": "./components/chp10/RotateObject"
         }
     ]
 }
