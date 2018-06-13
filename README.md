@@ -4,12 +4,16 @@ WebGl Programming Guide book exercises and code refactor.
 **Note:**
 - This book uses Webgl 1.0 so all examples will/are in webgl 1.0 (maybe at another time
 we can port the examples to use Webgl 2 (OpenGl Es 3.0).
-- Only chp2 has been converted into the app so far.  All other chapters are from several years ago
-and don't use the newly set up app.
+- ~~Only chp2 has been converted into the app so far.  All other chapters are from several years ago
+and don't use the newly set up app.~~  Chapters 1-9 have been built out.  Chapter 10 is pending.
+
+## Pending tasks
+Put each example into a chapter view;  E.g., 
+ Put all chapter examples onto chapter pages (will shorten left hand menu and allow for a collapsible navigation).
 
 ## Dirs
 - ./src/components - All chapter examples are here.
-- Other dis are self explanetory (./src/utils for utils, ./src/css for sass/css etc.).
+- Other dirs are self explanetory (./src/utils for utils, ./src/css for sass/css etc.).
 
 ## Development
 Dev scripts etc.
