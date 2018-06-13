@@ -166,8 +166,8 @@ export default class RotateObject extends GenericCanvasExperimentView {
             error('Error while creating vertices buffer.');
         }
 
-        let angle = 0,
-            dragging = false
+        let dragging = false,
+            modelMatrix = mat4.create()
         ;
                                       //  x   y   z
         const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
@@ -182,7 +182,6 @@ export default class RotateObject extends GenericCanvasExperimentView {
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
-            modelMatrix = mat4.create(),
             mvpMatrix =   mat4.create(),
             normalMatrix = mat4.create(),
             lightDirection = vec3.fromValues(0.0, 3.0, 4.0);
@@ -196,13 +195,15 @@ export default class RotateObject extends GenericCanvasExperimentView {
         gl.uniform3fv(u_LightDirection, lightDirection);
 
         const
+            dragAngInfo = {x: 0.0, y: 0.0, lastX: 0.0, lastY: 0.0},
             draw = () => {
+                // Only apply rotation if `dragging`
                 if (dragging) {
-                    console.log(dragAngleXY);
-                    mat4.rotateX(modelMatrix, modelMatrix, toRadians(dragAngleXY.x));
-                    mat4.rotateY(modelMatrix, modelMatrix, toRadians(dragAngleXY.y));
-                    dragAngleXY.x = 0;
-                    dragAngleXY.y = 0;
+                    // Start rotation from fresh matrix (since mat4.rotate does cumulative rotation).
+                    modelMatrix = mat4.create();
+                    mat4.rotateX(modelMatrix, modelMatrix, toRadians(dragAngInfo.x));
+                    mat4.rotateY(modelMatrix, modelMatrix, toRadians(dragAngInfo.y));
+                    dragging = false;
                 }
 
                 // Magic Matrix: Inverse transpose matrix (for affecting normals on
@@ -227,35 +228,36 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
             },
-            dragAngleXY = {x: 1.0, y: 1.0, lastX: 0.0, lastY: 0.0, storedX: 0, storedY: 0},
+            onMouseMove = e => {
+                dragging = true;
+                const {lastX, lastY} = dragAngInfo,
+                    factor = 100 / e.currentTarget.offsetHeight,
+                    evX = e.clientX,// - elm.offsetLeft,
+                    evY = e.clientY,// - elm.offsetHeight,
+                    dx = factor * (evX - lastX),
+                    dy = factor * (evY - lastY)
+                ;
+                dragAngInfo.x = (dragAngInfo.x + dy) % 360.0;
+                dragAngInfo.y = (dragAngInfo.y + dx) % 360.0; //Math.max(Math.min(dragAngInfo.y + dx, 90.0), -90.0) % 360.0;
+                dragAngInfo.lastX = evX;
+                dragAngInfo.lastY = evY;
+            },
             onMouseDown = e => {
                 dragging = true;
-                const elm = e.currentTarget;
-                dragAngleXY.lastX = e.clientX - elm.offsetLeft;
-                dragAngleXY.lastY = e.clientY - elm.offsetTop;
+                dragAngInfo.lastX = e.clientX;// - elm.offsetLeft;
+                dragAngInfo.lastY = e.clientY;// - elm.offsetTop;
                 canvasElm.addEventListener('mousemove', onMouseMove);
             },
             onMouseUp = () => {
                 dragging = false;
                 canvasElm.removeEventListener('mousemove', onMouseMove);
-            },
-            onMouseMove = e => {
-                const {lastX, lastY} = dragAngleXY,
-                    evX = e.clientX - e.currentTarget.offsetLeft,
-                    evY = e.clientY - e.currentTarget.offsetHeight,
-                    dx = evX - lastX,
-                    dy = evY - lastY
-                ;
-                dragAngleXY.x = dx % 360.0 * -1;
-                dragAngleXY.y = dy % 360.0 * -1;
-                dragAngleXY.lastX = evX;
-                dragAngleXY.lastY = evY;
             }
 
         ;
 
         canvasElm.addEventListener('mousedown', onMouseDown);
         canvasElm.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('mouseup', onMouseUp);
 
         rafLimiter(draw, 144);
     }
@@ -267,6 +269,7 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
+                <p>Drag shape around to rotate it</p>
                 <canvas width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
