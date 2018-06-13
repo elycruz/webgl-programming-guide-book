@@ -293,7 +293,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
             },
 
             drawBox = (buffer, modelMatrix) => {
-                gl.bindBuffer(buffer.type, buffer);
+                gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
                 gl.vertexAttribPointer(a_Position, buffer.numParts, buffer.vertAttribType, false, 0, 0);
                 gl.enableVertexAttribArray(a_Position);
 
@@ -315,30 +315,26 @@ export default class LightedCube extends GenericCanvasExperimentView {
 
             draw = modelMatrix => {
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                let scaled, last;
+                let last;
 
                 // Base
                 last = mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0.0, -12.0, 0.0));
-                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(10.0, baseHeight, 10.0));
-                drawBox(g_baseBuffer, scaled);
+                drawBox(g_baseBuffer, last);
 
                 // Arm 1
                 mat4.translate(last, last, vec3.fromValues(0.0,  baseHeight, 0.0));
                 mat4.rotateY(last, last, toRadians(g_arm1Angle));
-                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(3.0, armLength, 3.0));
-                drawBox(g_arm1Buffer, scaled);
+                drawBox(g_arm1Buffer, last);
 
                 // Arm 2
                 mat4.translate(last, last, vec3.fromValues(0.0, armLength, 0.0));
                 mat4.rotateZ(last, last, toRadians(g_joint1Angle));
-                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(4.0, arm2Length, 4.0));
-                drawBox(g_arm2Buffer, scaled);
+                drawBox(g_arm2Buffer, last);
 
                 // Palm length
-                mat4.translate(last, last, vec3.fromValues(0.0, arm2Length + armLength, 0.0));
+                mat4.translate(last, last, vec3.fromValues(0.0, arm2Length, 0.0));
                 mat4.rotateY(last, last, toRadians(g_joint2Angle));
-                scaled = mat4.scale(mat4.create(), last, vec3.fromValues(2.0, palmLength, 6.0));
-                drawBox(g_palmBuffer, scaled);
+                drawBox(g_palmBuffer, last);
 
                 // Move to palm tip center
                 mat4.translate(last, last, vec3.fromValues(0.0, palmLength, 0.0));
@@ -347,14 +343,12 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 const finger1Matrix = mat4.clone(last);
                 mat4.translate(finger1Matrix, finger1Matrix, vec3.fromValues(0.0, 0.0, 2.0));
                 mat4.rotateX(finger1Matrix, finger1Matrix, toRadians(g_joint3Angle));
-                mat4.scale(finger1Matrix, finger1Matrix, vec3.fromValues(1.0, 2.0, 1.0));
                 drawBox(g_fingerBuffer, finger1Matrix);
 
                 // Finger 2
                 mat4.translate(last, last, vec3.fromValues(0.0, 0.0, -2.0));
                 mat4.rotateX(last, last, toRadians(g_joint3Angle));
-                scaled = mat4.scale(last, last, vec3.fromValues(1.0, 2.0, 1.0));
-                drawBox(g_fingerBuffer, scaled);
+                drawBox(g_fingerBuffer, last);
             },
 
             init = () => {
