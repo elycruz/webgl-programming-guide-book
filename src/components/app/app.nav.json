@@ -261,9 +261,16 @@
             "componentFilePath": "./components/chp9/MultiJointModel_segment"
         },
         {
-            "label": "Rotate Object",
-            "uri": "/chp10/rotate-object",
-            "componentFilePath": "./components/chp10/RotateObject"
+            "label": "Chapter 10",
+            "uri": "/chp10/index",
+            "componentFilePath": "./components/chp10/Chapter10",
+            "items": [
+                {
+                    "label": "Rotate Object",
+                    "uri": "/chp10/rotate-object",
+                    "componentFilePath": "./components/chp10/RotateObject"
+                }
+            ]
         }
     ]
 }

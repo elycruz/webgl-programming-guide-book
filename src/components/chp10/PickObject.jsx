@@ -21,14 +21,19 @@ const
         uniform mat4 u_MvpMatrix;
         uniform mat4 u_NormalMatrix;
         uniform mat4 u_ModelMatrix;
-        
+        uniform bool u_Clicked;
         varying vec3 v_Normal;
         varying vec3 v_Position;
         varying vec4 v_Color;
         
         void main () {
             gl_Position = u_MvpMatrix * a_Position;
-            v_Color = a_Color; 
+            if (u_Clicked) {
+                v_Color = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+            else {
+                v_Color = a_Color; 
+            }
             
             // Calculate the world coordinate of the vertex
             v_Position = vec3(u_ModelMatrix * a_Position);
@@ -68,11 +73,11 @@ const
 
 ;
 
-export default class RotateObject extends GenericCanvasExperimentView {
+export default class PickObject extends GenericCanvasExperimentView {
     static defaultProps = {
-        aliasName: 'rotate-object',
-        canvasId: 'rotate-object-experiment-canvas',
-        fileName: 'RotateObject.jsx'
+        aliasName: 'pick-object',
+        canvasId: 'pick-object-experiment-canvas',
+        fileName: 'PickObject.jsx'
     };
 
     constructor (props) {
@@ -104,7 +109,7 @@ export default class RotateObject extends GenericCanvasExperimentView {
             return !!buffer;
         }
 
-        function initVertexBuffers () {
+        function initVertexBuffers (colors) {
             const
                 vertices = new Float32Array([   // Vertex coordinates
                     1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0,  // v0-v1-v2-v3 front
@@ -113,14 +118,6 @@ export default class RotateObject extends GenericCanvasExperimentView {
                     -1.0, 1.0, 1.0,  -1.0, 1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0,-1.0, 1.0,  // v1-v6-v7-v2 left
                     -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,  // v7-v4-v3-v2 down
                     1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0   // v4-v7-v6-v5 back
-                ]),
-                colors = new Float32Array([     // Colors
-                    0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  // v0-v1-v2-v3 front(blue)
-                    0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  // v0-v3-v4-v5 right(green)
-                    1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  // v0-v5-v6-v1 up(red)
-                    1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  // v1-v6-v7-v2 left
-                    1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v7-v4-v3-v2 down
-                    0.4, 1.0, 1.0,  0.4, 1.0, 1.0,  0.4, 1.0, 1.0,  0.4, 1.0, 1.0   // v4-v7-v6-v5 back
                 ]),
                 /*colors = new Float32Array(
                     [].concat.apply(
@@ -160,13 +157,34 @@ export default class RotateObject extends GenericCanvasExperimentView {
             return !indexBuffer ? -1 : indices.length; // num sides in shape
         }
 
-        const numCreatedVertices = initVertexBuffers(gl);
+        const
+            cubeColors = new Float32Array([     // Colors
+                0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  0.4, 0.4, 1.0,  // v0-v1-v2-v3 front(blue)
+                0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  0.4, 1.0, 0.4,  // v0-v3-v4-v5 right(green)
+                1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  1.0, 0.4, 0.4,  // v0-v5-v6-v1 up(red)
+                1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  1.0, 1.0, 0.4,  // v1-v6-v7-v2 left
+                1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v7-v4-v3-v2 down
+                0.4, 1.0, 1.0,  0.4, 1.0, 1.0,  0.4, 1.0, 1.0,  0.4, 1.0, 1.0   // v4-v7-v6-v5 back
+            ]),
+            // cubeColorsRGB = cubeColors
+            //     .map(float => 255 * float)
+            //     .reduce((agg, num, ind) => {
+            //         agg[1].push(num);
+            //         if (ind && (ind + 1) % 12 === 0) {
+            //             agg[0].push(agg[1]);
+            //             agg[1] = [];
+            //         }
+            //         return agg;
+            //     }, [[], []])
+            //     .shift(),
+            numCreatedVertices = initVertexBuffers(cubeColors);
 
         if (numCreatedVertices === -1) {
             error('Error while creating vertices buffer.');
         }
 
         let dragging = false,
+            cubeSelected = false,
             modelMatrix = mat4.create()
         ;
                                       //  x   y   z
@@ -180,6 +198,7 @@ export default class RotateObject extends GenericCanvasExperimentView {
             u_LightDirection = uniformLoc(gl, 'u_LightDirection'),
             u_LightPosition = uniformLoc(gl, 'u_LightPosition'),
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
+            u_Clicked = uniformLoc(gl, 'u_Clicked'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
             mvpMatrix =   mat4.create(),
@@ -193,6 +212,7 @@ export default class RotateObject extends GenericCanvasExperimentView {
         gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
         gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
         gl.uniform3fv(u_LightDirection, lightDirection);
+        gl.uniform1i(u_Clicked, 0);
 
         const
             dragAngInfo = {x: 0.0, y: 0.0, lastX: 0.0, lastY: 0.0},
@@ -219,6 +239,7 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
                 gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
                 gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
+                gl.uniform1i(u_Clicked, cubeSelected ? 1 : 0);
 
                 // Clear then draw
                 gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -227,6 +248,14 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 gl.polygonOffset(1.0, 1.0);
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
+            },
+            checkIfCubeSelected = (x, y) => {
+                draw();
+                let foundPixels = new Uint8Array(4);
+                gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, foundPixels);
+                // For our example since where are using lighting and a 'per-fragment' pixel color
+                //  we're just going to check if the black area in the canvas was clicked or not
+                cubeSelected = foundPixels[0] >= 1 && !cubeSelected
             },
             onMouseMove = e => {
                 dragging = true;
@@ -251,12 +280,19 @@ export default class RotateObject extends GenericCanvasExperimentView {
             onMouseUp = () => {
                 dragging = false;
                 canvasElm.removeEventListener('mousemove', onMouseMove);
+            },
+            onClick = e => {
+                checkIfCubeSelected(
+                    e.clientX - e.currentTarget.offsetLeft,
+                    e.clientY - e.currentTarget.offsetTop
+                );
             }
 
         ;
 
         canvasElm.addEventListener('mousedown', onMouseDown);
         canvasElm.addEventListener('mouseup', onMouseUp);
+        canvasElm.addEventListener('click', onClick);
         window.addEventListener('mouseup', onMouseUp);
 
         rafLimiter(draw, 144);
@@ -269,7 +305,9 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
-                <p>Drag shape around to rotate it</p>
+                <p>Click cube to select it.</p>
+                <p>Drag cube around to rotate it.</p>
+                <p>In this example we're calling `gl.readPixels` to see if the black area was clicked or not.</p>
                 <canvas width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>

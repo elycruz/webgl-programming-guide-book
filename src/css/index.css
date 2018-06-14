@@ -812,8 +812,7 @@ blockquote,
 p {
   margin-bottom: 13px; }
 
-blockquote,
-p {
+blockquote {
   text-indent: 1rem; }
 
 a,
@@ -1385,7 +1384,7 @@ p {
         color: #fff;
         font-weight: bold;
         font-size: 1.3rem; }
-      #wrapper > main > div > nav ul {
+      #wrapper > main > div > nav > ul {
         position: absolute;
         display: block;
         width: 100%;
