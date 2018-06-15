@@ -32,9 +32,15 @@ const
         
         void main () {
             gl_Position = u_MvpMatrix * a_Position;
+            int face = int(a_Face);
+            vec3 color  = (face == u_PickedFace) ? vec3(1.0) : a_Color.rgb;
             
-            // Pass color to fragment shader
-            v_Color = a_Color;
+            if (u_PickedFace == 0) { // insert face color as alpha
+                v_Color = vec4(color, a_Face / 255.0);
+            }
+            else {
+                v_Color = vec4(color, a_Color.a);
+            }
             
             // Calculate the world coordinate of the vertex
             v_Position = vec3(u_ModelMatrix * a_Position);
@@ -69,16 +75,16 @@ const
             vec3 diffuse = u_LightColor * vec3(v_Color.rgb) * nDotL;
             
             // Calculate color
-            gl_FragColor = vec4(diffuse + ambient, v_Color.a);
+            gl_FragColor = v_Color; //vec4(diffuse + ambient, v_Color.a);
         }`
 
 ;
 
-export default class ThreeDOver extends GenericCanvasExperimentView {
+export default class PickFace extends GenericCanvasExperimentView {
     static defaultProps = {
-        aliasName: 'three-d-over',
-        canvasId: 'three-d-over-experiment-canvas',
-        fileName: 'ThreeDOver.jsx'
+        aliasName: 'pick-face',
+        canvasId: 'pick-face-experiment-canvas',
+        fileName: 'PickFace.jsx'
     };
 
     constructor (props) {
@@ -87,8 +93,7 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
     }
 
     componentDidMount () {
-        const
-            canvasElm = this.canvas.current,
+        const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),
             shadersAssocList = [
                 [gl.VERTEX_SHADER, vertShader],
@@ -121,6 +126,12 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
                     -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,  // v7-v4-v3-v2 down
                     1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0   // v4-v7-v6-v5 back
                 ]),
+                /*colors = new Float32Array(
+                    [].concat.apply(
+                        [], range$(0, vertices.length / 3)
+                            .map(() => [1.0, 0.0, 0.0])
+                    )
+                ),*/
                 indices = new Uint8Array([       // Indices of the vertices
                     0, 1, 2,   0, 2, 3,    // front
                     4, 5, 6,   4, 6, 7,    // right
@@ -137,15 +148,17 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
                     0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
                     0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
                 ]),
+                faces = new Uint8Array(concatMap(n => repeat(4, parseFloat(n)), range(1, 6))),
                 indexBuffer = gl.createBuffer()
             ;
 
             if (
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Position', vertices) ||
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Color', colors) ||
+                !initBufferWithData(gl.ARRAY_BUFFER, 1, gl.UNSIGNED_BYTE, 'a_Face', faces) ||
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)) {
-                return -1;
-            }
+                    return -1;
+                }
 
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
@@ -169,10 +182,11 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
         }
 
         let angle = 90.0,
+            pickedFace = -1,
             modelMatrix = mat4.create(),
             capturedDelta
         ;
-        //  x   y   z
+                                      //  x   y   z
         const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
             currFocal =   vec3.fromValues(0,  0,  0),
             upFocal =     vec3.fromValues(0,  1,  0),
@@ -183,6 +197,7 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
             u_LightDirection = uniformLoc(gl, 'u_LightDirection'),
             u_LightPosition = uniformLoc(gl, 'u_LightPosition'),
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
+            u_PickedFace = uniformLoc(gl, 'u_PickedFace'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
             mvpMatrix =   mat4.create(),
@@ -196,6 +211,7 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
         gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
         gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
         gl.uniform3fv(u_LightDirection, lightDirection);
+        gl.uniform1i(u_PickedFace, pickedFace);
 
         const
             draw = delta => {
@@ -217,17 +233,39 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
                 gl.uniformMatrix4fv(u_MvpMatrix, false, mvpMatrix);
                 gl.uniformMatrix4fv(u_NormalMatrix, false, normalMatrix);
                 gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
+                gl.uniform1i(u_PickedFace, pickedFace);
 
                 // Clear then draw
-                gl.clearColor(0.0, 0.0, 0.0, 0.0);
+                gl.clearColor(0.0, 0.0, 0.0, 1.0);
                 gl.enable(gl.DEPTH_TEST);
                 gl.enable(gl.POLYGON_OFFSET_FILL);
                 gl.polygonOffset(1.0, 1.0);
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
+            },
+            setClickedFaceNum = (x, y) => {
+                pickedFace = 0;
+                draw(capturedDelta);
+                let foundPixels = new Uint8Array(4);
+                gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, foundPixels);
+                // For our example since where are using lighting and a 'per-fragment' pixel color
+                //  we're just going to check if the black area in the canvas was clicked or not
+                pickedFace = foundPixels[3];
             }
         ;
+        this.onClick = e => {
+            setClickedFaceNum(
+                e.pageX - e.target.offsetLeft,
+                e.pageY - e.target.offsetTop
+            );
+        };
+        this.canvasElm = canvasElm;
+        canvasElm.addEventListener('click', this.onClick);
         rafLimiter(draw, 144);
+    }
+
+    componentWillUnmount () {
+        this.canvas.current.removeEventListener('click', this.onClick);
     }
 
     render () {
@@ -237,51 +275,12 @@ export default class ThreeDOver extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
-                <div style={{
-                    position: 'relative',
-                    overflowY: 'scroll',
-                    height: '610px',
-                    border: '1px solid #CCC',
-                    padding: '21px'
-                }}>
-                    <p>Canvas overlain over plain html content.</p>
-                    <canvas width="377" height="377"
-                            id={props.canvasId} ref={this.canvas}
-                            style={{position: 'absolute', zIndex: 99, top: '55px'}}>
-                        <p>Html canvas element not supported</p>
-                    </canvas>
-                    <div className="lipsum" style={{color: '#888'}}>
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sodales eget metus ut
-                            gravida. Vestibulum a aliquet nulla. Nam imperdiet semper metus. Nulla ullamcorper pharetra
-                            felis non pellentesque. Ut lectus quam, hendrerit at vulputate non, feugiat sed dolor. Nulla
-                            facilisi. Suspendisse a ex vel justo consequat placerat. Sed vehicula iaculis blandit.
-                            Vivamus sollicitudin ac lectus dignissim aliquet. Phasellus fermentum hendrerit tortor a
-                            iaculis. Suspendisse at sapien nec tortor fringilla aliquam. Praesent viverra dolor turpis,
-                            id mattis felis euismod id.
-                        </p>
-                        <p>
-                            Pellentesque consequat ut augue sed venenatis. Praesent in blandit nibh. Nunc tempor rhoncus
-                            erat eu blandit. Etiam porta velit non venenatis facilisis. Ut non est urna. Donec pretium
-                            urna rhoncus nisi tincidunt efficitur. Vestibulum et purus ultricies, dapibus lectus vel,
-                            pretium tellus. Aliquam vel tempus turpis. Etiam sodales, augue a malesuada volutpat, ligula
-                            tellus finibus libero, sit amet dictum est justo vitae lorem. In accumsan eget elit a
-                            placerat. Cras nec mattis felis, non euismod nunc.
-                        </p>
-                        <p>
-                            Phasellus suscipit vulputate sagittis. Donec facilisis fermentum sollicitudin. Vestibulum at
-                            nibh libero. Vestibulum et nisl efficitur, efficitur elit in, posuere tellus. Sed sit amet
-                            libero elementum, imperdiet magna ut, mattis diam. Pellentesque posuere, lacus ut imperdiet
-                            sagittis, augue mauris placerat elit, non dictum lacus tellus eget purus. Praesent tempor
-                            ultricies nisi, id pharetra ligula vulputate eget. Donec consequat eros mi, sit amet varius
-                            eros ultricies ac. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per
-                            inceptos himenaeos. Etiam arcu dolor, aliquet non arcu a, blandit euismod elit. Ut dignissim
-                            viverra eros. Cras in metus id eros feugiat finibus. Vestibulum tincidunt lorem sit amet
-                            pellentesque vulputate. Nam cursus facilisis magna id euismod.
-                        </p>
-
-                        </div>
-                </div>
+                <p>Click cube face to select it.</p>
+                <p>Click on black to deselect selected faces.</p>
+                <canvas width="377" height="377"
+                        id={props.canvasId} ref={this.canvas}>
+                    <p>Html canvas element not supported</p>
+                </canvas>
             </div>
         );
     }
