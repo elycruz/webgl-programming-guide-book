@@ -8,17 +8,33 @@ import ScaledTriangle_Matrix from './ScaledTriangle_Matrix';
 import TranslatedTriangle from './TranslatedTriangle';
 import TranslatedTriangle_Matrix from './TranslatedTriangle_Matrix';
 
-export default function Chapter2 (props) {
+export default function Chapter2(props) {
     return (
         <React.Fragment>
-            <HelloQuad/>
-            <HelloTriangle/>
-            <MultiPoint/>
-            <RotatedTriangle/>
-            <RotatedTriangle_Matrix/>
-            <ScaledTriangle_Matrix/>
-            <TranslatedTriangle/>
-            <TranslatedTriangle_Matrix/>
+            <div className="canvas-experiment">
+                <HelloQuad/>
+            </div>
+            <div className="canvas-experiment">
+                <HelloTriangle/>
+            </div>
+            <div className="canvas-experiment">
+                <MultiPoint/>
+            </div>
+            <div className="canvas-experiment">
+                <RotatedTriangle/>
+            </div>
+            <div className="canvas-experiment">
+                <RotatedTriangle_Matrix/>
+            </div>
+            <div className="canvas-experiment">
+                <ScaledTriangle_Matrix/>
+            </div>
+            <div className="canvas-experiment">
+                <TranslatedTriangle/>
+            </div>
+            <div className="canvas-experiment">
+                <TranslatedTriangle_Matrix/>
+            </div>
         </React.Fragment>
     );
 }

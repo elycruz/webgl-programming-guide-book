@@ -4,9 +4,7 @@ import {range} from 'fjl-range';
 import {concatMap, repeat} from 'fjl';
 import {error} from '../../utils/utils';
 import {
-    getWebGlContext, initProgram,
-    getAttribLoc as attribLoc,
-    getUniformLoc as uniformLoc,
+    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
     toRadians
 } from "../../utils/WebGlUtils-2";
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
@@ -175,16 +173,26 @@ export default class PickFace extends GenericCanvasExperimentView {
                 0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82, // v7-v4-v3-v2 down
                 0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93, // v4-v7-v6-v5 back
             ]),
+            // cubeColorsRGB = cubeColors
+            //     .map(float => 255 * float)
+            //     .reduce((agg, num, ind) => {
+            //         agg[1].push(num);
+            //         if (ind && (ind + 1) % 12 === 0) {
+            //             agg[0].push(agg[1]);
+            //             agg[1] = [];
+            //         }
+            //         return agg;
+            //     }, [[], []])
+            //     .shift(),
             numCreatedVertices = initVertexBuffers(cubeColors);
 
         if (numCreatedVertices === -1) {
             error('Error while creating vertices buffer.');
         }
 
-        let angle = 90.0,
+        let dragging = false,
             pickedFace = -1,
-            modelMatrix = mat4.create(),
-            capturedDelta
+            modelMatrix = mat4.create()
         ;
                                       //  x   y   z
         const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
@@ -214,11 +222,16 @@ export default class PickFace extends GenericCanvasExperimentView {
         gl.uniform1i(u_PickedFace, pickedFace);
 
         const
-            draw = delta => {
-                capturedDelta = delta;
-                angle = (delta * 0.001) % 360.0;
-                mat4.rotateX(modelMatrix, modelMatrix, angle);
-                mat4.rotateY(modelMatrix, modelMatrix, angle);
+            dragAngInfo = {x: 0.0, y: 0.0, lastX: 0.0, lastY: 0.0},
+            draw = () => {
+                // Only apply rotation if `dragging`
+                if (dragging) {
+                    // Start rotation from fresh matrix (since mat4.rotate does cumulative rotation).
+                    modelMatrix = mat4.create();
+                    mat4.rotateX(modelMatrix, modelMatrix, toRadians(dragAngInfo.x));
+                    mat4.rotateY(modelMatrix, modelMatrix, toRadians(dragAngInfo.y));
+                    dragging = false;
+                }
 
                 // Magic Matrix: Inverse transpose matrix (for affecting normals on
                 //  shape when translating, scaling etc.)
@@ -245,27 +258,51 @@ export default class PickFace extends GenericCanvasExperimentView {
             },
             setClickedFaceNum = (x, y) => {
                 pickedFace = 0;
-                draw(capturedDelta);
+                draw();
                 let foundPixels = new Uint8Array(4);
                 gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, foundPixels);
                 // For our example since where are using lighting and a 'per-fragment' pixel color
                 //  we're just going to check if the black area in the canvas was clicked or not
                 pickedFace = foundPixels[3];
+            },
+            onMouseMove = e => {
+                dragging = true;
+                const elm = e.currentTarget,
+                    {lastX, lastY} = dragAngInfo,
+                    factor = 100 / e.currentTarget.offsetHeight,
+                    evX = e.pageX - elm.offsetLeft,
+                    evY = e.pageY - elm.offsetTop,
+                    dx = factor * (evX - lastX),
+                    dy = factor * (evY - lastY)
+                ;
+                dragAngInfo.x = (dragAngInfo.x + dy) % 360.0;
+                dragAngInfo.y = (dragAngInfo.y + dx) % 360.0;
+                dragAngInfo.lastX = evX;
+                dragAngInfo.lastY = evY;
+            },
+            onMouseDown = e => {
+                dragging = true;
+                const elm = e.currentTarget;
+                dragAngInfo.lastX = e.pageX  - elm.offsetLeft;
+                dragAngInfo.lastY = e.pageY  - elm.offsetTop;
+                canvasElm.addEventListener('mousemove', onMouseMove);
+            },
+            onMouseUp = () => {
+                dragging = false;
+                canvasElm.removeEventListener('mousemove', onMouseMove);
+            },
+            onClick = e => {
+                setClickedFaceNum(
+                    e.pageX - e.target.offsetLeft,
+                    e.pageY - e.target.offsetTop
+                );
             }
         ;
-        this.onClick = e => {
-            setClickedFaceNum(
-                e.pageX - e.target.offsetLeft,
-                e.pageY - e.target.offsetTop
-            );
-        };
-        this.canvasElm = canvasElm;
-        canvasElm.addEventListener('click', this.onClick);
+        canvasElm.addEventListener('mousedown', onMouseDown);
+        canvasElm.addEventListener('mouseup', onMouseUp);
+        canvasElm.addEventListener('click', onClick);
+        window.addEventListener('mouseup', onMouseUp);
         rafLimiter(draw, 144);
-    }
-
-    componentWillUnmount () {
-        this.canvas.current.removeEventListener('click', this.onClick);
     }
 
     render () {
@@ -276,7 +313,7 @@ export default class PickFace extends GenericCanvasExperimentView {
                     <h3>{props.fileName}</h3>
                 </header>
                 <p>Click cube face to select it.</p>
-                <p>Click on black to deselect selected faces.</p>
+                <p>Drag cube around to rotate it.</p>
                 <canvas width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
