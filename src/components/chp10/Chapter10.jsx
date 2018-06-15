@@ -3,6 +3,7 @@ import RotateObject from './RotateObject';
 import PickObject from './PickObject';
 import PickFace from './PickFace';
 import HUD from './HUD';
+import ThreeDOver from './ThreeDOver';
 
 const Chapter10 = () => (
         <React.Fragment>
@@ -17,6 +18,9 @@ const Chapter10 = () => (
             </div>
             <div className="canvas-experiment">
                 <HUD />
+            </div>
+            <div className="canvas-experiment">
+                <ThreeDOver />
             </div>
         </React.Fragment>
     )

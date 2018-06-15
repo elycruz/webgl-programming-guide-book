@@ -279,6 +279,16 @@
                     "label": "Pick Face",
                     "uri": "/chp10/pick-face",
                     "componentFilePath": "./components/chp10/PickFace"
+                },
+                {
+                    "label": "Hud (heads up display)",
+                    "uri": "/chp10/hud",
+                    "componentFilePath": "./components/chp10/HUD"
+                },
+                {
+                    "label": "3D Over",
+                    "uri": "/chp10/3d-over",
+                    "componentFilePath": "./components/chp10/ThreeDOver"
                 }
             ]
         }
