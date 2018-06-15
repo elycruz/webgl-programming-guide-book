@@ -4,7 +4,9 @@ import {range} from 'fjl-range';
 import {concatMap, repeat} from 'fjl';
 import {error} from '../../utils/utils';
 import {
-    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
+    getWebGlContext, initProgram,
+    getAttribLoc as attribLoc,
+    getUniformLoc as uniformLoc,
     toRadians
 } from "../../utils/WebGlUtils-2";
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
@@ -78,20 +80,25 @@ const
 
 ;
 
-export default class PickFace extends GenericCanvasExperimentView {
+export default class HUD extends GenericCanvasExperimentView {
     static defaultProps = {
-        aliasName: 'pick-face',
-        canvasId: 'pick-face-experiment-canvas',
-        fileName: 'PickFace.jsx'
+        aliasName: 'hud',
+        canvasId: 'hud-experiment-canvas',
+        hudId: 'hud-id',
+        fileName: 'HUD.jsx'
     };
 
     constructor (props) {
         super(props);
         this.canvas = React.createRef();
+        this.hud = React.createRef();
     }
 
     componentDidMount () {
-        const canvasElm = this.canvas.current,
+        const
+            canvasElm = this.canvas.current,
+            hudElm = this.hud.current,
+            hudCtx = hudElm.getContext('2d'),
             gl = getWebGlContext(canvasElm),
             shadersAssocList = [
                 [gl.VERTEX_SHADER, vertShader],
@@ -155,8 +162,8 @@ export default class PickFace extends GenericCanvasExperimentView {
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Color', colors) ||
                 !initBufferWithData(gl.ARRAY_BUFFER, 1, gl.UNSIGNED_BYTE, 'a_Face', faces) ||
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)) {
-                    return -1;
-                }
+                return -1;
+            }
 
             gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
@@ -173,28 +180,18 @@ export default class PickFace extends GenericCanvasExperimentView {
                 0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82,  0.27, 0.58, 0.82, // v7-v4-v3-v2 down
                 0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93,  0.73, 0.82, 0.93, // v4-v7-v6-v5 back
             ]),
-            // cubeColorsRGB = cubeColors
-            //     .map(float => 255 * float)
-            //     .reduce((agg, num, ind) => {
-            //         agg[1].push(num);
-            //         if (ind && (ind + 1) % 12 === 0) {
-            //             agg[0].push(agg[1]);
-            //             agg[1] = [];
-            //         }
-            //         return agg;
-            //     }, [[], []])
-            //     .shift(),
             numCreatedVertices = initVertexBuffers(cubeColors);
 
         if (numCreatedVertices === -1) {
             error('Error while creating vertices buffer.');
         }
 
-        let dragging = false,
+        let angle = 90.0,
             pickedFace = -1,
-            modelMatrix = mat4.create()
+            modelMatrix = mat4.create(),
+            capturedDelta
         ;
-                                      //  x   y   z
+        //  x   y   z
         const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
             currFocal =   vec3.fromValues(0,  0,  0),
             upFocal =     vec3.fromValues(0,  1,  0),
@@ -222,16 +219,29 @@ export default class PickFace extends GenericCanvasExperimentView {
         gl.uniform1i(u_PickedFace, pickedFace);
 
         const
-            dragAngInfo = {x: 0.0, y: 0.0, lastX: 0.0, lastY: 0.0},
-            draw = () => {
-                // Only apply rotation if `dragging`
-                if (dragging) {
-                    // Start rotation from fresh matrix (since mat4.rotate does cumulative rotation).
-                    modelMatrix = mat4.create();
-                    mat4.rotateX(modelMatrix, modelMatrix, toRadians(dragAngInfo.x));
-                    mat4.rotateY(modelMatrix, modelMatrix, toRadians(dragAngInfo.y));
-                    dragging = false;
-                }
+            hudColor = 'rgba(255,255,0,1)',
+            // Hud
+            draw2d = (ctx, currentAngle) => {
+                ctx.clearRect(0, 0, 377, 377);
+                ctx.beginPath();
+                ctx.moveTo(120, 21);
+                ctx.lineTo(200, 150);
+                ctx.lineTo(40, 150);
+                ctx.closePath();
+                ctx.strokeStyle = hudColor;
+                ctx.stroke();
+                ctx.font='18px "Arial"';
+                ctx.fillStyle= hudColor;
+                ctx.fillText('HUD: Head up Display', 21, 200);
+                ctx.fillText('Triangle is drawn by Hud API', 21, 220);
+                ctx.fillText('Cube is drawn by WebGL API', 21, 240);
+                ctx.fillText('Current Angle: ' + Math.floor(currentAngle * 1000), 21, 260);
+            },
+            draw = delta => {
+                capturedDelta = delta;
+                angle = (delta * 0.001) % 360.0;
+                mat4.rotateX(modelMatrix, modelMatrix, angle);
+                mat4.rotateY(modelMatrix, modelMatrix, angle);
 
                 // Magic Matrix: Inverse transpose matrix (for affecting normals on
                 //  shape when translating, scaling etc.)
@@ -255,54 +265,30 @@ export default class PickFace extends GenericCanvasExperimentView {
                 gl.polygonOffset(1.0, 1.0);
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
                 gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
+                draw2d(hudCtx, angle);
             },
             setClickedFaceNum = (x, y) => {
                 pickedFace = 0;
-                draw();
+                draw(capturedDelta, angle);
                 let foundPixels = new Uint8Array(4);
                 gl.readPixels(x, y, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, foundPixels);
                 // For our example since where are using lighting and a 'per-fragment' pixel color
                 //  we're just going to check if the black area in the canvas was clicked or not
                 pickedFace = foundPixels[3];
-            },
-            onMouseMove = e => {
-                dragging = true;
-                const elm = e.currentTarget,
-                    {lastX, lastY} = dragAngInfo,
-                    factor = 100 / e.currentTarget.offsetHeight,
-                    evX = e.pageX - elm.offsetLeft,
-                    evY = e.pageY - elm.offsetTop,
-                    dx = factor * (evX - lastX),
-                    dy = factor * (evY - lastY)
-                ;
-                dragAngInfo.x = (dragAngInfo.x + dy) % 360.0;
-                dragAngInfo.y = (dragAngInfo.y + dx) % 360.0;
-                dragAngInfo.lastX = evX;
-                dragAngInfo.lastY = evY;
-            },
-            onMouseDown = e => {
-                dragging = true;
-                const elm = e.currentTarget;
-                dragAngInfo.lastX = e.pageX  - elm.offsetLeft;
-                dragAngInfo.lastY = e.pageY  - elm.offsetTop;
-                canvasElm.addEventListener('mousemove', onMouseMove);
-            },
-            onMouseUp = () => {
-                dragging = false;
-                canvasElm.removeEventListener('mousemove', onMouseMove);
-            },
-            onClick = e => {
-                setClickedFaceNum(
-                    e.pageX - e.target.offsetLeft,
-                    e.pageY - e.target.offsetTop
-                );
             }
         ;
-        canvasElm.addEventListener('mousedown', onMouseDown);
-        canvasElm.addEventListener('mouseup', onMouseUp);
-        canvasElm.addEventListener('click', onClick);
-        window.addEventListener('mouseup', onMouseUp);
+        this.onClick = e => {
+            setClickedFaceNum(
+                e.pageX - e.currentTarget.parentNode.parentNode.offsetLeft,
+                e.pageY - e.currentTarget.parentNode.parentNode.offsetTop
+            );
+        };
+        hudElm.addEventListener('click', this.onClick);
         rafLimiter(draw, 144);
+    }
+
+    componentWillUnmount () {
+        this.hud.current.removeEventListener('click', this.onClick);
     }
 
     render () {
@@ -312,12 +298,23 @@ export default class PickFace extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
-                <p>Click cube face to select it.</p>
-                <p>Drag cube around to rotate it.</p>
-                <canvas width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
+                <div>
+                    <p>Click cube face to select it.</p>
+                    <p>Hud display and 3D cube are separate canvasas.</p>
+                    <p>Click events on cube canvas are proxied via hud click events.</p>
+                    <div className="canvas-wrapper" style={{position: 'relative'}}>
+                        <canvas width="377" height="377"
+                                id={props.canvasId} ref={this.canvas}
+                                style={{position: 'relative', zIndex: 98}}>
+                            <p>Html canvas element not supported</p>
+                        </canvas>
+                        <canvas width="377" height="377"
+                                id={props.hudId} ref={this.hud}
+                                style={{position: 'absolute', zIndex: 99, left: 0, top: 0}}>
+                            <p>Html canvas element not supported</p>
+                        </canvas>
+                    </div>
+                </div>
             </div>
         );
     }
