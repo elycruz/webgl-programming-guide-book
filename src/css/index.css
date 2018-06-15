@@ -1274,6 +1274,10 @@ p {
     opacity: 0; }
     #wrapper > main > div > section.view-area canvas {
       max-width: 100%; }
+    #wrapper > main > div > section.view-area .canvas-experiment {
+      margin-bottom: 34px; }
+    #wrapper > main > div > section.view-area .canvas-experiment:last-child {
+      margin-bottom: 0; }
   #wrapper > main > div > section.view-area.visible {
     opacity: 1; }
   @media (min-width: 768px) and (max-width: 3840px) {

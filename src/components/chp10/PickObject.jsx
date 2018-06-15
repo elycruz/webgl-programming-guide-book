@@ -260,9 +260,10 @@ export default class PickObject extends GenericCanvasExperimentView {
             onMouseMove = e => {
                 dragging = true;
                 const {lastX, lastY} = dragAngInfo,
-                    factor = 100 / e.currentTarget.offsetHeight,
-                    evX = e.clientX,// - elm.offsetLeft,
-                    evY = e.clientY,// - elm.offsetHeight,
+                    elm = e.currentTarget,
+                    factor = 100 / elm.offsetHeight,
+                    evX = e.pageX - elm.offsetLeft,
+                    evY = e.pageY - elm.offsetTop,
                     dx = factor * (evX - lastX),
                     dy = factor * (evY - lastY)
                 ;
@@ -272,9 +273,10 @@ export default class PickObject extends GenericCanvasExperimentView {
                 dragAngInfo.lastY = evY;
             },
             onMouseDown = e => {
+                const elm = e.currentTarget;
                 dragging = true;
-                dragAngInfo.lastX = e.clientX;// - elm.offsetLeft;
-                dragAngInfo.lastY = e.clientY;// - elm.offsetTop;
+                dragAngInfo.lastX = e.pageX - elm.offsetLeft;
+                dragAngInfo.lastY = e.pageY - elm.offsetTop;
                 canvasElm.addEventListener('mousemove', onMouseMove);
             },
             onMouseUp = () => {
@@ -283,8 +285,8 @@ export default class PickObject extends GenericCanvasExperimentView {
             },
             onClick = e => {
                 checkIfCubeSelected(
-                    e.clientX - e.currentTarget.offsetLeft,
-                    e.clientY - e.currentTarget.offsetTop
+                    e.pageX - e.currentTarget.offsetLeft,
+                    e.pageY - e.currentTarget.offsetTop
                 );
             }
 
