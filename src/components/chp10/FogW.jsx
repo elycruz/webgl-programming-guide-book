@@ -50,12 +50,13 @@ const
             // Recalculate normal with normal matrix and make length of normal '1.0'
             v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));
             
-            // Calculate distance for given vertex from eye 
-            v_Dist = distance(u_ModelMatrix * a_Position, u_Eye);
+            // Calculate distance for given vertex from eye
+            // Using distance approximation using 'z' value of vertex 
+            v_Dist = gl_Position.w; //  distance(u_ModelMatrix * a_Position, u_Eye);
         }`,
 
     fragShader = `
-        precision highp float;
+        precision mediump float;
         
         uniform vec3 u_LightColor;
         uniform vec3 u_LightDirection;
@@ -304,7 +305,6 @@ export default class PickFace extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
-                <p>Fog effect</p>
                 <p>Click cube face to select it.</p>
                 <p>Click on black to deselect selected faces.</p>
                 <canvas width="377" height="377"
