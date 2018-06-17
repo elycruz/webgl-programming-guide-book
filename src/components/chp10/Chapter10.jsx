@@ -4,6 +4,7 @@ import PickObject from './PickObject';
 import PickFace from './PickFace';
 import HUD from './HUD';
 import ThreeDOver from './ThreeDOver';
+import Fog from './Fog';
 
 const Chapter10 = () => (
         <React.Fragment>
@@ -21,6 +22,10 @@ const Chapter10 = () => (
             </div>
             <div className="canvas-experiment">
                 <ThreeDOver />
+            </div>
+
+            <div className="canvas-experiment">
+                <Fog />
             </div>
         </React.Fragment>
     )

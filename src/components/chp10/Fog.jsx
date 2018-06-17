@@ -26,9 +26,11 @@ const
         uniform mat4 u_NormalMatrix;
         uniform mat4 u_ModelMatrix;
         uniform int  u_PickedFace;
+        uniform vec4 u_Eye;
         varying vec3 v_Normal;
         varying vec3 v_Position;
         varying vec4 v_Color;
+        varying float v_Dist;
         
         void main () {
             gl_Position = u_MvpMatrix * a_Position;
@@ -47,21 +49,30 @@ const
             
             // Recalculate normal with normal matrix and make length of normal '1.0'
             v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));
+            
+            // Calculate distance for given vertex from eye 
+            v_Dist = distance(u_ModelMatrix * a_Position, u_Eye);
         }`,
 
     fragShader = `
-        precision highp float;
+        precision mediump float;
         
         uniform vec3 u_LightColor;
         uniform vec3 u_LightDirection;
         uniform vec3 u_LightPosition;
         uniform vec3 u_AmbientLight;
+        uniform vec3 u_FogColor;
+        uniform vec2 u_FogDist;
         
         varying vec3 v_Normal;
         varying vec3 v_Position;
         varying vec4 v_Color;
+        varying float v_Dist;
         
         void main () {
+        
+            float fogFactor = clamp((u_FogDist.y - v_Dist) / (u_FogDist.y - u_FogDist.x), 0.0, 1.0);
+        
             // Calculate light direction and make it 1.0 in length
             vec3 lightDirection = normalize(u_LightPosition - vec3(v_Position));
 
@@ -75,16 +86,20 @@ const
             vec3 diffuse = u_LightColor * vec3(v_Color.rgb) * nDotL;
             
             // Calculate color
-            gl_FragColor = v_Color; //vec4(diffuse + ambient, v_Color.a);
+            // u_FogColor * (1 - fogFactor) + v_Color * fogFactor
+            vec3 fragColor = mix(u_FogColor, vec3(vec4(diffuse + ambient, v_Color.a)), fogFactor);
+
+            // Mix fog in with frag color
+            gl_FragColor = vec4(fragColor, v_Color.a);
         }`
 
 ;
 
 export default class PickFace extends GenericCanvasExperimentView {
     static defaultProps = {
-        aliasName: 'pick-face',
-        canvasId: 'pick-face-experiment-canvas',
-        fileName: 'PickFace.jsx'
+        aliasName: 'fog',
+        canvasId: 'fog-experiment-canvas',
+        fileName: 'Fog.jsx'
     };
 
     constructor (props) {
@@ -186,10 +201,17 @@ export default class PickFace extends GenericCanvasExperimentView {
             modelMatrix = mat4.create(),
             capturedDelta
         ;
-                                      //  x   y   z
-        const eye =       vec3.fromValues(3,  3,  7),  // Get converted to floating point
-            currFocal =   vec3.fromValues(0,  0,  0),
-            upFocal =     vec3.fromValues(0,  1,  0),
+
+        const
+            fogColor = new Float32Array([0.137, 0.231, 0.423]),
+            fogDist = new Float32Array([55, 89]),
+            fogColorWith4th = new Float32Array(
+                Array.from(fogColor).concat([1.0])
+            ),
+            eye = vec3.fromValues(25,  65,  35),  //  x   y   z - Get converted to floating point
+            eyeF32 = new Float32Array([25, 65, 35, 1.0]),
+            currFocal = vec3.fromValues(0,  0,  0),
+            upFocal = vec3.fromValues(0,  1,  0),
             u_MvpMatrix = uniformLoc(gl, 'u_MvpMatrix'),
             u_NormalMatrix= uniformLoc(gl, 'u_NormalMatrix'),
             u_ModelMatrix= uniformLoc(gl, 'u_ModelMatrix'),
@@ -198,6 +220,9 @@ export default class PickFace extends GenericCanvasExperimentView {
             u_LightPosition = uniformLoc(gl, 'u_LightPosition'),
             u_AmbientLight = uniformLoc(gl, 'u_AmbientLight'),
             u_PickedFace = uniformLoc(gl, 'u_PickedFace'),
+            u_Eye = uniformLoc(gl, 'u_Eye'),
+            u_FogColor = uniformLoc(gl, 'u_FogColor'),
+            u_FogDist = uniformLoc(gl, 'u_FogDist'),
             viewMatrix =  mat4.create(),
             projMatrix =  mat4.create(),
             mvpMatrix =   mat4.create(),
@@ -206,10 +231,14 @@ export default class PickFace extends GenericCanvasExperimentView {
 
         vec3.normalize(lightDirection, lightDirection);
         mat4.lookAt(viewMatrix, eye, currFocal, upFocal);
+        mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(10, 10, 10));
 
+        gl.uniform4fv(u_Eye, eyeF32);
+        gl.uniform3fv(u_FogColor, fogColor);
+        gl.uniform2fv(u_FogDist, fogDist);
         gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
-        gl.uniform3f(u_AmbientLight, 0.2, 0.2, 0.2);
-        gl.uniform3f(u_LightPosition, 0.0, 3.0, 4.0);
+        gl.uniform3f(u_AmbientLight, 0.3, 0.3, 0.3);
+        gl.uniform3f(u_LightPosition, 0.0, 21.0, 4.0);
         gl.uniform3fv(u_LightDirection, lightDirection);
         gl.uniform1i(u_PickedFace, pickedFace);
 
@@ -226,7 +255,7 @@ export default class PickFace extends GenericCanvasExperimentView {
                 mat4.invert(normalMatrix, normalMatrix);
                 mat4.transpose(normalMatrix, normalMatrix);
 
-                mat4.perspective(projMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+                mat4.perspective(projMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 1000);
                 mat4.multiply(mvpMatrix, projMatrix, viewMatrix);
                 mat4.multiply(mvpMatrix, mvpMatrix, modelMatrix);
 
@@ -236,7 +265,7 @@ export default class PickFace extends GenericCanvasExperimentView {
                 gl.uniform1i(u_PickedFace, pickedFace);
 
                 // Clear then draw
-                gl.clearColor(0.0, 0.0, 0.0, 1.0);
+                gl.clearColor.apply(gl, fogColorWith4th);
                 gl.enable(gl.DEPTH_TEST);
                 gl.enable(gl.POLYGON_OFFSET_FILL);
                 gl.polygonOffset(1.0, 1.0);

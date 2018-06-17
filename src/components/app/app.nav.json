@@ -326,6 +326,11 @@
           "label": "3D Over",
           "uri": "/chp10/3d-over",
           "componentFilePath": "./components/chp10/ThreeDOver"
+        },
+        {
+          "label": "Fog",
+          "uri": "/chp10/fog",
+          "componentFilePath": "./components/chp10/Fog"
         }
       ]
     }
