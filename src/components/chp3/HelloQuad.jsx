@@ -19,7 +19,11 @@ const
 ;
 
 export default class HelloQuad extends GenericCanvasExperimentView {
-
+    static defaultProps = {
+        aliasName: 'hello-quad',
+        canvasId: 'hello-quad-canvas',
+        fileName: 'HelloQuad.jsx'
+    };
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = WebGlUtils.getWebGlContext(canvasElm),

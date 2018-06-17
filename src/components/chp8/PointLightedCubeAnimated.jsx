@@ -62,7 +62,7 @@ const
 
 ;
 
-export default class LightedCube extends GenericCanvasExperimentView {
+export default class PointLightedCubeAnimated extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'experiment-alias-name',
         canvasId: 'experiment-canvas',

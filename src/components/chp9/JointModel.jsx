@@ -67,7 +67,7 @@ const
 
 ;
 
-export default class LightedCube extends GenericCanvasExperimentView {
+export default class JointModel extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'experiment-alias-name',
         canvasId: 'experiment-canvas',

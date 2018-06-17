@@ -17,6 +17,11 @@ const
 ;
 
 export default class DrawAPoint extends GenericCanvasExperimentView {
+    static defaultProps = {
+        aliasName: 'draw-a-point',
+        canvasId: 'draw-a-point-canvas',
+        fileName: 'DrawAPoint.jsx'
+    };
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = WebGlUtils.getWebGlContext(canvasElm);

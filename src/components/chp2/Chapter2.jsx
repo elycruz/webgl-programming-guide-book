@@ -6,7 +6,7 @@ import DrawRectangle from './DrawRectangle';
 
 export default function Chapter2 () {
     return (
-        <React.Fragment>
+        <div className="chapter">
             <div className="canvas-experiment">
                 <DrawRectangle/>
             </div>
@@ -19,6 +19,6 @@ export default function Chapter2 () {
             <div className="canvas-experiment">
                 <DrawAPoint3/>
             </div>
-        </React.Fragment>
+        </div>
     );
 }

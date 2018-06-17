@@ -8,7 +8,7 @@ import Fog from './Fog';
 import FogW from './FogW';
 
 const Chapter10 = () => (
-        <React.Fragment>
+        <div className="chapter">
             <div className="canvas-experiment">
                 <RotateObject/>
             </div>
@@ -30,7 +30,7 @@ const Chapter10 = () => (
             <div className="canvas-experiment">
                 <FogW />
             </div>
-        </React.Fragment>
+        </div>
     )
 ;
 
