@@ -29,7 +29,7 @@ const
 
 ;
 
-export default class OrthoView extends GenericCanvasExperimentView {
+export default class PerspectiveView extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'experiment-alias-name',
         canvasId: 'experiment-canvas',

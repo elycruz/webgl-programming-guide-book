@@ -8,9 +8,9 @@ import ScaledTriangle_Matrix from './ScaledTriangle_Matrix';
 import TranslatedTriangle from './TranslatedTriangle';
 import TranslatedTriangle_Matrix from './TranslatedTriangle_Matrix';
 
-export default function Chapter2(props) {
+export default function Chapter3 () {
     return (
-        <React.Fragment>
+        <div className="chapter">
             <div className="canvas-experiment">
                 <HelloQuad/>
             </div>
@@ -35,6 +35,6 @@ export default function Chapter2(props) {
             <div className="canvas-experiment">
                 <TranslatedTriangle_Matrix/>
             </div>
-        </React.Fragment>
+        </div>
     );
 }

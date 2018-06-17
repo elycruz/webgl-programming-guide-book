@@ -32,7 +32,7 @@ const
 
 ;
 
-export default class TextureQuadRepeat extends GenericCanvasExperimentView {
+export default class TextureQuad_Repeat extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),

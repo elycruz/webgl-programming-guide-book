@@ -135,7 +135,7 @@ class App extends Component {
                                 innerRef={this.navRef}
                         />
                         <section ref={this.viewsElmRef}
-                                 className="canvas-experiment-view view-area visible"
+                                 className="view-area visible"
                                  onTransitionEnd={this.boundOnViewsAreaTransitionEnd}>
                             <CurrentView />
                         </section>

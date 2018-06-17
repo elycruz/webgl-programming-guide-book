@@ -28,7 +28,7 @@ const
 
 ;
 
-export default class PerspectiveView_mvpMatrix extends GenericCanvasExperimentView {
+export default class DepthBuffer extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'experiment-alias-name',
         canvasId: 'experiment-canvas',

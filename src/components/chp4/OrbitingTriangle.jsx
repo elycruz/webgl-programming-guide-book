@@ -21,7 +21,7 @@ const
 
 ;
 
-export default class RotatingTriangle extends GenericCanvasExperimentView {
+export default class OrbitingTriangle extends GenericCanvasExperimentView {
 
     componentDidMount () {
         const canvasElm = this.canvas.current,

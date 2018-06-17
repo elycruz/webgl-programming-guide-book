@@ -26,7 +26,7 @@ const
 
 ;
 
-export default class MultiAttributeSize extends GenericCanvasExperimentView {
+export default class MultiAttributeColor extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),

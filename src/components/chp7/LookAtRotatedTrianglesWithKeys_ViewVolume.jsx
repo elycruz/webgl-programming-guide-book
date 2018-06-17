@@ -29,7 +29,7 @@ const
 
     ;
 
-export default class LookAtRotatedTrianglesWithKeys extends GenericCanvasExperimentView {
+export default class LookAtRotatedTrianglesWithKeys_ViewVolume extends GenericCanvasExperimentView {
     componentDidMount () {
         const canvasElm = this.canvas.current,
             gl = getWebGlContext(canvasElm),

@@ -85,7 +85,7 @@
     {
       "label": "Chapter 4",
       "uri": "/chp4/index",
-      "componentFilePath": "./component/chp4/Chapter4",
+      "componentFilePath": "./components/chp4/Chapter4",
       "items": [
         {
           "label": "Rotated and Translated Triangle",
@@ -112,7 +112,7 @@
     {
       "label": "Chapter 5",
       "uri": "/chp5/index",
-      "componentFilePath": "./component/chp5/Chapter5",
+      "componentFilePath": "./components/chp5/Chapter5",
       "items": [
         {
           "label": "Multi Attribute Size",
@@ -164,7 +164,7 @@
     {
       "label": "Chapter 7",
       "uri": "/chp7/index",
-      "componentFilePath": "./component/chp7/Chapter7",
+      "componentFilePath": "./components/chp7/Chapter7",
       "items": [
         {
           "label": "Look at Triangles",

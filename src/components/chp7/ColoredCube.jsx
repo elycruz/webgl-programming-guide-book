@@ -28,7 +28,7 @@ const
 
 ;
 
-export default class ZFighting extends GenericCanvasExperimentView {
+export default class ColoredCube extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'experiment-alias-name',
         canvasId: 'experiment-canvas',
