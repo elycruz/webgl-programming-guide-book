@@ -6,6 +6,9 @@ import HUD from './HUD';
 import ThreeDOver from './ThreeDOver';
 import Fog from './Fog';
 import FogW from './FogW';
+import RoundedPoints from "./RoundedPoints";
+import LookAtBlendedTriangles from "./LookAtBlendedTriangles";
+import BlendedCube from "./BlendedCube";
 
 const Chapter10 = () => (
         <div className="chapter">
@@ -29,6 +32,15 @@ const Chapter10 = () => (
             </div>
             <div className="canvas-experiment">
                 <FogW />
+            </div>
+            <div className="canvas-experiment">
+                <RoundedPoints />
+            </div>
+            <div className="canvas-experiment">
+                <LookAtBlendedTriangles />
+            </div>
+            <div className="canvas-experiment">
+                <BlendedCube />
             </div>
         </div>
     )

@@ -331,6 +331,16 @@
           "label": "Fog",
           "uri": "/chp10/fog",
           "componentFilePath": "./components/chp10/Fog"
+        },
+        {
+          "label": "FogW",
+          "uri": "/chp10/fogw",
+          "componentFilePath": "./components/chp10/FogW"
+        },
+        {
+          "label": "RoundedPoints",
+          "uri": "/chp10/rounded-points",
+          "componentFilePath": "./components/chp10/RoundedPoints"
         }
       ]
     }
