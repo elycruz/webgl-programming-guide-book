@@ -21,4 +21,32 @@ export const
             return out;
         });
         return _obj;
+    },
+    stripLastSlash = xs =>
+        xs !== '/' &&
+        xs.lastIndexOf('/') === xs.length - 1 ?
+            xs.substring(0, xs.length - 1) : xs
+    ,
+    findNavItemByUri = (pathName, navItems) => {
+        const uri = stripLastSlash(pathName);
+        if (!navItems || !navItems.length) {
+            return undefined;
+        }
+        let limit = navItems.length,
+            found = null,
+            ind = 0
+        ;
+        // Recursive search
+        for (; ind < limit; ind += 1) {
+            const item = navItems[ind];
+            if (stripLastSlash(item.uri) === uri) {
+                return item;
+            }
+            if (item.items) {
+                found = findNavItemByUri(uri, item.items);
+            }
+            if (found) {
+                return found;
+            }
+        }
     };

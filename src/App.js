@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {debounce} from "./utils/utils";
+import {debounce, findNavItemByUri} from "./utils/utils";
 import * as navContainer from './components/app/app.nav.json';
 
 import AppNav from "./components/app/AppNav";
@@ -64,8 +64,7 @@ class App extends Component {
         this.navRef = React.createRef();
         // this.hamburgerRef = React.createRef();
         this.navContainer = navContainer;
-        this.currentLocationInfo = this.navContainer.items
-            .filter(x => x.uri === window.location.pathname).shift(); // assume flat list for now
+        this.currentLocationInfo = findNavItemByUri(window.location.pathname, this.navContainer.items);
         this.boundOnLinkClick = App.onLinkClick.bind(this);
         this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
         this.boundHamburgerClick = App.onHamburgerClick.bind(this);
@@ -92,7 +91,7 @@ class App extends Component {
 
     componentDidMount () {
         window.addEventListener('popstate', e => {
-            e.detail = e.state;
+            e.detail = e.state || findNavItemByUri(window.location.pathname, this.navContainer.items);
             this.boundOnLinkClick(e);
         });
     }

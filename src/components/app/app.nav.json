@@ -338,9 +338,19 @@
           "componentFilePath": "./components/chp10/FogW"
         },
         {
-          "label": "RoundedPoints",
+          "label": "Rounded Points",
           "uri": "/chp10/rounded-points",
           "componentFilePath": "./components/chp10/RoundedPoints"
+        },
+        {
+          "label": "Look at Blended Triangles",
+          "uri": "/chp10/look-at-blended-triangles",
+          "componentFilePath": "./components/chp10/LookAtBlendedTriangles"
+        },
+        {
+          "label": "Blended Cube",
+          "uri": "/chp10/blended-cube",
+          "componentFilePath": "./components/chp10/BlendedCube"
         }
       ]
     }
