@@ -111,7 +111,7 @@ export default class BlendedCube extends GenericCanvasExperimentView {
 
             if (
                 !initBufferWithData(gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Position', vertices) ||
-                !initBufferWithData(gl.ARRAY_BUFFER, 4, gl.FLOAT, 'a_Color', colors)
+                !initBufferWithData(gl.ARRAY_BUFFER, 4, gl.FLOAT, 'a_Color', colors, colors.BYTES_PER_ELEMENT * 4)
             ) {
                 return -1;
             }
@@ -146,11 +146,12 @@ export default class BlendedCube extends GenericCanvasExperimentView {
 
         // Clear then draw
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
-        gl.enable(gl.DEPTH_TEST);
-        gl.enable(gl.POLYGON_OFFSET_FILL);
+        // Hide 'hidden-surface' removal function
+        // gl.enable(gl.DEPTH_TEST);
+        // gl.enable(gl.POLYGON_OFFSET_FILL);
+        // gl.polygonOffset(1.0, 1.0);
         gl.enable(gl.BLEND);
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        gl.polygonOffset(1.0, 1.0);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         gl.drawElements(gl.TRIANGLES, numCreatedVertices, gl.UNSIGNED_BYTE, 0);
     }
