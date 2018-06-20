@@ -160,12 +160,9 @@ const
                 indexBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, indices)
             }
         ;
-
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
-
         out.numIndices = indices.length;
-
         return out;
     },
 
@@ -173,15 +170,11 @@ const
 
     drawTexturedCube = () => {},
 
-    drawCube = ({
-        progInfo,
-        cubeBufferInfo,
-        worldInfo,
-        gl
-    }) => {
+    drawCube = (progInfo, worldInfo, gl) => {
         const {u_MvpMatrix, u_NormalMatrix, u_ModelMatrix} = progInfo.uniforms,
             {g_modelMatrix, g_mvpMatrix, g_normalMatrix,
                 g_viewMatrix, g_projMatrix, g_angle} = worldInfo;
+
         mat4.rotateX(g_modelMatrix, g_modelMatrix, g_angle);
         mat4.rotateY(g_modelMatrix, g_modelMatrix, g_angle);
 
@@ -224,54 +217,17 @@ const
             [gl.FRAGMENT_SHADER, fragShader]
         ],
         init: (progInfo, gl) => {
-            const
-                vertices = new Float32Array([   // Vertex coordinates
-                    1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0,  // v0-v1-v2-v3 front
-                    1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0,  // v0-v3-v4-v5 right
-                    1.0, 1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,  // v0-v5-v6-v1 up
-                    -1.0, 1.0, 1.0, -1.0, 1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0,  // v1-v6-v7-v2 left
-                    -1.0, -1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, -1.0, -1.0, 1.0,  // v7-v4-v3-v2 down
-                    1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0   // v4-v7-v6-v5 back
-                ]),
-                indices = new Uint8Array([       // Indices of the vertices
-                    0, 1, 2, 0, 2, 3,    // front
-                    4, 5, 6, 4, 6, 7,    // right
-                    8, 9, 10, 8, 10, 11,    // up
-                    12, 13, 14, 12, 14, 15,    // left
-                    16, 17, 18, 16, 18, 19,    // down
-                    20, 21, 22, 20, 22, 23     // back
-                ]),
-                colors = new Float32Array([   // Colors
+            const colors = new Float32Array([   // Colors
                     0.32, 0.18, 0.56, 0.32, 0.18, 0.56, 0.32, 0.18, 0.56, 0.32, 0.18, 0.56, // v0-v1-v2-v3 front
                     0.5, 0.41, 0.69, 0.5, 0.41, 0.69, 0.5, 0.41, 0.69, 0.5, 0.41, 0.69,  // v0-v3-v4-v5 right
                     0.78, 0.69, 0.84, 0.78, 0.69, 0.84, 0.78, 0.69, 0.84, 0.78, 0.69, 0.84, // v0-v5-v6-v1 up
                     0.0, 0.32, 0.61, 0.0, 0.32, 0.61, 0.0, 0.32, 0.61, 0.0, 0.32, 0.61,  // v1-v6-v7-v2 left
                     0.27, 0.58, 0.82, 0.27, 0.58, 0.82, 0.27, 0.58, 0.82, 0.27, 0.58, 0.82, // v7-v4-v3-v2 down
                     0.73, 0.82, 0.93, 0.73, 0.82, 0.93, 0.73, 0.82, 0.93, 0.73, 0.82, 0.93, // v4-v7-v6-v5 back
-                ]),
-                normals = new Float32Array([    // Normal
-                    0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
-                    1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
-                    0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
-                    -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
-                    0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0,  // v7-v4-v3-v2 down
-                    0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0   // v4-v7-v6-v5 back
-                ]),
-                indexBuffer = gl.createBuffer()
+                ])
             ;
 
-            if (
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Position', vertices) ||
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Color', colors) ||
-                !initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)) {
-                return -1;
-            }
-
-            gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
-
             progInfo.buffersInfo = createCubeBuffersInfo(gl);
-            return !indexBuffer ? -1 : indices.length; // num sides in shape
         },
         draw: (progInfo, delta, gl) => {
             drawCube(progInfo);
@@ -309,7 +265,7 @@ export default class ProgramObject extends GenericCanvasExperimentView {
     };
 
     componentDidMount () {
-        let angle = 90.0,
+        let g_angle = 90.0,
             capturedDelta
         ;
 
@@ -393,18 +349,16 @@ export default class ProgramObject extends GenericCanvasExperimentView {
                 capturedDelta = delta;
                 g_angle = (delta * 0.001) % 360.0;
 
-                programs.forEach(progInfo => {
-                    progInfo.draw(progInfo, delta, {
-
-                    }, gl);
-                });
-
                 // Clear then draw
                 gl.clearColor.apply(gl, fogColorWith4th);
                 gl.enable(gl.DEPTH_TEST);
                 gl.enable(gl.POLYGON_OFFSET_FILL);
                 gl.polygonOffset(1.0, 1.0);
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+                programs.forEach(progInfo => {
+                    progInfo.draw(progInfo, delta, dynamicValues, gl);
+                });
             }
         ;
 
