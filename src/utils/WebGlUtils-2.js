@@ -69,12 +69,12 @@ export const
         .filter(shader => !!shader);
     },
 
-    initBufferWithData = (gl, bufferType, numParts, attribType, attribName, bufferData) => {
+    initBufferWithData = (gl, bufferType, numParts, attribType, attribName, bufferData, stride = 0, offset = 0) => {
         const buffer = gl.createBuffer(),
             a_Attrib = getAttribLoc(gl, attribName);
         gl.bindBuffer(bufferType, buffer);
         gl.bufferData(bufferType, bufferData, gl.STATIC_DRAW);
-        gl.vertexAttribPointer(a_Attrib, numParts, attribType || gl.FLOAT,  false, 0, 0);
+        gl.vertexAttribPointer(a_Attrib, numParts, attribType || gl.FLOAT,  false, stride, offset);
         gl.enableVertexAttribArray(a_Attrib);
         return !!buffer;
     },
@@ -82,7 +82,33 @@ export const
     initBufferNoEnable = (gl, vertAttribType, numParts, bufferData) => {
         const buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW)
+        gl.bufferData(gl.ARRAY_BUFFER, bufferData, gl.STATIC_DRAW);
+        if (!buffer) {
+            error('Falied to create buffer for later use');
+            return;
+        }
+        buffer.numParts = numParts;
+        buffer.vertAttribType = vertAttribType;
+        return buffer;
+    },
+
+    initAttributeVar = (gl, attributePointer, buffer) => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.vertexAttribPointer(attributePointer, buffer.numParts, buffer.vertAttribType, false, 0, 0);
+        gl.enableVertexAttribArray(attributePointer);
+    },
+
+    initBufferNoEnable1 = (
+        gl,
+        bufferType,
+        vertAttribType,
+        usageType,
+        numParts,
+        bufferData
+    ) => {
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(bufferType, buffer);
+        gl.bufferData(bufferType, bufferData, usageType);
         if (!buffer) {
             error('Falied to create buffer for later use');
             return;

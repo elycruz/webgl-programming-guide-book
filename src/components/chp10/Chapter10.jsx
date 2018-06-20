@@ -9,6 +9,7 @@ import FogW from './FogW';
 import RoundedPoints from "./RoundedPoints";
 import LookAtBlendedTriangles from "./LookAtBlendedTriangles";
 import BlendedCube from "./BlendedCube";
+import ProgramObject from "./ProgramObject";
 
 const Chapter10 = () => (
         <div className="chapter">
@@ -41,6 +42,9 @@ const Chapter10 = () => (
             </div>
             <div className="canvas-experiment">
                 <BlendedCube />
+            </div>
+            <div className="canvas-experiment">
+                <ProgramObject />
             </div>
         </div>
     )

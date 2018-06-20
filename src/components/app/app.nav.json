@@ -351,6 +351,11 @@
           "label": "Blended Cube",
           "uri": "/chp10/blended-cube",
           "componentFilePath": "./components/chp10/BlendedCube"
+        },
+        {
+          "label": "Program Object",
+          "uri": "/chp10/program-object",
+          "componentFilePath": "./components/chp10/ProgramObject"
         }
       ]
     }
