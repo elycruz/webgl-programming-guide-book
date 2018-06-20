@@ -5,7 +5,7 @@ WebGl Programming Guide book exercises and code refactor.
 - This book uses Webgl 1.0 so all examples will/are in webgl 1.0 (maybe at another time
 we can port the examples to use Webgl 2 (OpenGl Es 3.0).
 - ~~Only chp2 has been converted into the app so far.  All other chapters are from several years ago
-and don't use the newly set up app.~~  Chapters 1-9 have been built out.  Chapter 10 is pending.
+and don't use the newly set up app.~~  Chapters 1-9 have been built out.  Chapter 10 is in progress.
 
 ## Pending tasks
 Put each example into a chapter view;  E.g., 
