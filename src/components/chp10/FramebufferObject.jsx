@@ -165,6 +165,67 @@ const
         return out;
     },
 
+    createFrameBufferInfo = (progInfo, gl) => {
+        const out = {},
+            errorCleanup = () => {
+                if (frameBuffer) gl.deleteFramebuffer(frameBuffer);
+                if (texture) gl.deleteTexture(texture);
+                if (depthBuffer) gl.deleteRenderbuffer(depthBuffer);
+            };
+
+        let frameBuffer = gl.createFramebuffer(),
+            texture = loadTexture(gl, textureImg, () => {
+                gl.useProgram(progInfo.program);
+                gl.uniform1i(progInfo.uniforms.u_Sampler, 0);
+                gl.bindTexture(gl.TEXTURE_2D, null);
+            }),
+            depthBuffer = gl.createRenderbuffer(),
+            failedAssocList = [
+                ['framebuffer', frameBuffer],
+                ['texture', texture],
+                ['renderbuffer', depthBuffer]
+            ].filter((_, buffer) => !buffer),
+            frameBufferStatus;
+
+        // If errors exit
+        if (failedAssocList.length) {
+            errorCleanup();
+            failedAssocList.forEach(([bufferName]) => {
+                error(`Failed to create ${bufferName} buffer object`);
+            });
+            return undefined;
+        }
+
+        // Set outgoing components
+        out.texture = texture;
+        out.framebuffer = frameBuffer;
+        out.renderbuffer = depthBuffer;
+
+        // Set render buffer
+        gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+        gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, offscreenWidth, offscreenHeight);
+
+        // Attach texture and render buffer to frame buffer
+        gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+
+        // Check if frame buffer is configured correctly
+        frameBufferStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (gl.FRAMEBUFFER_COMPLETE !== frameBufferStatus) {
+            error(`Frame buffer object is not complete: ${frameBufferStatus}`);
+            errorCleanup();
+            return undefined;
+        }
+
+        // Unbind frame buffer to allow binding it at render time
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.bindTexture(gl.TEXTURE_2D, null);
+        gl.bindRenderbuffer(gl.RENDERBUFFER, null);
+
+        return out;
+    },
+
     drawCube = (progInfo, worldInfo, gl) => {
         const {u_MvpMatrix, u_NormalMatrix, u_ModelMatrix} = progInfo.uniforms,
             {g_mvpMatrix, g_normalMatrix,
@@ -190,6 +251,22 @@ const
         gl.drawElements(gl.TRIANGLES, progInfo.numCreatedVertices, gl.UNSIGNED_BYTE, 0);
     },
 
+    drawTexturedObj = (progInfo, worldInfo, gl) => {
+        const {
+            // attributes: {a_Position, a_TexCoord},
+            // buffersInfo:
+        } = progInfo;
+    },
+
+    drawTexturedCube = (progInfo, worldInfo, gl) => {
+        const {modelMatrix} = progInfo.matrices;
+
+    },
+
+    drawTexturedPlane = (progInfo, worldInfo, gl) => {
+
+    },
+
     setSharedStaticUniforms = (progInfo, statics, dynamics, gl) => {
         const
             {u_Eye, u_FogColor, u_FogDist,
@@ -209,8 +286,8 @@ const
         {
             attributeNames: [
                 'a_Position',
-                'a_Color',
                 'a_Normal',
+                'a_TexCoord'
             ],
             uniformNames: [
                 'u_MvpMatrix',
@@ -223,6 +300,7 @@ const
                 'u_Eye',
                 'u_FogColor',
                 'u_FogDist',
+                'u_Sampler'
             ],
             getShadersAssocList: gl => [
                 [gl.VERTEX_SHADER, vertShader],
@@ -241,7 +319,7 @@ const
                 mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(-2, 0, 0));
                 progInfo.buffersInfo = createCubeBuffersInfo(gl);
                 progInfo.buffersInfo.colorBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, colors);
-
+                progInfo.planeBufferInfo = createPlaneBuffersInfo(gl);
                 progInfo.matrices = {modelMatrix};
                 return progInfo.buffersInfo.numIndices;
             },
@@ -270,7 +348,14 @@ const
                 // Draw cube
                 drawCube(progInfo, worldInfo, gl);
             },
-            setStaticUniforms: setSharedStaticUniforms
+            setStaticUniforms: (progInfo, statics, dynamics, gl) => {
+                    setSharedStaticUniforms(progInfo, statics, dynamics, gl);
+                    progInfo.texture = loadTexture(gl, textureImg, () => {
+                        gl.useProgram(progInfo.program);
+                        gl.uniform1i(progInfo.uniforms.u_Sampler, 0);
+                        gl.bindTexture(gl.TEXTURE_2D, null);
+                    });
+            }
         },
     ]
 
@@ -393,5 +478,4 @@ export default class ProgramObject extends GenericCanvasExperimentView {
             </div>
         );
     }
-
 }
