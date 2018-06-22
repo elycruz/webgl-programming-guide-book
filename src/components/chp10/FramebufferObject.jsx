@@ -10,7 +10,9 @@ import {
 } from "../../utils/WebGlUtils-2";
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 import rafLimiter from "../../utils/raqLimiter";
-import textureImg from '../../assets/orange.jpg'
+import textureImg from '../../assets/sky_cloud.jpg';
+import vertShader from '../../assets/fboVertexShader.js';
+import fragShader from '../../assets/fboFragmentShader.js';
 
 const
 
@@ -20,77 +22,7 @@ const
     // Offscreen buffer height
     offscreenHeight = 256,
 
-    vertShader = `
-        precision highp float;
-        
-        attribute vec4 a_Position;
-        attribute vec4 a_Color;
-        attribute vec4 a_Normal;
-        
-        uniform mat4 u_MvpMatrix;
-        uniform mat4 u_NormalMatrix;
-        uniform mat4 u_ModelMatrix;
-        uniform vec4 u_Eye;
-        varying vec3 v_Normal;
-        varying vec3 v_Position;
-        varying vec4 v_Color;
-        varying float v_Dist;
-        
-        void main () {
-            gl_Position = u_MvpMatrix * a_Position;
-            
-            v_Color = a_Color;
-            
-            // Calculate the world coordinate of the vertex
-            v_Position = vec3(u_ModelMatrix * a_Position);
-            
-            // Recalculate normal with normal matrix and make length of normal '1.0'
-            v_Normal = normalize(vec3(u_NormalMatrix * a_Normal));
-            
-            // Calculate distance for given vertex from eye
-            // Using distance approximation using 'z' value of vertex 
-            v_Dist = gl_Position.w; //  distance(u_ModelMatrix * a_Position, u_Eye);
-        }`,
-
-    fragShader = `
-        precision highp float;
-        
-        uniform vec3 u_LightColor;
-        uniform vec3 u_LightDirection;
-        uniform vec3 u_LightPosition;
-        uniform vec3 u_AmbientLight;
-        uniform vec3 u_FogColor;
-        uniform vec2 u_FogDist;
-        
-        varying vec3 v_Normal;
-        varying vec3 v_Position;
-        varying vec4 v_Color;
-        varying float v_Dist;
-        
-        void main () {
-            float fogFactor = clamp((u_FogDist.y - v_Dist) / (u_FogDist.y - u_FogDist.x), 0.0, 1.0);
-        
-            // Calculate light direction and make it 1.0 in length
-            vec3 lightDirection = normalize(u_LightPosition - vec3(v_Position));
-
-            // Calculate the color due to ambient reflection
-            vec3 ambient = u_AmbientLight * v_Color.rgb;
-            
-            // Dot product of light direction and orientation of a surface
-            float nDotL = max(dot(lightDirection, v_Normal), 0.0);
-            
-            // Calculate color due to diffuse reflection
-            vec3 diffuse = u_LightColor * vec3(v_Color.rgb) * nDotL;
-            
-            // Calculate color
-            // u_FogColor * (1 - fogFactor) + v_Color * fogFactor
-            vec3 fragColor = mix(u_FogColor, vec3(vec4(diffuse + ambient, v_Color.a)), fogFactor);
-
-            // Mix fog in with frag color
-            gl_FragColor = vec4(fragColor, v_Color.a);
-        }`,
-
-    createCubeBuffersInfo = gl => {
+    createCubeBuffersInfo = (progInfo, worldInfo, gl) => {
         const
             vertices = new Float32Array([   // Vertex coordinates
                 1.0, 1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, 1.0, 1.0, -1.0, 1.0,  // v0-v1-v2-v3 front
@@ -124,20 +56,28 @@ const
                 0.0, 0.0,   1.0, 0.0,   1.0, 1.0,   0.0, 1.0,    // v7-v4-v3-v2 down
                 0.0, 0.0,   1.0, 0.0,   1.0, 1.0,   0.0, 1.0     // v4-v7-v6-v5 back
             ]),
+            modelMatrix = mat4.create(),
             out = {
                 vertexBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, vertices),
                 normalBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, normals),
                 texCoordBuffer: initBufferNoEnable(gl, gl.FLOAT, 2, texCoords),
-                indexBuffer: initBufferNoEnable1(gl, gl.ELEMENT_ARRAY_BUFFER, gl.FLOAT, gl.STATIC_DRAW, 3, indices)
+                indexBuffer: initBufferNoEnable1(gl, gl.ELEMENT_ARRAY_BUFFER, gl.FLOAT, gl.STATIC_DRAW, indices.length, indices),
+                texture: loadTexture(gl, textureImg, () => {
+                    gl.useProgram(progInfo.program);
+                    gl.uniform1i(progInfo.uniforms.u_Sampler, 0);
+                    gl.bindTexture(gl.TEXTURE_2D, null);
+                }),
+                modelMatrix: modelMatrix
             }
         ;
+        mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(2, 2, 2));
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         out.numIndices = keys(out).some(k => !out[k]) ? -1 : indices.length;
         return out;
     },
 
-    createPlaneBuffersInfo = gl => {
+    createPlaneBuffersInfo = (progInfo, worldInfo, gl) => {
         const
             // Vertex coordinates
             vertices = new Float32Array([
@@ -150,42 +90,50 @@ const
             // Indices of the vertices
             indices = new Uint8Array([0, 1, 2, 0, 2, 3]),
 
+            viewProjMatrix = mat4.create(),
+            modelMatrix = mat4.create(),
+            {canvasElm, eye, currFocal, upFocal} = worldInfo,
+
             out = {
                 vertexBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, vertices),
-                texCoordsBuffer: initBufferNoEnable(gl, gl.FLOAT, 2, texCoords),
-                indexBuffer: initBufferNoEnable1(gl, gl.ELEMENT_ARRAY_BUFFER, gl.UNSIGNED_BYTE, gl.STATIC_DRAW, indices)
+                texCoordBuffer: initBufferNoEnable(gl, gl.FLOAT, 2, texCoords),
+                indexBuffer: initBufferNoEnable1(gl, gl.ELEMENT_ARRAY_BUFFER, gl.UNSIGNED_BYTE, gl.STATIC_DRAW, indices.length, indices),
+                modelMatrix,
+                viewProjMatrix
             }
         ;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+        // Set up view projection
+        mat4.lookAt(viewProjMatrix, eye, currFocal, upFocal);
+        mat4.perspective(viewProjMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+
+        // Set up model
+        // mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(0, 0, -10));
+        mat4.scale(modelMatrix, modelMatrix, vec3.fromValues(3, 3, 3));
 
         out.numIndices = keys(out).some(k => !out[k]) ? -1 : indices.length;
-
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         return out;
     },
 
-    createFrameBufferInfo = (progInfo, gl) => {
+    createFrameBufferInfo = (progInfo, worldInfo, gl) => {
+        let framebuffer = gl.createFramebuffer(),
+            texture = gl.createTexture(),
+            renderbuffer = gl.createRenderbuffer(),
+            failedAssocList = [
+                ['framebuffer', framebuffer],
+                ['texture', texture],
+                ['renderbuffer', renderbuffer]
+            ].filter(([_, buffer]) => !buffer),
+            framebufferStatus;
+
         const out = {},
             errorCleanup = () => {
-                if (frameBuffer) gl.deleteFramebuffer(frameBuffer);
+                if (framebuffer) gl.deleteFramebuffer(framebuffer);
                 if (texture) gl.deleteTexture(texture);
-                if (depthBuffer) gl.deleteRenderbuffer(depthBuffer);
+                if (renderbuffer) gl.deleteRenderbuffer(renderbuffer);
             };
-
-        let frameBuffer = gl.createFramebuffer(),
-            texture = loadTexture(gl, textureImg, () => {
-                gl.useProgram(progInfo.program);
-                gl.uniform1i(progInfo.uniforms.u_Sampler, 0);
-                gl.bindTexture(gl.TEXTURE_2D, null);
-            }),
-            depthBuffer = gl.createRenderbuffer(),
-            failedAssocList = [
-                ['framebuffer', frameBuffer],
-                ['texture', texture],
-                ['renderbuffer', depthBuffer]
-            ].filter((_, buffer) => !buffer),
-            frameBufferStatus;
 
         // If errors exit
         if (failedAssocList.length) {
@@ -196,26 +144,30 @@ const
             return undefined;
         }
 
+        gl.bindTexture(gl.TEXTURE_2D, texture); // Bind the object to target
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, offscreenWidth, offscreenHeight, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+
         // Set outgoing components
         out.texture = texture;
-        out.framebuffer = frameBuffer;
-        out.renderbuffer = depthBuffer;
+        out.framebuffer = framebuffer;
+        out.renderbuffer = renderbuffer;
 
         // Set render buffer
-        gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
+        gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
         gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, offscreenWidth, offscreenHeight);
 
         // Attach texture and render buffer to frame buffer
-        gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
         gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
-        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+        gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
 
         // Check if frame buffer is configured correctly
-        frameBufferStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
-        if (gl.FRAMEBUFFER_COMPLETE !== frameBufferStatus) {
-            error(`Frame buffer object is not complete: ${frameBufferStatus}`);
-            errorCleanup();
-            return undefined;
+        framebufferStatus = gl.checkFramebufferStatus(gl.FRAMEBUFFER);
+        if (gl.FRAMEBUFFER_COMPLETE !== framebufferStatus) {
+            // error(`Frame buffer object is not complete: ${framebufferStatus}`);
+            // errorCleanup();
+            // return undefined;
         }
 
         // Unbind frame buffer to allow binding it at render time
@@ -226,14 +178,20 @@ const
         return out;
     },
 
-    drawCube = (progInfo, worldInfo, gl) => {
+    drawTexturedObj = (progInfo, worldInfo, bufferInfo, gl) => {
+        const {
+                attributes: {a_Position, a_TexCoord}
+            } = progInfo,
+            {
+                vertexBuffer, texCoordBuffer, texture, indexBuffer,
+                modelMatrix
+            } = bufferInfo;
         const {u_MvpMatrix, u_NormalMatrix, u_ModelMatrix} = progInfo.uniforms,
             {g_mvpMatrix, g_normalMatrix,
-                g_viewMatrix, g_projMatrix, g_angle} = worldInfo,
-            {modelMatrix} = progInfo.matrices;
+                g_viewMatrix, g_projMatrix, g_angle} = worldInfo;
 
-        mat4.rotateX(modelMatrix, modelMatrix, g_angle);
         mat4.rotateY(modelMatrix, modelMatrix, g_angle);
+        // mat4.rotateY(modelMatrix, modelMatrix, g_angle);
 
         // Magic Matrix: Inverse transpose matrix (for affecting normals on
         //  shape when translating, scaling etc.)
@@ -248,120 +206,92 @@ const
         gl.uniformMatrix4fv(u_NormalMatrix, false, g_normalMatrix);
         gl.uniformMatrix4fv(u_ModelMatrix, false, modelMatrix);
 
-        gl.drawElements(gl.TRIANGLES, progInfo.numCreatedVertices, gl.UNSIGNED_BYTE, 0);
-    },
+        initAttributeVar(gl, a_Position, vertexBuffer);
+        initAttributeVar(gl, a_TexCoord, texCoordBuffer);
 
-    drawTexturedObj = (progInfo, worldInfo, gl) => {
-        const {
-            // attributes: {a_Position, a_TexCoord},
-            // buffersInfo:
-        } = progInfo;
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+        gl.drawElements(gl.TRIANGLES, indexBuffer.numParts, gl.UNSIGNED_BYTE, 0);
     },
 
     drawTexturedCube = (progInfo, worldInfo, gl) => {
-        const {modelMatrix} = progInfo.matrices;
+        const {
+            attributes: {a_Position, a_Normal, a_TexCoord},
+            cubeBufferInfo,
+            cubeBufferInfo: {
+                vertexBuffer, normalBuffer, texCoordBuffer, indexBuffer
+            }
+        } = progInfo;
 
+        // Set attribute buffers
+        initAttributeVar(gl, a_Position, vertexBuffer);
+        initAttributeVar(gl, a_Normal, normalBuffer);
+        initAttributeVar(gl, a_TexCoord, texCoordBuffer);
+
+        // Bind vertex index buffer
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+        // Draw cube
+        drawTexturedObj(progInfo, worldInfo, cubeBufferInfo, gl);
     },
 
     drawTexturedPlane = (progInfo, worldInfo, gl) => {
-
+        progInfo.planeBufferInfo.texture = progInfo.fboBufferInfo.texture;
+        drawTexturedObj(progInfo, worldInfo, progInfo.planeBufferInfo, gl);
     },
 
-    setSharedStaticUniforms = (progInfo, statics, dynamics, gl) => {
+    setSharedStaticUniforms = (progInfo, worldInfo, gl) => {
         const
             {u_Eye, u_FogColor, u_FogDist,
                 u_LightColor, u_AmbientLight, u_LightPosition,
                 u_LightDirection} = progInfo.uniforms,
-            {eyeF32, fogColor, fogDist, lightDirection} = statics;
+            {eyeF32, fogColor, fogDist, lightDirection} = worldInfo;
         gl.uniform4fv(u_Eye, eyeF32);
         gl.uniform3fv(u_FogColor, fogColor);
         gl.uniform2fv(u_FogDist, fogDist);
         gl.uniform3f(u_LightColor, 1.0, 1.0, 1.0);
         gl.uniform3f(u_AmbientLight, 0.3, 0.3, 0.3);
-        gl.uniform3f(u_LightPosition, 0.0, 21.0, 4.0);
+        gl.uniform3f(u_LightPosition, 0.0, 21.0, 21.0);
         gl.uniform3fv(u_LightDirection, lightDirection);
     },
 
-    programConfigs = [
-        {
-            attributeNames: [
-                'a_Position',
-                'a_Normal',
-                'a_TexCoord'
-            ],
-            uniformNames: [
-                'u_MvpMatrix',
-                'u_NormalMatrix',
-                'u_ModelMatrix',
-                'u_LightColor',
-                'u_LightDirection',
-                'u_LightPosition',
-                'u_AmbientLight',
-                'u_Eye',
-                'u_FogColor',
-                'u_FogDist',
-                'u_Sampler'
-            ],
-            getShadersAssocList: gl => [
-                [gl.VERTEX_SHADER, vertShader],
-                [gl.FRAGMENT_SHADER, fragShader]
-            ],
-            init: (progInfo, gl) => {
-                const colors = new Float32Array([   // Colors
-                        0.32, 0.18, 0.56, 0.32, 0.18, 0.56, 0.32, 0.18, 0.56, 0.32, 0.18, 0.56, // v0-v1-v2-v3 front
-                        0.5, 0.41, 0.69, 0.5, 0.41, 0.69, 0.5, 0.41, 0.69, 0.5, 0.41, 0.69,  // v0-v3-v4-v5 right
-                        0.78, 0.69, 0.84, 0.78, 0.69, 0.84, 0.78, 0.69, 0.84, 0.78, 0.69, 0.84, // v0-v5-v6-v1 up
-                        0.0, 0.32, 0.61, 0.0, 0.32, 0.61, 0.0, 0.32, 0.61, 0.0, 0.32, 0.61,  // v1-v6-v7-v2 left
-                        0.27, 0.58, 0.82, 0.27, 0.58, 0.82, 0.27, 0.58, 0.82, 0.27, 0.58, 0.82, // v7-v4-v3-v2 down
-                        0.73, 0.82, 0.93, 0.73, 0.82, 0.93, 0.73, 0.82, 0.93, 0.73, 0.82, 0.93, // v4-v7-v6-v5 back
-                    ]),
-                    modelMatrix = mat4.create();
-                mat4.translate(modelMatrix, modelMatrix, vec3.fromValues(-2, 0, 0));
-                progInfo.buffersInfo = createCubeBuffersInfo(gl);
-                progInfo.buffersInfo.colorBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, colors);
-                progInfo.planeBufferInfo = createPlaneBuffersInfo(gl);
-                progInfo.matrices = {modelMatrix};
-                return progInfo.buffersInfo.numIndices;
-            },
-            draw: (progInfo, worldInfo, gl) => {
-                const {
-                    program,
-                    attributes: {
-                        a_Position, a_Normal, a_Color
-                    },
-                    buffersInfo: {
-                        vertexBuffer, normalBuffer, colorBuffer, indexBuffer
-                    }
-                } = progInfo;
-
-                // Set program
-                gl.useProgram(program);
-
-                // Set attribute buffers
-                initAttributeVar(gl, a_Position, vertexBuffer);
-                initAttributeVar(gl, a_Normal, normalBuffer);
-                initAttributeVar(gl, a_Color, colorBuffer);
-
-                // Bind vertex index buffer
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-
-                // Draw cube
-                drawCube(progInfo, worldInfo, gl);
-            },
-            setStaticUniforms: (progInfo, statics, dynamics, gl) => {
-                    setSharedStaticUniforms(progInfo, statics, dynamics, gl);
-                    progInfo.texture = loadTexture(gl, textureImg, () => {
-                        gl.useProgram(progInfo.program);
-                        gl.uniform1i(progInfo.uniforms.u_Sampler, 0);
-                        gl.bindTexture(gl.TEXTURE_2D, null);
-                    });
-            }
+    programInfo = {
+        attributeNames: [
+            'a_Position',
+            'a_Normal',
+            'a_TexCoord'
+        ],
+        uniformNames: [
+            'u_MvpMatrix',
+            'u_NormalMatrix',
+            'u_ModelMatrix',
+            'u_LightColor',
+            'u_LightDirection',
+            'u_LightPosition',
+            'u_AmbientLight',
+            'u_Eye',
+            'u_FogColor',
+            'u_FogDist',
+            'u_Sampler'
+        ],
+        getShadersAssocList: gl => [
+            [gl.VERTEX_SHADER, vertShader],
+            [gl.FRAGMENT_SHADER, fragShader]
+        ],
+        init: (progInfo, worldInfo, gl) => {
+            progInfo.cubeBufferInfo = createCubeBuffersInfo(progInfo, worldInfo, gl);
+            progInfo.planeBufferInfo = createPlaneBuffersInfo(progInfo, worldInfo, gl);
+            progInfo.fboBufferInfo = createFrameBufferInfo(progInfo, worldInfo, gl);
+            progInfo.cubeBufferInfo.viewProjMatrix = worldInfo.g_viewMatrix;
+            return ![progInfo.cubeBufferInfo, progInfo.planeBufferInfo, progInfo.fboBufferInfo].some(x => !x);
         },
-    ]
-
+        setStaticUniforms: setSharedStaticUniforms
+    }
 ;
 
-export default class ProgramObject extends GenericCanvasExperimentView {
+export default class FramebufferObject extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'program-object',
         canvasId: 'program-object-canvas',
@@ -377,10 +307,10 @@ export default class ProgramObject extends GenericCanvasExperimentView {
 
             // Uniform values
             fogColor = new Float32Array([0.137, 0.231, 0.423]),
-            fogDist = new Float32Array([10, 15]),
+            fogDist = new Float32Array([13, 15]),
             fogColorWith4th = new Float32Array( Array.from(fogColor).concat([1.0]) ),
             eye = vec3.fromValues(0,  0,  13),  //  x   y   z - Get converted to floating point
-            eyeF32 = new Float32Array([13, 0, 0, 1.0]),
+            eyeF32 = new Float32Array([0, 0, 13, 1.0]),
             currFocal = vec3.fromValues(0,  0,  0),
             upFocal = vec3.fromValues(0,  1,  0),
             lightDirection = vec3.fromValues(0.0, 3.0, 4.0),
@@ -391,77 +321,82 @@ export default class ProgramObject extends GenericCanvasExperimentView {
             g_normalMatrix = mat4.create(),
             g_mvpMatrix = mat4.create(),
 
-            // Static values for easy sharing
-            staticValues = {fogColor, fogDist, fogColorWith4th, eye, eyeF32, currFocal, upFocal, lightDirection},
-            dynamicValues = {g_mvpMatrix, g_normalMatrix, g_viewMatrix, g_projMatrix, g_angle},
+            worldInfo = {
+                g_mvpMatrix, g_normalMatrix, g_viewMatrix, g_projMatrix, g_angle, canvasElm,
+                fogColor, fogDist, fogColorWith4th, eye, eyeF32, currFocal, upFocal, lightDirection
+            },
 
-            // Create program objects
-            programs = programConfigs.map(progInfo => {
-                const
-                    program =
-                        progInfo.program =
-                            initProgram(gl, progInfo.getShadersAssocList(gl));
+            program =
+                programInfo.program =
+                    initProgram(gl, programInfo.getShadersAssocList(gl));
 
-                if (!program) {
-                    error('Error while creating and linking program.');
-                    return progInfo;
-                }
+        if (!program) {
+            error('Error while creating and linking program.');
+            return programInfo;
+        }
 
-                const numCreatedVertices =
-                    progInfo.numCreatedVertices =
-                        progInfo.init(progInfo, gl);
+        // Get uniform locations
+        programInfo.uniforms = programInfo.uniformNames.reduce((agg, name) => {
+            agg[name] = gl.getUniformLocation(program, name);
+            return agg;
+        }, {});
 
-                if (numCreatedVertices === -1) {
-                    error('Error while creating vertices buffer.');
-                }
+        // Get attributes locations
+        programInfo.attributes = programInfo.attributeNames.reduce((agg, name) => {
+            agg[name] = gl.getAttribLocation(program, name);
+            return agg;
+        }, {});
 
-                // Get uniform locations
-                if (progInfo.uniformNames) {
-                    progInfo.uniforms = progInfo.uniformNames.reduce((agg, name) => {
-                        agg[name] = gl.getUniformLocation(progInfo.program, name);
-                        return agg;
-                    }, {});
-                }
+        if (!programInfo.init(programInfo, worldInfo, gl)) {
+            error('Error while initializing buffers.');
+        }
 
-                // Get attributes locations
-                if (progInfo.attributeNames) {
-                    progInfo.attributes = progInfo.attributeNames.reduce((agg, name) => {
-                        agg[name] = gl.getAttribLocation(progInfo.program, name);
-                        return agg;
-                    }, {});
-                }
-
-                // Initialize static uniforms
-                if (progInfo.setStaticUniforms) {
-                    progInfo.setStaticUniforms(progInfo, staticValues, dynamicValues, gl);
-                }
-
-                return progInfo;
-            });
+        // Initialize static uniforms
+        programInfo.setStaticUniforms(programInfo, worldInfo, gl);
 
         vec3.normalize(lightDirection, lightDirection);
         mat4.lookAt(g_viewMatrix, eye, currFocal, upFocal);
         mat4.perspective(g_projMatrix, toRadians(30), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
 
+        gl.enable(gl.DEPTH_TEST);
+        gl.enable(gl.POLYGON_OFFSET_FILL);
+        gl.polygonOffset(1.0, 1.0);
+
         const draw = delta => {
-            dynamicValues.g_angle =
+            worldInfo.g_angle =
                 g_angle = (delta * 0.001) % 360.0;
 
-            // Clear then draw
+            const {fboBufferInfo: {framebuffer}} = programInfo;
+
+            // Set frame buffer
+            gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+
+            // Set frame buffer viewport
+            gl.viewport(0, 0, offscreenWidth, offscreenHeight);
+
+            // Clear drawing
             gl.clearColor.apply(gl, fogColorWith4th);
-            gl.enable(gl.DEPTH_TEST);
-            gl.enable(gl.POLYGON_OFFSET_FILL);
-            gl.polygonOffset(1.0, 1.0);
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-            programs.forEach(progInfo => {
-                if (!progInfo.program) { return; }
-                progInfo.draw(progInfo, dynamicValues, gl);
-            });
+            // Draw textured cube
+            drawTexturedCube(programInfo, worldInfo, gl);
+
+            // Clear framebuffer
+            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+            // Change viewport
+            gl.viewport(0, 0, canvasElm.width, canvasElm.height);
+
+            // Clear gl
+            gl.clearColor(0.0, 0.0, 0.0, 1.0);
+            gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+            // Draw textured plane
+            drawTexturedPlane(programInfo, worldInfo, gl);
         };
 
         this.canvasElm = canvasElm;
-        rafLimiter(draw, 144);
+        rafLimiter(draw, 60);
     }
 
     render () {
@@ -471,7 +406,10 @@ export default class ProgramObject extends GenericCanvasExperimentView {
                 <header>
                     <h3>{props.fileName}</h3>
                 </header>
-                <canvas width="610" height="377"
+                <p>Framebuffer texture for rectangle (cube is being rendered into
+                    frame buffer then outputted as a texture and applied to square).
+                Note:  The darkside of the rectangle is due to 'fog-effect' being applied via the same shader</p>
+                <canvas width="377" height="377"
                         id={props.canvasId} ref={this.canvas}>
                     <p>Html canvas element not supported</p>
                 </canvas>

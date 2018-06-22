@@ -356,6 +356,11 @@
           "label": "Program Object",
           "uri": "/chp10/program-object",
           "componentFilePath": "./components/chp10/ProgramObject"
+        },
+        {
+          "label": "Frame Buffer Object",
+          "uri": "/chp10/frame-buffer-object",
+          "componentFilePath": "./components/chp10/FramebufferObject"
         }
       ]
     }
