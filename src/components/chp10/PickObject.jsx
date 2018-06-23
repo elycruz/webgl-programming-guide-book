@@ -277,11 +277,11 @@ export default class PickObject extends GenericCanvasExperimentView {
                 dragging = true;
                 dragAngInfo.lastX = e.pageX - elm.offsetLeft;
                 dragAngInfo.lastY = e.pageY - elm.offsetTop;
-                canvasElm.addEventListener('mousemove', onMouseMove);
+                canvasElm.addEventListener('mousemove', this.onMouseMove);
             },
             onMouseUp = () => {
                 dragging = false;
-                canvasElm.removeEventListener('mousemove', onMouseMove);
+                canvasElm.removeEventListener('mousemove', this.onMouseMove);
             },
             onClick = e => {
                 checkIfCubeSelected(
@@ -291,13 +291,31 @@ export default class PickObject extends GenericCanvasExperimentView {
             }
 
         ;
+        this.onMouseMove = onMouseMove;
+        this.onMouseUp = onMouseUp;
+        this.onMouseDown = onMouseDown;
+        this.onClick = onClick;
+        this.canvasElm = canvasElm;
 
-        canvasElm.addEventListener('mousedown', onMouseDown);
-        canvasElm.addEventListener('mouseup', onMouseUp);
-        canvasElm.addEventListener('click', onClick);
-        window.addEventListener('mouseup', onMouseUp);
+        canvasElm.addEventListener('mousedown', this.onMouseDown);
+        canvasElm.addEventListener('mouseup', this.onMouseUp);
+        canvasElm.addEventListener('click', this.onClick);
+        window.addEventListener('mouseup', this.onMouseUp);
 
         rafLimiter(draw, 144);
+    }
+
+    componentWillUnmount () {
+        [
+            ['mousedown', this.onMouseDown],
+            ['mouseup', this.onMouseUp],
+            ['mousemove', this.onMouseMove],
+            ['click', this.onClick],
+            ['mouseup', this.onMouseUp, window]
+        ].forEach(([name, handler, ctx]) =>
+            (ctx || this.canvasElm)
+                .removeEventListener(name, handler)
+        );
     }
 
     render () {

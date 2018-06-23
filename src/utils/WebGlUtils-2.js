@@ -89,6 +89,7 @@ export const
         }
         buffer.numParts = numParts;
         buffer.vertAttribType = vertAttribType;
+        buffer.bufferType = gl.ARRAY_BUFFER;
         return buffer;
     },
 
@@ -115,6 +116,7 @@ export const
         }
         buffer.numParts = numParts;
         buffer.vertAttribType = vertAttribType;
+        buffer.bufferType = bufferType;
         return buffer;
     },
 

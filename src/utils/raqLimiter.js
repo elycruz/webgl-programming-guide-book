@@ -1,13 +1,20 @@
-import {peek} from "./console";
-
+/**
+ * Request animation frame (limiter).
+ * Uses return value of `fn` to decide whether to stop animation
+ * or not.
+ * @function module:utils.rafLimiter
+ * @param fn {Function} - Receives `delta` (look at function src).
+ * @param [fps = 60] {Number}
+ * @returns {undefined}
+ */
 export default function rafLimiter (fn, fps = 60) {
     const interval = 1000 / fps;
     let then = Date.now();
 
-    return (function loop (timestamp) {
+    return (function loop (/*timestamp*/) {
         let now = Date.now(),
-            delta = now - then;
-
+            delta = now - then,
+            stopAnimation;
         if (delta > interval) {
             // Update time
             // now - (delta % interval) is an improvement over just
@@ -15,10 +22,9 @@ export default function rafLimiter (fn, fps = 60) {
             then = now - (delta % interval);
 
             // call the fn
-            fn(delta);
+            stopAnimation = fn(delta);
         }
-
-        return requestAnimationFrame(loop);
-
+        return stopAnimation ? undefined :
+            requestAnimationFrame(loop);
     }(then));
 }

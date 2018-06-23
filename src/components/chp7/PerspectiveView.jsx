@@ -160,7 +160,7 @@ export default class PerspectiveView extends GenericCanvasExperimentView {
         draw();
     }
 
-    componentWillUnMount () {
+    componentWillUnmount () {
         document.removeEventListener('keydown', this.onKeyDown);
     }
 

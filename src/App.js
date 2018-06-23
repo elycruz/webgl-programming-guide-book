@@ -34,11 +34,18 @@ class App extends Component {
     };
 
     static onLinkClick (e) {
-        this.currentLocationInfo = e.detail;
-        this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
         if (this.htmlElm.classList.contains('mobile-size')) {
             this.boundHamburgerClick(e);
         }
+        if (this.previousLocInfo &&
+            e.detail && e.detail.uri &&
+            this.previousLocInfo.uri === e.detail.uri) {
+            return;
+        }
+        this.previousLocInfo =
+            this.currentLocationInfo =
+                e.detail;
+        this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
     }
 
     static onHamburgerClick () {
@@ -64,7 +71,9 @@ class App extends Component {
         this.navRef = React.createRef();
         // this.hamburgerRef = React.createRef();
         this.navContainer = navContainer;
-        this.currentLocationInfo = findNavItemByUri(window.location.pathname, this.navContainer.items);
+        this.previousLocInfo =
+            this.currentLocationInfo =
+                findNavItemByUri(window.location.pathname, this.navContainer.items);
         this.boundOnLinkClick = App.onLinkClick.bind(this);
         this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
         this.boundHamburgerClick = App.onHamburgerClick.bind(this);
