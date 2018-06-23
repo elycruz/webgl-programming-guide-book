@@ -139,7 +139,7 @@ export default class OrthoView extends GenericCanvasExperimentView {
         draw();
     }
 
-    componentWillUnMount () {
+    componentWillUnmount () {
         document.removeEventListener('keydown', this.onKeyDown);
     }
 

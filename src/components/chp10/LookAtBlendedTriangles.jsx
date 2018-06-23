@@ -132,7 +132,7 @@ export default class LookAtBlendedTriangles extends GenericCanvasExperimentView 
         draw(eye);
     }
 
-    componentWillUnMount () {
+    componentWillUnmount () {
         document.removeEventListener('keydown', this.onKeyDown);
     }
 }

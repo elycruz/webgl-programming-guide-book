@@ -125,7 +125,7 @@ export default class LookAtRotatedTrianglesWithKeys_ViewVolume extends GenericCa
         draw(eye);
     }
 
-    componentWillUnMount () {
+    componentWillUnmount () {
         document.removeEventListener('keydown', this.onKeyDown);
     }
 }

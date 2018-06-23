@@ -120,7 +120,7 @@ export default class LookAtRotatedTrianglesWithKeys extends GenericCanvasExperim
         draw(eye);
     }
 
-    componentWillUnMount () {
+    componentWillUnmount () {
         document.removeEventListener('keydown', this.onKeyDown);
     }
 }

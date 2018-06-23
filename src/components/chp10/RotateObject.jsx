@@ -248,20 +248,36 @@ export default class RotateObject extends GenericCanvasExperimentView {
                 const elm = e.currentTarget;
                 dragAngInfo.lastX = e.pageX - elm.offsetLeft;
                 dragAngInfo.lastY = e.pageY - elm.offsetTop;
-                canvasElm.addEventListener('mousemove', onMouseMove);
+                canvasElm.addEventListener('mousemove', this.onMouseMove);
             },
             onMouseUp = () => {
                 dragging = false;
-                canvasElm.removeEventListener('mousemove', onMouseMove);
+                canvasElm.removeEventListener('mousemove', this.onMouseMove);
             }
-
         ;
 
-        canvasElm.addEventListener('mousedown', onMouseDown);
-        canvasElm.addEventListener('mouseup', onMouseUp);
-        window.addEventListener('mouseup', onMouseUp);
+        this.onMouseMove = onMouseMove;
+        this.onMouseUp = onMouseUp;
+        this.onMouseDown = onMouseDown;
+        this.canvasElm = canvasElm;
+
+        canvasElm.addEventListener('mousedown', this.onMouseDown);
+        canvasElm.addEventListener('mouseup', this.onMouseUp);
+        window.addEventListener('mouseup', this.onMouseUp);
 
         rafLimiter(draw, 144);
+    }
+
+    componentWillUnmount () {
+        [
+            ['mousedown', this.onMouseDown],
+            ['mouseup', this.onMouseUp],
+            ['mousemove', this.onMouseMove],
+            ['mouseup', this.onMouseUp, window]
+        ].forEach(([name, handler, ctx]) =>
+            (ctx || this.canvasElm)
+                .removeEventListener(name, handler)
+        );
     }
 
     render () {
