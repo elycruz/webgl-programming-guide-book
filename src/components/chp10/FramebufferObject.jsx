@@ -14,6 +14,8 @@ import textureImg from '../../assets/sky_cloud.jpg';
 import vertShader from '../../assets/fboVertexShader.js';
 import fragShader from '../../assets/fboFragmentShader.js';
 
+let stopAniFrame = false;
+
 const
 
     // Offscreen buffer width
@@ -361,6 +363,7 @@ export default class FramebufferObject extends GenericCanvasExperimentView {
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.POLYGON_OFFSET_FILL);
         gl.polygonOffset(1.0, 1.0);
+        stopAniFrame = false;
 
         const draw = delta => {
             worldInfo.g_angle =
@@ -393,10 +396,17 @@ export default class FramebufferObject extends GenericCanvasExperimentView {
 
             // Draw textured plane
             drawTexturedPlane(programInfo, worldInfo, gl);
+
+            // Animation stopper
+            return stopAniFrame;
         };
 
         this.canvasElm = canvasElm;
-        rafLimiter(draw, 60);
+        rafLimiter(draw);
+    }
+
+    componentWillUnmount () {
+        stopAniFrame = true;
     }
 
     render () {
