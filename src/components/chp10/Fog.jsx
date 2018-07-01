@@ -5,8 +5,8 @@ import {concatMap, repeat} from 'fjl';
 import {error} from '../../utils/utils';
 import {
     getWebGlContext, initProgram,
-    getAttribLoc as attribLoc,
-    getUniformLoc as uniformLoc,
+    toAttribLoc as attribLoc,
+    toUniformLoc as uniformLoc,
     toRadians
 } from "../../utils/WebGlUtils-2";
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";

@@ -14,9 +14,9 @@ export const
 
     isPowerOf2 = x => (x & (x - 1)) === 0,
 
-    getUniformLoc = (gl, locName) => gl.getUniformLocation(gl.program, locName),
+    toUniformLoc = (gl, locName) => gl.getUniformLocation(gl.program, locName),
 
-    getAttribLoc = (gl, locName) => gl.getAttribLocation(gl.program, locName),
+    toAttribLoc = (gl, locName) => gl.getAttribLocation(gl.program, locName),
 
     initProgram = (gl, shadersAssocList) => {
         let program = compileProgram(gl, shadersAssocList);
@@ -71,7 +71,7 @@ export const
 
     initBufferWithData = (gl, bufferType, numParts, attribType, attribName, bufferData, stride = 0, offset = 0) => {
         const buffer = gl.createBuffer(),
-            a_Attrib = getAttribLoc(gl, attribName);
+            a_Attrib = toAttribLoc(gl, attribName);
         gl.bindBuffer(bufferType, buffer);
         gl.bufferData(bufferType, bufferData, gl.STATIC_DRAW);
         gl.vertexAttribPointer(a_Attrib, numParts, attribType || gl.FLOAT,  false, stride, offset);

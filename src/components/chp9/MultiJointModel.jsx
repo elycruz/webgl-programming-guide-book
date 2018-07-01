@@ -1,7 +1,7 @@
 import React from 'react';
 import {error} from '../../utils/utils';
 import {
-    getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc,
+    getWebGlContext, initProgram, toAttribLoc as attribLoc, toUniformLoc as uniformLoc,
     toRadians, initBufferWithData
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';

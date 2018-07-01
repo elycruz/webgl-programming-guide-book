@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {error} from '../../utils/utils';
-import {getWebGlContext, initProgram, getAttribLoc as attribLoc, getUniformLoc as uniformLoc} from "../../utils/WebGlUtils-2";
+import {getWebGlContext, initProgram, toAttribLoc as attribLoc, toUniformLoc as uniformLoc} from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 
