@@ -120,6 +120,29 @@ export const
         return buffer;
     },
 
+    initElementArrayBufferNoEnable = (
+        gl,
+        numParts,
+        bufferData
+    ) => {
+        const
+            buffer = gl.createBuffer(),
+            bufferType = gl.ELEMENT_ARRAY_BUFFER,
+            usageType = gl.STATIC_DRAW,
+            vertAttribType = gl.UNSIGNED_BYTE
+        ;
+        gl.bindBuffer(bufferType, buffer);
+        gl.bufferData(bufferType, bufferData, usageType);
+        if (!buffer) {
+            error('Falied to create buffer for later use');
+            return;
+        }
+        buffer.numParts = numParts;
+        buffer.vertAttribType = vertAttribType;
+        buffer.bufferType = bufferType;
+        return buffer;
+    },
+
     onTextureImageLoad = e => {
         const image = e.currentTarget,
             {gl, texture, level, internalFormat, srcFormat, srcType} = e.detail;
