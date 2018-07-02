@@ -361,6 +361,11 @@
           "label": "Frame Buffer Object",
           "uri": "/chp10/frame-buffer-object",
           "componentFilePath": "./components/chp10/FramebufferObject"
+        },
+        {
+          "label": "Shadow",
+          "uri": "/chp10/shadow",
+          "componentFilePath": "./components/chp10/Shadow"
         }
       ]
     }

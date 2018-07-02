@@ -28,6 +28,45 @@ export const
         return program;
     },
 
+    initPrograms = (programConfigs, worldInfo, gl) => programConfigs.map(progInfo => {
+        const
+            program =
+                progInfo.program =
+                    initProgram(gl, progInfo.getShadersAssocList(gl));
+
+        if (!program) {
+            error('Error while creating and linking program.');
+            return progInfo;
+        }
+
+        if (!progInfo.init(progInfo, worldInfo, gl)) {
+            error('Error while initializing program.');
+        }
+
+        // Get uniform locations
+        if (progInfo.uniformNames) {
+            progInfo.uniforms = progInfo.uniformNames.reduce((agg, name) => {
+                agg[name] = gl.getUniformLocation(progInfo.program, name);
+                return agg;
+            }, {});
+        }
+
+        // Get attributes locations
+        if (progInfo.attributeNames) {
+            progInfo.attributes = progInfo.attributeNames.reduce((agg, name) => {
+                agg[name] = gl.getAttribLocation(progInfo.program, name);
+                return agg;
+            }, {});
+        }
+
+        // Initialize static uniforms
+        if (progInfo.setStaticUniforms) {
+            progInfo.setStaticUniforms(progInfo, worldInfo, gl);
+        }
+
+        return progInfo;
+    }),
+
     compileProgram = (gl, shadersAssocList) => {
         let program = gl.createProgram(),
             shaders = compileShaders(gl, shadersAssocList);
@@ -108,6 +147,29 @@ export const
         bufferData
     ) => {
         const buffer = gl.createBuffer();
+        gl.bindBuffer(bufferType, buffer);
+        gl.bufferData(bufferType, bufferData, usageType);
+        if (!buffer) {
+            error('Falied to create buffer for later use');
+            return;
+        }
+        buffer.numParts = numParts;
+        buffer.vertAttribType = vertAttribType;
+        buffer.bufferType = bufferType;
+        return buffer;
+    },
+
+    initElementArrayBufferNoEnable = (
+        gl,
+        numParts,
+        bufferData
+    ) => {
+        const
+            buffer = gl.createBuffer(),
+            bufferType = gl.ELEMENT_ARRAY_BUFFER,
+            usageType = gl.STATIC_DRAW,
+            vertAttribType = gl.UNSIGNED_BYTE
+        ;
         gl.bindBuffer(bufferType, buffer);
         gl.bufferData(bufferType, bufferData, usageType);
         if (!buffer) {
