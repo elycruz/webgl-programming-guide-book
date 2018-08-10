@@ -16,6 +16,7 @@ export default class AppNav extends Component {
         e.detail = {label, componentFilePath, uri};
         window.history.pushState(e.detail, label, uri);
         this.props.onLinkClick(e);
+        window.scroll(0, 0);
     }
 
     constructor (props) {

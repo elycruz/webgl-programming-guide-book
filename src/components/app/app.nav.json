@@ -365,7 +365,7 @@
         {
           "label": "Shadow",
           "uri": "/chp10/shadow",
-          "componentFilePath": "./components/chp10/Shadow"
+          "componentFilePath": "./components/chp10/Shadow2"
         }
       ]
     }

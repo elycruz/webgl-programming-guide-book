@@ -14,8 +14,8 @@ const
     lightX = 0,
     lightY = 7,
     lightZ = 2,
-    offscreenW = 256,
-    offscreenH = 256,
+    offscreenW = 2048,
+    offscreenH = 2048,
 
     shadowVertShader = `
         attribute vec4 a_Position;
@@ -84,7 +84,7 @@ const
                 3.0, -1.7, 2.5, -3.0, -1.7, 2.5, -3.0, -1.7, -2.5, 3.0, -1.7, -2.5    // v0-v1-v2-v3
             ]),
             colors = new Float32Array([
-                1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+                1.0, 1.0, 1.0,   1.0, 1.0, 1.0,   1.0, 1.0, 1.0,   1.0, 1.0, 1.0
             ]),
             indices = new Uint8Array([0, 1, 2, 0, 2, 3]),
             modelMatrix = mat4.create(),
@@ -92,7 +92,8 @@ const
                 vertexBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, vertices),
                 colorBuffer: initBufferNoEnable(gl, gl.FLOAT, 3, colors),
                 indexBuffer: initElementArrayBufferNoEnable(gl, indices.length, indices),
-                modelMatrix,
+                // Set plane rotation/position
+                modelMatrix: mat4.rotate(modelMatrix, modelMatrix, toRadians(-45), vec3.fromValues(0, 1, 1)),
                 numIndices: indices.length
             };
 
@@ -100,8 +101,6 @@ const
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-        // Set plane rotation/position
-        mat4.rotate(modelMatrix, modelMatrix, toRadians(45.0), vec3.fromValues(0, 1, 1));
         return out;
     },
 
@@ -183,11 +182,11 @@ const
         }
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, bufferInfo.indexBuffer);
         gl.uniformMatrix4fv(u_MvpMatrix, false,
-            new Float32Array(mat4.multiply(
+            mat4.multiply(
                 mat4.create(),
                 viewProjMatrix,
                 bufferInfo.modelMatrix
-            ))
+            )
         );
         gl.drawElements(gl.TRIANGLES, bufferInfo.numIndices, gl.UNSIGNED_BYTE, 0);
     },
@@ -271,12 +270,12 @@ const
         );
         mat4.perspective(
             viewProjMatrixFromLight,
-            toRadians(70.0), offscreenW / offscreenH, 1, 100
+            toRadians(70.0), offscreenW / offscreenH, 1.0, 100.0
         );
 
         // Regular view projection
         mat4.lookAt(viewProjMatrix, eye, currFocal, upFocal);
-        mat4.perspective(viewProjMatrix, toRadians(45), canvasElm.offsetWidth / canvasElm.offsetHeight, 1, 100);
+        mat4.perspective(viewProjMatrix, toRadians(45), canvasElm.offsetWidth / canvasElm.offsetHeight, 1.0, 100.0);
 
         // Kick-off animation loop
         rafLimiter(toDrawCallback(programs, worldInfo, gl), 144);
@@ -320,7 +319,7 @@ const
     ]
 ;
 
-export default class Shadow extends GenericCanvasExperimentView {
+export default class Shadow2 extends GenericCanvasExperimentView {
     static defaultProps = {
         aliasName: 'shadow',
         canvasId: 'shadow-canvas',
