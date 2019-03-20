@@ -1,6 +1,6 @@
 {
   "name": "webgl-prog-guide-book",
-  "version": "1.0.1",
+  "version": "11.0.1",
   "private": true,
   "dependencies": {
     "common-classes": "elycruz/common-classes",
