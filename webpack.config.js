@@ -27,7 +27,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
  * https://github.com/jantimon/html-webpack-plugin
  *
  */
-let {NODE_ENV} = process.env;
+let {NODE_ENV, PORT = 8080, PUBLIC_URL} = process.env;
 
 NODE_ENV = NODE_ENV || 'development';
 
@@ -35,7 +35,7 @@ const isDev = NODE_ENV === 'development';
 
 module.exports = {
 	mode: NODE_ENV,
-	entry: './src/index.ts',
+	entry: './src/index.tsx',
 
 	output: {
 		filename: '[name].[chunkhash].js',
@@ -43,9 +43,15 @@ module.exports = {
 	},
 
 	plugins: [
+		new webpack.DefinePlugin({
+			PUBLIC_URL: isDev ? `http://localhost:${PORT}/` : PUBLIC_URL
+		}),
 		new webpack.ProgressPlugin(),
 		new HtmlWebpackPlugin({
-			template: '!!html-loader!src/index.html'
+			template: '!!html-loader!public/index.html',
+			templateParameters: {
+				PUBLIC_URL
+			}
 		}),
 		new MiniCssExtractPlugin({
 			// Options similar to the same options in webpackOptions.output
@@ -100,7 +106,7 @@ module.exports = {
 				}
 			},
 			{
-				test: /\.[tj]s?$/,
+				test: /\.[tj]sx?$/,
 				loader: 'babel-loader',
 				include: [path.resolve(__dirname, 'src')],
 				exclude: [/node_modules/]
@@ -125,7 +131,8 @@ module.exports = {
 	},
 
 	devServer: {
-		open: true
+		open: true,
+		port: PORT
 	},
 
 	resolve: {

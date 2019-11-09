@@ -1,6 +1,4 @@
 @import "variables";
-@import "../../node_modules/unsemantic/assets/sass/unsemantic-grid-responsive";
-@import "../../node_modules/common-classes/sass/common-classes/clearfix";
 @import "functions/functions";
 @import "mixins/mixins";
 @import "base/base";
@@ -12,5 +10,3 @@
   visibility: hidden;
   display: block;
 }
-
-// hello world
