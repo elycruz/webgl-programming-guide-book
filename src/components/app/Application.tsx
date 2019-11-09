@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {debounce, findNavItemByUri} from "../../utils/utils";
-import * as navContainer from './app.nav.json';
+import navContainer from './app.nav.config';
 
 import AppNav from "./AppNav";
 
