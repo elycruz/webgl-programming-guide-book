@@ -1,6 +1,6 @@
 import React from 'react';
 import {mat4, vec3} from 'gl-matrix';
-import {range} from 'fjl-range';
+import {range} from 'fjl';
 import {concatMap, repeat} from 'fjl';
 import {error} from '../../utils/utils';
 import {

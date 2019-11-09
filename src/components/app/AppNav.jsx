@@ -5,7 +5,7 @@ import {uuid} from '../../utils/utils';
 export default class AppNav extends Component {
     static defaultProps = {
         navContainer: [],
-        onLinkClick: () => (undefined),
+        onLinkClick: () => undefined,
         innerRef: null
     };
 

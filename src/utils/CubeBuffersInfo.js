@@ -1,4 +1,4 @@
-import {range} from "fjl-range";
+import {range} from "fjl";
 import {concatMap, repeat} from "fjl";
 import {initBufferNoEnable, initBufferWithData} from "./WebGlUtils-2";
 

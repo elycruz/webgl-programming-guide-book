@@ -5,7 +5,7 @@ import {
     toRadians, initBufferWithData, initBufferNoEnable
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
-import {range$} from 'fjl-range';
+import {range$} from 'fjl';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 import {and} from 'fjl';
 

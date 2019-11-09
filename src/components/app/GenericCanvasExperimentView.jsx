@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import {uuid} from '../../utils/utils';
 
 export default class GenericCanvasExperimentView extends Component {
     static defaultProps = {

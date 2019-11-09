@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {debounce, findNavItemByUri} from "./utils/utils";
-import * as navContainer from './components/app/app.nav.json';
+import {debounce, findNavItemByUri} from "../../utils/utils";
+import * as navContainer from './app.nav.json';
 
-import AppNav from "./components/app/AppNav";
+import AppNav from "./AppNav";
 
 const
 
@@ -26,7 +26,7 @@ const
     returnErrorView = () => Promise.resolve((<h2>Page not found</h2>))
 ;
 
-class App extends Component {
+class Application extends Component {
 
     static defaultProps = {
         viewsElmVisbleClassName: 'visible',
@@ -74,9 +74,9 @@ class App extends Component {
         this.previousLocInfo =
             this.currentLocationInfo =
                 findNavItemByUri(window.location.pathname, this.navContainer.items);
-        this.boundOnLinkClick = App.onLinkClick.bind(this);
-        this.boundOnViewsAreaTransitionEnd = App.onViewsAreaTransitionEnd.bind(this);
-        this.boundHamburgerClick = App.onHamburgerClick.bind(this);
+        this.boundOnLinkClick = Application.onLinkClick.bind(this);
+        this.boundOnViewsAreaTransitionEnd = Application.onViewsAreaTransitionEnd.bind(this);
+        this.boundHamburgerClick = Application.onHamburgerClick.bind(this);
         this.state.CurrentView = this.getViewFor(!this.currentLocationInfo ? errorViewInfo : this.currentLocationInfo);
         this.htmlElm = document.querySelector('html');
     }
@@ -156,4 +156,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default Application;
