@@ -5,6 +5,5 @@
     "@babel/preset-typescript"
   ],
   "plugins": [
-    "babel-plugin-transform-object-rest-spread"
   ]
 }
