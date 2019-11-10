@@ -1,31 +1,40 @@
 import React, {Component} from 'react';
 
-export default class GenericCanvasExperimentView extends Component {
-    static defaultProps = {
-        aliasName: 'experiment-alias-name',
-        canvasId: 'experiment-canvas',
-        fileName: 'FileNameGoesHere.jsx'
-    };
+export interface GenericCanvasExperimentViewProps {
+  aliasName: string,
+  canvasId: string,
+  fileName: string
+}
 
-    constructor (props) {
-        super(props);
-        this.canvas = React.createRef();
-    }
+export default class GenericCanvasExperimentView extends Component<GenericCanvasExperimentViewProps> {
+  static defaultProps = {
+    aliasName: 'experiment-alias-name',
+    canvasId: 'experiment-canvas',
+    fileName: 'FileNameGoesHere.jsx'
+  };
 
-    render () {
-        const {props} = this;
+  canvasElm: HTMLCanvasElement;
+  canvas: React.RefObject<HTMLCanvasElement>;
 
-        return (
-            <div>
-                <header>
-                    <h3>{props.fileName}</h3>
-                </header>
-                <canvas width="377" height="377"
-                        id={props.canvasId} ref={this.canvas}>
-                    <p>Html canvas element not supported</p>
-                </canvas>
-            </div>
-        );
-    }
+  constructor(props) {
+    super(props);
+    this.canvas = React.createRef();
+  }
+
+  render() {
+    const {props: {fileName, canvasId}} = this;
+
+    return (
+      <div>
+        <header>
+          <h3>{fileName}</h3>
+        </header>
+        <canvas width="377" height="377"
+                id={canvasId} ref={this.canvas}>
+          <p>Html canvas element not supported</p>
+        </canvas>
+      </div>
+    );
+  }
 
 }
