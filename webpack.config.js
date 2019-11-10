@@ -1,8 +1,8 @@
 const path = require('path'),
 
-	webpack = require('webpack'),
+  webpack = require('webpack'),
 
-	MiniCssExtractPlugin = require('mini-css-extract-plugin');
+  MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 /*
  * SplitChunksPlugin is enabled by default and replaced
@@ -34,108 +34,119 @@ NODE_ENV = NODE_ENV || 'development';
 const isDev = NODE_ENV === 'development';
 
 module.exports = {
-	mode: NODE_ENV,
-	entry: './src/index.tsx',
+  mode: NODE_ENV,
 
-	output: {
-		filename: '[name].[chunkhash].js',
-		path: path.resolve(__dirname, 'dist')
-	},
+  entry: './src/index.tsx',
 
-	plugins: [
-		new webpack.DefinePlugin({
-			PUBLIC_URL: isDev ? `http://localhost:${PORT}/` : PUBLIC_URL
-		}),
-		new webpack.ProgressPlugin(),
-		new HtmlWebpackPlugin({
-			template: '!!html-loader!public/index.html',
-			templateParameters: {
-				PUBLIC_URL
-			}
-		}),
-		new MiniCssExtractPlugin({
-			// Options similar to the same options in webpackOptions.output
-			// both options are optional
-			filename: isDev ? '[name].css' : '[name].[hash].css',
-			chunkFilename: isDev ? '[id].css' : '[id].[hash].css',
-		}),
-	],
+  devtool: "source-map",
 
-	module: {
-		rules: [
-			{
-				test: /\.scss$/,
-				use: [
-					(isDev ?
-						// Creates `style` nodes from JS strings
-						'style-loader' :
+  output: {
+    filename: '[name].[chunkhash].js',
+    path: path.resolve(__dirname, 'dist')
+  },
 
-						// In 'prod' extract css to files
-						{
-							loader: MiniCssExtractPlugin.loader,
-							options: {
-								hmr: isDev,
-							},
-						}),
+  plugins: [
+    new webpack.DefinePlugin({
+      PUBLIC_URL: isDev ? `http://localhost:${PORT}/` : PUBLIC_URL
+    }),
+    new webpack.ProgressPlugin(),
+    new HtmlWebpackPlugin({
+      template: '!!html-loader!public/index.html',
+      templateParameters: {
+        PUBLIC_URL
+      }
+    }),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      filename: isDev ? '[name].css' : '[name].[hash].css',
+      chunkFilename: isDev ? '[id].css' : '[id].[hash].css',
+    }),
+  ],
 
-					// Translates CSS into CommonJS
-					{
-						loader: 'css-loader',
-						options: {
-							sourceMap: true,
-						},
-					},
-					// Compiles Sass to CSS
-					{
-						loader: 'sass-loader',
-						options: {
-							sassOptions: {sourceMap: true, sourceComments: false}
-						}
-					}
-					// compiles Sass to CSS, using Node Sass by default
-				],
-				include: [
-					path.resolve(__dirname, 'src')
-				]
-			},
-			{
-				test: /\.html$/,
-				loader: 'html-loader',
-				options: {
-					minify: true
-				}
-			},
-			{
-				test: /\.[tj]sx?$/,
-				loader: 'babel-loader',
-				include: [path.resolve(__dirname, 'src')],
-				exclude: [/node_modules/]
-			}
-		],
-	},
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          (isDev ?
+            // Creates `style` nodes from JS strings
+            'style-loader' :
 
-	optimization: {
-		splitChunks: {
-			cacheGroups: {
-				vendors: {
-					priority: -10,
-					test: /[\\/]node_modules[\\/]/
-				}
-			},
+            // In 'prod' extract css to files
+            {
+              loader: MiniCssExtractPlugin.loader,
+              options: {
+                hmr: isDev,
+              },
+            }),
 
-			chunks: 'async',
-			minChunks: 1,
-			minSize: 30000,
-			name: true
-		}
-	},
+          // Translates CSS into CommonJS
+          {
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+            },
+          },
+          // Compiles Sass to CSS
+          {
+            loader: 'sass-loader',
+            options: {
+              sassOptions: {sourceMap: true, sourceComments: false}
+            }
+          }
+          // compiles Sass to CSS, using Node Sass by default
+        ],
+        include: [
+          path.resolve(__dirname, 'src')
+        ]
+      },
+      {
+        test: /\.html$/,
+        loader: 'html-loader',
+        options: {
+          minify: true
+        }
+      },
+      {
+        test: /\.[tj]sx?$/,
+        loader: 'babel-loader',
+        include: [path.resolve(__dirname, 'src')],
+        exclude: [/node_modules/]
+      },
+      {
+        test: /\.(png|jpe?g|gif)$/i,
+        use: [
+          {
+            loader: 'file-loader',
+          },
+        ],
+      },
+    ],
+  },
 
-	devServer: {
-		open: true,
-		port: PORT
-	},
+  optimization: {
+    splitChunks: {
+      cacheGroups: {
+        vendors: {
+          priority: -10,
+          test: /[\\/]node_modules[\\/]/
+        }
+      },
 
-	resolve: {
-		extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.html']
-	}
+      chunks: 'async',
+      minChunks: 1,
+      minSize: 30000,
+      name: true
+    }
+  },
+
+  devServer: {
+    open: true,
+    port: PORT
+  },
+
+  resolve: {
+    extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.html']
+  }
 };

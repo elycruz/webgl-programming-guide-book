@@ -1,4 +1,4 @@
-import {defineEnumProps} from 'fjl-mutable';
+import {defineEnumProps} from 'fjl';
 
 export class ProgramInfo {
     constructor (infoObj) {

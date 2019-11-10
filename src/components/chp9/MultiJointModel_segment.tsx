@@ -5,7 +5,7 @@ import {
     toRadians, initBufferWithData, initBufferNoEnable
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
-import {range$} from 'fjl';
+import {range} from 'fjl';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 import {and} from 'fjl';
 
@@ -183,7 +183,7 @@ export default class MultiJointModel_segment extends GenericCanvasExperimentView
 
                 colors = new Float32Array(
                     [].concat.apply(
-                        [], range$(0, vertices_base.length / 3)
+                        [], range(0, vertices_base.length / 3)
                             .map(() => [1.0, 0.0, 0.0])
                     )
                 ),
@@ -195,7 +195,7 @@ export default class MultiJointModel_segment extends GenericCanvasExperimentView
                 normalBufferInitialized = initBufferWithData(gl, gl.ARRAY_BUFFER, 3, gl.FLOAT, 'a_Normal', normals)
 
             ;
-            
+
             g_baseBuffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_base);
             g_arm1Buffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_arm1);
             g_arm2Buffer = initBufferNoEnable(gl, gl.FLOAT, 3, vertices_arm2);

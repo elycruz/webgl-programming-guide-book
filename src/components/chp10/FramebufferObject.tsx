@@ -11,8 +11,8 @@ import {
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 import rafLimiter from "../../utils/raqLimiter";
 import textureImg from '../../assets/sky_cloud.jpg';
-import vertShader from '../../assets/fboVertexShader.js';
-import fragShader from '../../assets/fboFragmentShader.js';
+import vertShader from '../../assets/fboVertexShader';
+import fragShader from '../../assets/fboFragmentShader';
 
 let stopAniFrame = false;
 

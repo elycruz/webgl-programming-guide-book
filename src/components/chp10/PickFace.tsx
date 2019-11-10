@@ -128,7 +128,7 @@ export default class PickFace extends GenericCanvasExperimentView {
                 ]),
                 /*colors = new Float32Array(
                     [].concat.apply(
-                        [], range$(0, vertices.length / 3)
+                        [], range(0, vertices.length / 3)
                             .map(() => [1.0, 0.0, 0.0])
                     )
                 ),*/

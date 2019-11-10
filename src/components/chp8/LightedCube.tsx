@@ -5,7 +5,7 @@ import {
     toRadians
 } from "../../utils/WebGlUtils-2";
 import {mat4, vec3} from 'gl-matrix';
-import {range$} from 'fjl';
+import {range} from 'fjl';
 import GenericCanvasExperimentView from "../app/GenericCanvasExperimentView";
 
 const
@@ -91,7 +91,7 @@ export default class LightedCube extends GenericCanvasExperimentView {
                 ]),
                 colors = new Float32Array(
                     [].concat.apply(
-                        [], range$(0, vertices.length / 3)
+                        [], range(0, vertices.length / 3)
                             .map(() => [1.0, 0.0, 0.0])
                     )
                 ),
