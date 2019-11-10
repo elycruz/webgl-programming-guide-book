@@ -13,13 +13,13 @@ const returnErrorView = err => {
   Home = React.lazy(() => import('../home/Home').catch(returnErrorView)),
 
   Chapter2 = React.lazy(() => import('../chp2/Chapter2').catch(returnErrorView)),
-
+  
   DrawRectangle = React.lazy(() => import('../chp2/DrawRectangle').catch(returnErrorView)),
 
   viewsMap = {
+    './components/chp2/DrawRectangle': DrawRectangle,
     './components/home/Home': Home,
     './components/chp2/Chapter2': Chapter2,
-    './components/chp2/DrawRectangle': DrawRectangle,
     './components/chp2/DrawAPoint': React.lazy(() => import('../chp2/DrawAPoint').catch(returnErrorView)),
     './components/chp2/DrawAPoint2': React.lazy(() => import('../chp2/DrawAPoint2').catch(returnErrorView)),
     './components/chp2/DrawAPoint3': React.lazy(() => import('../chp2/DrawAPoint3').catch(returnErrorView)),

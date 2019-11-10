@@ -1,4 +1,4 @@
-import React, {Component, PureComponent, FunctionComponent, ReactEventHandler, Suspense} from 'react';
+import React, {Component, PureComponent, FunctionComponent, ReactEventHandler, Suspense, ComponentType} from 'react';
 import {debounce, findNavItemByUri} from "../../utils/utils";
 import navContainer from './config.app.nav';
 import viewsMap from "./config.views.map";
@@ -8,7 +8,7 @@ import {LocationInfo} from "./LocationInfo";
 
 interface ApplicationState {
   currentViewProps: object,
-  CurrentView: Component | PureComponent | FunctionComponent
+  CurrentView: ComponentType<any>
 }
 
 interface ApplicationProps {
