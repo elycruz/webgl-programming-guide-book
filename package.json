@@ -5,8 +5,8 @@
   "dependencies": {
     "fjl": "^1.12.1",
     "gl-matrix": "^3.1.0",
-    "react": "^16.3.1",
-    "react-dom": "^16.3.1",
+    "react": "^16.11.0",
+    "react-dom": "^16.11.0",
     "react-router-dom": "^5.1.2",
     "twgl.js": "^4.4.0"
   },

@@ -5,8 +5,7 @@
     "module": "commonjs",
     "target": "es5",
     "allowJs": true,
-    "jsx": "react",
-    "resolveJsonModule": true
+    "jsx": "react"
   },
   "files": [
     "./src/index.tsx"

@@ -70,16 +70,17 @@ module.exports = {
         test: /\.scss$/,
         use: [
           (isDev ?
-            // Creates `style` nodes from JS strings
-            'style-loader' :
+              // Creates `style` nodes from JS strings
+              'style-loader' :
 
-            // In 'prod' extract css to files
-            {
-              loader: MiniCssExtractPlugin.loader,
-              options: {
-                hmr: isDev,
-              },
-            }),
+              // In 'prod' extract css to files
+              {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  hmr: isDev,
+                },
+              }
+          ),
 
           // Translates CSS into CommonJS
           {
@@ -115,7 +116,7 @@ module.exports = {
         exclude: [/node_modules/]
       },
       {
-        test: /\.(png|jpe?g|gif)$/i,
+        test: /\.(png|jpe?g|gif|glsl)$/i,
         use: [
           {
             loader: 'file-loader',

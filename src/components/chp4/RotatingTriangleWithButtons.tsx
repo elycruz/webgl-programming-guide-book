@@ -42,7 +42,7 @@ export default class RotatingTriangleWithButtons extends Component {
         this.angleStep = this.props.angleStep;
     }
 
-    componentWillMount () {
+    UNSAFE_componentWillMount () {
         this.boundAngleStepChange = RotatingTriangleWithButtons.onAngleStepChange.bind(this);
     }
 

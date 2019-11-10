@@ -4,55 +4,41 @@ import navContainer from './config.app.nav';
 import viewsMap from "./config.views.map";
 
 import AppNav from "./AppNav";
-
-const returnErrorView = () => Promise.resolve((<h2>Page not found</h2>));
+import {LocationInfo} from "./LocationInfo";
 
 interface ApplicationState {
   currentViewProps: object,
   CurrentView: Component | PureComponent | FunctionComponent
 }
 
-class Application extends Component {
+interface ApplicationProps {
+  viewsElmVisbleClassName: string,
+  mobileNavActiveClassName: string,
+}
 
-  htmlElm: HTMLElement;
+class App extends Component<ApplicationProps> {
+  static defaultProps = {
+    viewsElmVisbleClassName: 'visible',
+    mobileNavActiveClassName: 'mobile-nav-active'
+  } as ApplicationProps;
+
+  htmlElm: HTMLElement = document.querySelector('html');
+
   boundHamburgerClick: ReactEventHandler;
+  boundOnViewsAreaTransitionEnd: ReactEventHandler;
+  boundOnLinkClick: ReactEventHandler;
+
+  prevLocInfo: LocationInfo;
+  currLocInfo: LocationInfo;
+  navContainer: LocationInfo;
+
+  viewsElmRef: React.RefObject<HTMLElement> = null;
+  navRef: React.RefObject<HTMLElement> = null;
 
   state: ApplicationState = {
     currentViewProps: {},
     CurrentView: null
   };
-
-  static defaultProps = {
-    viewsElmVisbleClassName: 'visible',
-    mobileNavActiveClassName: 'mobile-nav-active'
-  };
-
-  static onLinkClick(e) {
-    if (this.htmlElm.classList.contains('mobile-size')) {
-      this.boundHamburgerClick(e);
-    }
-    if (this.previousLocInfo &&
-      e.detail && e.detail.uri &&
-      this.previousLocInfo.uri === e.detail.uri) {
-      return;
-    }
-    this.previousLocInfo =
-      this.currentLocationInfo =
-        e.detail;
-    this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
-  }
-
-  static onHamburgerClick() {
-    this.htmlElm.classList.toggle(this.props.mobileNavActiveClassName);
-  }
-
-  static onViewsAreaTransitionEnd(e) {
-    if (!e.currentTarget.classList.contains(this.props.viewsElmVisbleClassName)) {
-      const [currentViewProps, CurrentView] = this.getViewFor(this.currentLocationInfo);
-      this.setState({CurrentView, currentViewProps});
-      e.currentTarget.classList.add(this.props.viewsElmVisbleClassName);
-    }
-  }
 
   constructor(props) {
     super(props);
@@ -64,21 +50,20 @@ class Application extends Component {
     this.navRef = React.createRef();
     // this.hamburgerRef = React.createRef();
     this.navContainer = navContainer;
-    this.previousLocInfo =
-      this.currentLocationInfo =
+    this.prevLocInfo =
+      this.currLocInfo =
         findNavItemByUri(window.location.pathname, this.navContainer.items);
-    this.boundOnLinkClick = Application.onLinkClick.bind(this);
-    this.boundOnViewsAreaTransitionEnd = Application.onViewsAreaTransitionEnd.bind(this);
-    this.boundHamburgerClick = Application.onHamburgerClick.bind(this);
+    this.boundOnLinkClick = this.onLinkClick.bind(this);
+    this.boundOnViewsAreaTransitionEnd = this.onViewsAreaTransitionEnd.bind(this);
+    this.boundHamburgerClick = this.onHamburgerClick.bind(this);
     const [currentViewProps, CurrentView] =
-      this.getViewFor(!this.currentLocationInfo ? errorViewInfo : this.currentLocationInfo);
+      this.getViewFor(!this.currLocInfo ? errorViewInfo : this.currLocInfo);
 
     this.state.CurrentView = CurrentView;
     this.state.currentViewProps = currentViewProps;
-    this.htmlElm = document.querySelector('html');
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // Listen for window size change so we can branch our logic for different
     // screen sizes (from within business logic)
     const onWindowResize = () => {
@@ -101,12 +86,38 @@ class Application extends Component {
     });
   }
 
+  onLinkClick(e) {
+    if (this.htmlElm.classList.contains('mobile-size')) {
+      this.boundHamburgerClick(e);
+    }
+    if (this.prevLocInfo &&
+      e.detail && e.detail.uri &&
+      this.prevLocInfo.uri === e.detail.uri) {
+      return;
+    }
+    this.prevLocInfo =
+      this.currLocInfo = e.detail;
+    this.viewsElmRef.current.classList.remove(this.props.viewsElmVisbleClassName);
+  }
+
+  onHamburgerClick() {
+    this.htmlElm.classList.toggle(this.props.mobileNavActiveClassName);
+  }
+
+  onViewsAreaTransitionEnd(e) {
+    if (!e.currentTarget.classList.contains(this.props.viewsElmVisbleClassName)) {
+      const [currentViewProps, CurrentView] = this.getViewFor(this.currLocInfo);
+      this.setState({CurrentView, currentViewProps});
+      e.currentTarget.classList.add(this.props.viewsElmVisbleClassName);
+    }
+  }
+
   getViewFor(linkInfo) {
     const uriParts = linkInfo.uri.split('/'),
       filePathParts = linkInfo.componentFilePath.split('/'),
       aliasName = uriParts.length ? uriParts[uriParts.length - 1] : null,
       viewProps = {
-        fileName: filePathParts[filePathParts.length - 1] + '.jsx',
+        fileName: filePathParts[filePathParts.length - 1],
         aliasName,
         canvasId: aliasName
       };
@@ -114,7 +125,7 @@ class Application extends Component {
   }
 
   render() {
-    const {CurrentView} = this.state;
+    const {CurrentView, currentViewProps} = this.state;
     return (
       <div id="wrapper" className="clearfix">
         <header>
@@ -139,8 +150,8 @@ class Application extends Component {
             <section ref={this.viewsElmRef}
                      className="view-area visible"
                      onTransitionEnd={this.boundOnViewsAreaTransitionEnd}>
-              <Suspense fallback={'<div>Loading...</div>'}>
-                <CurrentView/>
+              <Suspense fallback={<div>Loading...</div>}>
+                <CurrentView {...currentViewProps}/>
               </Suspense>
             </section>
           </div>
@@ -150,6 +161,7 @@ class Application extends Component {
       </div>
     );
   }
+
 }
 
-export default Application;
+export default App;
